@@ -55,6 +55,9 @@ describe("stem.nvim", function()
   before_each(function()
     data_home = vim.fn.stdpath "data"
     stem = reset_stem()
+    local temp_cwd = new_temp_dir()
+    vim.cmd("cd " .. vim.fn.fnameescape(temp_cwd))
+    vim.cmd("tcd " .. vim.fn.fnameescape(temp_cwd))
   end)
 
   after_each(function()
@@ -174,6 +177,26 @@ describe("stem.nvim", function()
     assert.is_true(vim.fn.filereadable(session_path) == 1)
   end)
 
+  it("does not abandon modified buffers during session load", function()
+    if not require_bindfs() then
+      return
+    end
+    local dir = new_temp_dir()
+    local file = new_temp_file(dir, "conflict.txt")
+    stem.new("conflict")
+    vim.cmd("edit " .. vim.fn.fnameescape(file))
+    stem.save("conflict")
+    stem.close()
+
+    vim.o.hidden = false
+    vim.cmd "enew"
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, { "dirty" })
+    vim.bo.modified = true
+
+    stem.open("conflict")
+    assert.is_true(vim.bo.modified == true)
+  end)
+
   it("lists untitled workspaces", function()
     if not require_bindfs() then
       return
@@ -223,6 +246,149 @@ describe("stem.nvim", function()
     vim.fn.writefile({ "other" }, lock_dir .. "/other-instance")
     stem.close()
     assert.is_true(vim.fn.isdirectory(other) == 1)
+  end)
+
+  it("accepts relative paths for StemAdd", function()
+    if not require_bindfs() then
+      return
+    end
+    local base = new_temp_dir()
+    local rel = base .. "/relrepo"
+    vim.fn.mkdir(rel, "p")
+    stem.new("")
+    local temp_root = vim.fn.getcwd()
+    vim.cmd("cd " .. vim.fn.fnameescape(base))
+    vim.cmd("tcd " .. vim.fn.fnameescape(base))
+    stem.add("relrepo")
+    vim.cmd("cd " .. vim.fn.fnameescape(temp_root))
+    vim.cmd("tcd " .. vim.fn.fnameescape(temp_root))
+    local mount_path = temp_root .. "/relrepo"
+    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+  end)
+
+  it("reports bindfs mount failures", function()
+    if not require_bindfs() then
+      return
+    end
+    local messages, restore = capture_notify()
+    stem.setup({ workspace = { bindfs_args = { "--not-a-real-flag" } } })
+    stem.new("")
+    local dir = new_temp_dir()
+    stem.add(dir)
+    restore()
+    local saw_failure = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Failed to bindfs") then
+        saw_failure = true
+      end
+    end
+    assert.is_true(saw_failure)
+  end)
+
+  it("disambiguates duplicate root names when mounting", function()
+    if not require_bindfs() then
+      return
+    end
+    local base = new_temp_dir()
+    local repo1 = base .. "/repo"
+    local repo2 = base .. "/other/repo"
+    vim.fn.mkdir(repo1, "p")
+    vim.fn.mkdir(repo2, "p")
+    stem.new("")
+    stem.add(repo1)
+    stem.add(repo2)
+    local cwd = vim.fn.getcwd()
+    assert.is_true(vim.fn.getftype(cwd .. "/repo") == "dir")
+    assert.is_true(vim.fn.getftype(cwd .. "/repo__2") == "dir")
+  end)
+
+  it("rejects invalid workspace names on save", function()
+    if not require_bindfs() then
+      return
+    end
+    local messages, restore = capture_notify()
+    stem.new("")
+    stem.save("bad/name")
+    restore()
+    local ws_file = data_home .. "/stem/workspaces/bad/name.lua"
+    assert.is_true(vim.fn.filereadable(ws_file) == 0)
+    local saw_invalid = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Invalid workspace name") then
+        saw_invalid = true
+      end
+    end
+    assert.is_true(saw_invalid)
+  end)
+
+  it("rejects non-existent workspace on open", function()
+    local messages, restore = capture_notify()
+    stem.open("missing")
+    restore()
+    local saw_missing = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Workspace not found") then
+        saw_missing = true
+      end
+    end
+    assert.is_true(saw_missing)
+  end)
+
+  it("rejects non-directory on add", function()
+    if not require_bindfs() then
+      return
+    end
+    local dir = new_temp_dir()
+    local file = new_temp_file(dir, "notadir.txt")
+    local messages, restore = capture_notify()
+    stem.new("")
+    stem.add(file)
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Not a directory") then
+        saw_error = true
+      end
+    end
+    assert.is_true(saw_error)
+  end)
+
+  it("rejects unknown directory on remove", function()
+    if not require_bindfs() then
+      return
+    end
+    local dir = new_temp_dir()
+    local messages, restore = capture_notify()
+    stem.new("")
+    stem.remove(dir)
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Directory not found") then
+        saw_error = true
+      end
+    end
+    assert.is_true(saw_error)
+  end)
+
+  it("prevents renaming to an existing workspace", function()
+    if not require_bindfs() then
+      return
+    end
+    local messages, restore = capture_notify()
+    stem.new("")
+    stem.save("one")
+    stem.new("")
+    stem.save("two")
+    stem.rename("one", "two")
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Workspace already exists") then
+        saw_error = true
+      end
+    end
+    assert.is_true(saw_error)
   end)
 
   it("completes StemOpen from saved workspaces", function()
