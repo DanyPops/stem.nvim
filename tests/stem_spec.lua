@@ -101,7 +101,7 @@ describe("stem.nvim", function()
     assert.is_true(vim.fn.getftype(mount_path) == "")
   end)
 
-  it("uses bindfs backend when available", function()
+  it("bindfs-backed mount is created successfully", function()
     if not require_bindfs() then
       return
     end
