@@ -109,6 +109,7 @@ local function open_root_in_oil()
 end
 
 local session_manager = require "stem.session_manager"
+local mount_manager = require "stem.mount_manager"
 
 local function load_session(name)
   session_manager.load(name, config.session.enabled, config.session.auto_load)
@@ -119,29 +120,7 @@ local function save_session(name)
 end
 
 local function clear_temp_root(path)
-  if not path or path == "" then
-    return
-  end
-  if #state.mounts > 0 then
-    for _, mount in ipairs(state.mounts) do
-      if vim.fn.isdirectory(mount) == 1 then
-        if vim.fn.executable("fusermount") == 1 then
-          vim.fn.system { "fusermount", "-u", mount }
-        else
-          vim.fn.system { "umount", mount }
-        end
-      end
-    end
-    state.mounts = {}
-  end
-  if vim.fn.isdirectory(path) == 0 then
-    vim.fn.mkdir(path, "p")
-    return
-  end
-  local entries = vim.fn.readdir(path)
-  for _, entry in ipairs(entries) do
-    vim.fn.delete(path .. "/" .. entry, "rf")
-  end
+  state.mounts = mount_manager.clear_temp_root(path, state.mounts)
 end
 
 local function cleanup_untitled_if_last()
@@ -171,38 +150,11 @@ local function mount_roots()
     return
   end
   clear_temp_root(state.temp_root)
-  state.mount_map = {}
-  state.mounts = {}
-  local used = {}
-  for _, root in ipairs(state.roots) do
-    local name = vim.fn.fnamemodify(root, ":t")
-    local mount_name = name
-    local n = 2
-    while used[mount_name] do
-      mount_name = string.format("%s__%d", name, n)
-      n = n + 1
-    end
-    used[mount_name] = true
-    state.mount_map[root] = mount_name
-    local mount_path = state.temp_root .. "/" .. mount_name
-    if vim.fn.executable("bindfs") ~= 1 then
-      notify("bindfs not found; cannot mount workspace", vim.log.levels.ERROR)
-      return
-    end
-    vim.fn.mkdir(mount_path, "p")
-    local cmd = { "bindfs" }
-    for _, arg in ipairs(config.workspace.bindfs_args or {}) do
-      table.insert(cmd, arg)
-    end
-    table.insert(cmd, root)
-    table.insert(cmd, mount_path)
-    local out = vim.fn.system(cmd)
-    if vim.v.shell_error ~= 0 then
-      notify(string.format("Failed to bindfs %s: %s", root, out), vim.log.levels.WARN)
-    else
-      table.insert(state.mounts, mount_path)
-    end
-  end
+  state.mounts, state.mount_map = mount_manager.mount_roots(
+    state.roots,
+    state.temp_root,
+    config.workspace.bindfs_args
+  )
 end
 
 local function maybe_reopen_in_workspace(root, mount_name)
