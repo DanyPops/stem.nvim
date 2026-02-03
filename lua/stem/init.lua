@@ -34,12 +34,6 @@ local function notify(msg, level)
   ui.notify(msg, level)
 end
 
-local function workspace_dir()
-  local dir = vim.fn.stdpath "data" .. "/stem/workspaces"
-  vim.fn.mkdir(dir, "p")
-  return dir
-end
-
 local function temp_untitled_root()
   local dir = config.workspace.temp_untitled_root
   vim.fn.mkdir(dir, "p")
@@ -64,58 +58,10 @@ local function release_instance_lock()
   vim.fn.delete(instance_lock_path())
 end
 
-local function is_valid_name(name)
-  return name and name ~= "" and name:match("^[%w%._%-]+$")
-end
-
-local function workspace_file(name)
-  if not is_valid_name(name) then
-    return nil
-  end
-  return workspace_dir() .. "/" .. name .. ".lua"
-end
-
-local function read_workspace(name)
-  local path = workspace_file(name)
-  if not path or vim.fn.filereadable(path) == 0 then
-    return nil
-  end
-  local chunk, err = loadfile(path)
-  if not chunk then
-    notify(string.format("Failed to load workspace %s: %s", name, err or "unknown error"), vim.log.levels.WARN)
-    return nil
-  end
-  if setfenv then
-    setfenv(chunk, {})
-  end
-  local ok, result = pcall(chunk)
-  if not ok or type(result) ~= "table" then
-    return nil
-  end
-  return result
-end
-
-local function write_workspace(name, roots)
-  local path = workspace_file(name)
-  if not path then
-    notify("Invalid workspace name: " .. tostring(name), vim.log.levels.ERROR)
-    return false
-  end
-  local encoded = "return " .. vim.inspect({ roots = roots })
-  vim.fn.writefile(vim.split(encoded, "\n"), path)
-  return true
-end
+local workspace_store = require "stem.workspace_store"
 
 local function list_workspaces()
-  local dir = workspace_dir()
-  local files = vim.fn.globpath(dir, "*.lua", false, true)
-  local names = {}
-  for _, file in ipairs(files) do
-    local name = vim.fn.fnamemodify(file, ":t:r")
-    table.insert(names, name)
-  end
-  table.sort(names)
-  return names
+  return workspace_store.list()
 end
 
 local function list_roots()
@@ -217,7 +163,7 @@ local function session_dir()
 end
 
 local function session_file(name)
-  if not is_valid_name(name) then
+  if not workspace_store.is_valid_name(name) then
     return nil
   end
   return session_dir() .. "/" .. name .. ".vim"
@@ -453,7 +399,7 @@ function M.open(name)
     notify("Workspace name required", vim.log.levels.ERROR)
     return
   end
-  local entry = read_workspace(name)
+  local entry = workspace_store.read(name)
   if not entry or type(entry.roots) ~= "table" then
     notify("Workspace not found: " .. name, vim.log.levels.ERROR)
     return
@@ -472,11 +418,11 @@ function M.save(name)
     notify("Save cancelled", vim.log.levels.WARN)
     return
   end
-  if not is_valid_name(workspace_name) then
+  if not workspace_store.is_valid_name(workspace_name) then
     notify("Invalid workspace name: " .. workspace_name, vim.log.levels.ERROR)
     return
   end
-  if not write_workspace(workspace_name, state.roots) then
+  if not workspace_store.write(workspace_name, state.roots) then
     return
   end
   state.name = workspace_name
@@ -574,17 +520,17 @@ end
 
 function M.rename(arg1, arg2)
   if arg2 then
-    local entry = read_workspace(arg1)
+    local entry = workspace_store.read(arg1)
     if not entry then
       notify("Workspace not found: " .. arg1, vim.log.levels.ERROR)
       return
     end
-    if not is_valid_name(arg2) then
+    if not workspace_store.is_valid_name(arg2) then
       notify("Invalid workspace name: " .. arg2, vim.log.levels.ERROR)
       return
     end
-    local from_path = workspace_file(arg1)
-    local to_path = workspace_file(arg2)
+    local from_path = workspace_store.path(arg1)
+    local to_path = workspace_store.path(arg2)
     if vim.fn.filereadable(to_path) == 1 then
       notify("Workspace already exists: " .. arg2, vim.log.levels.ERROR)
       return
@@ -610,12 +556,12 @@ function M.rename(arg1, arg2)
     notify("New name required", vim.log.levels.ERROR)
     return
   end
-  if not is_valid_name(new_name) then
+  if not workspace_store.is_valid_name(new_name) then
     notify("Invalid workspace name: " .. new_name, vim.log.levels.ERROR)
     return
   end
-  local current_file = workspace_file(state.name)
-  local target_file = workspace_file(new_name)
+  local current_file = workspace_store.path(state.name)
+  local target_file = workspace_store.path(new_name)
   if current_file and vim.fn.filereadable(current_file) == 1 then
     if vim.fn.filereadable(target_file) == 1 then
       notify("Workspace already exists: " .. new_name, vim.log.levels.ERROR)
@@ -623,7 +569,7 @@ function M.rename(arg1, arg2)
     end
     vim.fn.rename(current_file, target_file)
   else
-    if not write_workspace(new_name, state.roots) then
+    if not workspace_store.write(new_name, state.roots) then
       return
     end
   end
