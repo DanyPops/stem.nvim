@@ -156,39 +156,14 @@ local function open_root_in_oil()
   end
 end
 
-local function session_dir()
-  local dir = vim.fn.stdpath "data" .. "/stem/sessions"
-  vim.fn.mkdir(dir, "p")
-  return dir
-end
-
-local function session_file(name)
-  if not workspace_store.is_valid_name(name) then
-    return nil
-  end
-  return session_dir() .. "/" .. name .. ".vim"
-end
+local session_manager = require "stem.session_manager"
 
 local function load_session(name)
-  if not config.session.enabled or not config.session.auto_load then
-    return
-  end
-  local path = session_file(name)
-  if not path or vim.fn.filereadable(path) == 0 then
-    return
-  end
-  vim.cmd("silent! source " .. vim.fn.fnameescape(path))
+  session_manager.load(name, config.session.enabled, config.session.auto_load)
 end
 
 local function save_session(name)
-  if not config.session.enabled then
-    return
-  end
-  local path = session_file(name)
-  if not path then
-    return
-  end
-  vim.cmd("silent! mksession! " .. vim.fn.fnameescape(path))
+  session_manager.save(name, config.session.enabled)
 end
 
 local function clear_temp_root(path)
