@@ -28,8 +28,10 @@ local state = {
   instance_id = tostring(vim.fn.getpid()),
 }
 
+local ui = require "stem.ui"
+
 local function notify(msg, level)
-  vim.notify(msg, level or vim.log.levels.INFO, { title = "stem" })
+  ui.notify(msg, level)
 end
 
 local function workspace_dir()
@@ -487,7 +489,7 @@ end
 
 function M.close()
   if state.temporary and #state.roots > 0 and should_confirm_close() then
-    local choice = vim.fn.confirm("Close unnamed workspace without saving?", "&Yes\n&No", 2)
+    local choice = ui.confirm("Close unnamed workspace without saving?", "&Yes\n&No", 2)
     if choice ~= 1 then
       return
     end
