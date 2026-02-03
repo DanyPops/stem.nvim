@@ -34,29 +34,7 @@ local function notify(msg, level)
   ui.notify(msg, level)
 end
 
-local function temp_untitled_root()
-  local dir = config.workspace.temp_untitled_root
-  vim.fn.mkdir(dir, "p")
-  return dir
-end
-
-local function lock_dir()
-  local dir = temp_untitled_root() .. "/.locks"
-  vim.fn.mkdir(dir, "p")
-  return dir
-end
-
-local function instance_lock_path()
-  return lock_dir() .. "/" .. state.instance_id
-end
-
-local function ensure_instance_lock()
-  vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, instance_lock_path())
-end
-
-local function release_instance_lock()
-  vim.fn.delete(instance_lock_path())
-end
+local untitled_manager = require "stem.untitled_manager"
 
 local workspace_store = require "stem.workspace_store"
 
@@ -105,34 +83,8 @@ M._complete = {
   rename = complete_rename,
 }
 
-local function next_untitled_name()
-  local base = temp_untitled_root()
-  local files = vim.fn.globpath(base, "*", false, true)
-  local used = {}
-  for _, path in ipairs(files) do
-    local name = vim.fn.fnamemodify(path, ":t")
-    if name:match("^untitled%d*$") then
-      used[name] = true
-    end
-  end
-  if not used.untitled then
-    return "untitled"
-  end
-  local i = 1
-  while used["untitled" .. i] do
-    i = i + 1
-  end
-  return "untitled" .. i
-end
-
 local function temp_root_for(name, temporary)
-  local base = config.workspace.temp_root
-  vim.fn.mkdir(base, "p")
-  if temporary and (not name or name == "") then
-    local temp_base = temp_untitled_root()
-    return temp_base .. "/" .. next_untitled_name()
-  end
-  return base .. "/" .. name
+  return untitled_manager.temp_root_for(config.workspace, name, temporary)
 end
 
 local function set_cwd(path)
@@ -193,30 +145,11 @@ local function clear_temp_root(path)
 end
 
 local function cleanup_untitled_if_last()
-  local locks = vim.fn.globpath(lock_dir(), "*", false, true)
-  if #locks > 0 then
-    return
-  end
-  local base = temp_untitled_root()
-  local entries = vim.fn.readdir(base)
-  for _, entry in ipairs(entries) do
-    if entry ~= ".locks" then
-      vim.fn.delete(base .. "/" .. entry, "rf")
-    end
-  end
+  untitled_manager.cleanup_if_last(config.workspace)
 end
 
 local function list_untitled()
-  local base = temp_untitled_root()
-  local names = {}
-  local entries = vim.fn.readdir(base)
-  for _, entry in ipairs(entries) do
-    if entry ~= ".locks" then
-      table.insert(names, entry)
-    end
-  end
-  table.sort(names)
-  return names
+  return untitled_manager.list(config.workspace)
 end
 
 local function should_confirm_close()
@@ -356,7 +289,7 @@ function M.new(name)
   local workspace_name = name ~= "" and name or nil
   set_workspace(workspace_name, {}, workspace_name == nil)
   if state.temporary then
-    ensure_instance_lock()
+    untitled_manager.ensure_instance_lock(config.workspace, state.instance_id)
   end
   if config.workspace.auto_add_cwd and base_dir and base_dir ~= "" and base_dir ~= state.temp_root then
     M.add(base_dir)
@@ -419,7 +352,7 @@ function M.close()
     save_session(state.name)
   end
   if state.temporary then
-    release_instance_lock()
+    untitled_manager.release_instance_lock(config.workspace, state.instance_id)
   end
   if state.temp_root then
     clear_temp_root(state.temp_root)
