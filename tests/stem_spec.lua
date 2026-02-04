@@ -353,6 +353,65 @@ describe("stem.nvim", function()
     assert.is_true(saw_error)
   end)
 
+  it("tracks buffers and unmounts when last buffer closes", function()
+    if not require_bindfs() then
+      return
+    end
+    stem.setup({})
+    stem.new("alpha")
+    local dir = new_temp_dir()
+    local file = new_temp_file(dir, "buffer.txt")
+    stem.add(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/buffer.txt"))
+    local buf = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_delete(buf, { force = true })
+    assert.is_true(vim.fn.getftype(mount_path) == "")
+  end)
+
+  it("keeps mounts while another buffer remains", function()
+    if not require_bindfs() then
+      return
+    end
+    stem.setup({})
+    stem.new("")
+    local dir = new_temp_dir()
+    local file1 = new_temp_file(dir, "one.txt")
+    local file2 = new_temp_file(dir, "two.txt")
+    stem.add(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/one.txt"))
+    local buf1 = vim.api.nvim_get_current_buf()
+    vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/two.txt"))
+    local buf2 = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_delete(buf2, { force = true })
+    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+    vim.api.nvim_buf_delete(buf1, { force = true })
+  end)
+
+  it("does not unmount when untitled locks exist", function()
+    if not require_bindfs() then
+      return
+    end
+    stem.setup({})
+    stem.new("")
+    local base = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary"
+    local lock_dir = base .. "/.locks"
+    vim.fn.mkdir(lock_dir, "p")
+    vim.fn.writefile({ "other" }, lock_dir .. "/other-instance")
+    local dir = new_temp_dir()
+    local file = new_temp_file(dir, "lock.txt")
+    stem.add(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/lock.txt"))
+    local buf = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_delete(buf, { force = true })
+    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+  end)
+
   it("rejects unknown directory on remove", function()
     if not require_bindfs() then
       return

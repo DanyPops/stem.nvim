@@ -150,6 +150,28 @@ function M.new(config, deps)
     registry.module.set_current(registry.state, id)
   end
 
+  local function maybe_unmount_if_idle()
+    if not registry or not registry.module then
+      return
+    end
+    local id = state.temp_root
+    if not id then
+      return
+    end
+    if registry.module.buffer_count(registry.state, id) > 0 then
+      return
+    end
+    if state.temporary and untitled.has_locks(config.workspace) then
+      return
+    end
+    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
+    state.mount_map = {}
+    registry.module.set_mounts(registry.state, id, {}, {})
+    if events then
+      events.emit("workspace_unmounted", state)
+    end
+  end
+
   local function mount_roots()
     if not state.temp_root then
       return
@@ -468,6 +490,42 @@ function M.new(config, deps)
   function manager.state()
     return state
   end
+
+  function manager.on_buf_enter(bufnr)
+    if not registry or not registry.module then
+      return
+    end
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    if not name or name == "" then
+      return
+    end
+    local path = normalize_dir(name)
+    local ws = registry.module.find_by_path(registry.state, path)
+    if not ws then
+      return
+    end
+    registry.module.add_buffer(registry.state, ws.id, bufnr)
+    if events then
+      events.emit("buffer_mapped", { workspace = ws, bufnr = bufnr })
+    end
+  end
+
+  function manager.on_buf_leave(bufnr)
+    if not registry or not registry.module then
+      return
+    end
+    local id = registry.module.remove_buffer(registry.state, bufnr)
+    if not id then
+      return
+    end
+    local ws = registry.module.register(registry.state, id, {})
+    if events then
+      events.emit("buffer_unmapped", { workspace = ws, bufnr = bufnr })
+    end
+    maybe_unmount_if_idle()
+  end
+
+  manager.on_buf_delete = manager.on_buf_leave
 
   return manager
 end

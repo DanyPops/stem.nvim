@@ -37,6 +37,16 @@ local manager = require("stem.workspace_manager").new(config, {
 local commands = require "stem.commands"
 
 local function setup_autocmds()
+  vim.api.nvim_create_autocmd({ "BufEnter" }, {
+    callback = function(args)
+      manager.on_buf_enter(args.buf)
+    end,
+  })
+  vim.api.nvim_create_autocmd({ "BufWinLeave", "BufDelete" }, {
+    callback = function(args)
+      manager.on_buf_leave(args.buf)
+    end,
+  })
   vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
       if manager.state().temp_root then
