@@ -107,6 +107,7 @@ function M.new(config, deps)
   local sessions = deps.sessions
   local mount = deps.mount
   local untitled = deps.untitled
+  local workspace_lock = deps.workspace_lock
   local registry = deps.registry
   local events = deps.events
 
@@ -162,6 +163,13 @@ function M.new(config, deps)
       return
     end
     if state.temporary and untitled.has_locks(config.workspace) then
+      return
+    end
+    if
+      not state.temporary
+      and workspace_lock
+      and workspace_lock.has_other_locks(config.workspace, state.name, state.instance_id)
+    then
       return
     end
     state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
@@ -221,6 +229,10 @@ function M.new(config, deps)
     set_workspace(workspace_name, {}, workspace_name == nil)
     if state.temporary then
       untitled.ensure_instance_lock(config.workspace, state.instance_id)
+    else
+      if workspace_lock then
+        workspace_lock.ensure_instance_lock(config.workspace, workspace_name, state.instance_id)
+      end
     end
     if config.workspace.auto_add_cwd and base_dir and base_dir ~= "" and base_dir ~= state.temp_root then
       manager.add(base_dir)
@@ -244,6 +256,9 @@ function M.new(config, deps)
       return
     end
     set_workspace(name, entry.roots, false)
+    if workspace_lock then
+      workspace_lock.ensure_instance_lock(config.workspace, name, state.instance_id)
+    end
     ui.notify("Opened workspace: " .. name)
     sessions.load(name, config.session.enabled, config.session.auto_load)
   end
@@ -264,8 +279,14 @@ function M.new(config, deps)
     if not store.write(workspace_name, state.roots) then
       return
     end
+    if state.temporary then
+      untitled.release_instance_lock(config.workspace, state.instance_id)
+    end
     state.name = workspace_name
     state.temporary = false
+    if workspace_lock then
+      workspace_lock.ensure_instance_lock(config.workspace, state.name, state.instance_id)
+    end
     state.temp_root = untitled.temp_root_for(config.workspace, state.name, state.temporary)
     mount_roots()
     set_cwd(state.temp_root)
@@ -283,10 +304,17 @@ function M.new(config, deps)
     if state.name then
       sessions.save(state.name, config.session.enabled)
     end
+    local keep_mounts = false
     if state.temporary then
       untitled.release_instance_lock(config.workspace, state.instance_id)
+      keep_mounts = untitled.has_locks(config.workspace)
+    else
+      if workspace_lock then
+        workspace_lock.release_instance_lock(config.workspace, state.name, state.instance_id)
+        keep_mounts = workspace_lock.has_locks(config.workspace, state.name)
+      end
     end
-    if state.temp_root then
+    if state.temp_root and not keep_mounts then
       state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
       vim.fn.delete(state.temp_root, "rf")
     end

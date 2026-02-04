@@ -27,6 +27,7 @@ local manager = require("stem.workspace_manager").new(config, {
   sessions = require "stem.session_manager",
   mount = require "stem.mount_manager",
   untitled = require "stem.untitled_manager",
+  workspace_lock = require "stem.workspace_lock",
   registry = {
     module = registry_mod,
     state = registry_state,

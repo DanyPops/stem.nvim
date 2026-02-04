@@ -412,6 +412,31 @@ describe("stem.nvim", function()
     assert.is_true(vim.fn.getftype(mount_path) == "dir")
   end)
 
+  it("keeps named workspace mounted while another instance holds lock", function()
+    if not require_bindfs() then
+      return
+    end
+    stem.setup({})
+    local dir = new_temp_dir()
+    stem.new("alpha")
+    stem.add(dir)
+    stem.save("alpha")
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+
+    local locks = require "stem.workspace_lock"
+    local lock_config = { temp_root = vim.env.STEM_TMP_ROOT or "/tmp/stem/named" }
+    locks.ensure_instance_lock(lock_config, "alpha", "other-instance")
+
+    stem.close()
+    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+
+    locks.release_instance_lock(lock_config, "alpha", "other-instance")
+    stem.open("alpha")
+    stem.close()
+    assert.is_true(vim.fn.getftype(mount_path) == "")
+  end)
+
   it("rejects unknown directory on remove", function()
     if not require_bindfs() then
       return
