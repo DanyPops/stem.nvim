@@ -110,6 +110,7 @@ end
 
 local session_manager = require "stem.session_manager"
 local mount_manager = require "stem.mount_manager"
+local commands = require "stem.commands"
 
 local function load_session(name)
   session_manager.load(name, config.session.enabled, config.session.auto_load)
@@ -509,58 +510,21 @@ function M.setup(opts)
 
   bootstrap()
 
-  vim.api.nvim_create_user_command("StemNew", function(opts)
-    M.new(opts.args)
-  end, { nargs = "?" })
-
-  vim.api.nvim_create_user_command("StemOpen", function(opts)
-    M.open(opts.args)
-  end, { nargs = 1, complete = function(arg_lead)
-    return complete_workspace_names(arg_lead)
-  end })
-
-  vim.api.nvim_create_user_command("StemSave", function(opts)
-    M.save(opts.args)
-  end, { nargs = "?", complete = function(arg_lead)
-    return complete_workspace_names(arg_lead)
-  end })
-
-  vim.api.nvim_create_user_command("StemClose", function()
-    M.close()
-  end, { nargs = 0 })
-
-  vim.api.nvim_create_user_command("StemAdd", function(opts)
-    M.add(opts.args)
-  end, { nargs = "?", complete = "dir" })
-
-  vim.api.nvim_create_user_command("StemRemove", function(opts)
-    M.remove(opts.args)
-  end, { nargs = 1, complete = function(arg_lead)
-    return complete_roots(arg_lead)
-  end })
-
-  vim.api.nvim_create_user_command("StemRename", function(opts)
-    local args = vim.split(opts.args, "%s+")
-    if #args == 1 then
-      M.rename(args[1], nil)
-    else
-      M.rename(args[1], args[2])
-    end
-  end, { nargs = "+", complete = function(arg_lead, cmd_line)
-    return complete_rename(arg_lead, cmd_line)
-  end })
-
-  vim.api.nvim_create_user_command("StemList", function()
-    M.list()
-  end, { nargs = 0 })
-
-  vim.api.nvim_create_user_command("StemStatus", function()
-    M.status()
-  end, { nargs = 0 })
-
-  vim.api.nvim_create_user_command("StemUntitledList", function()
-    M.untitled_list()
-  end, { nargs = 0 })
+  M._complete = commands.setup({
+    new = M.new,
+    open = M.open,
+    save = M.save,
+    close = M.close,
+    add = M.add,
+    remove = M.remove,
+    rename = M.rename,
+    list = M.list,
+    status = M.status,
+    untitled_list = M.untitled_list,
+    complete_workspaces = complete_workspace_names,
+    complete_roots = complete_roots,
+    complete_rename = complete_rename,
+  })
 
   vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
