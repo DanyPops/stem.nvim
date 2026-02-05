@@ -536,31 +536,21 @@ function M.new(config, deps)
     ui.notify("Renamed workspace to: " .. new_name)
   end
 
-  -- List saved workspaces.
+  -- List workspaces (untitled first, then saved).
   function manager.list()
-    local names = store.list()
-    if #names == 0 then
-      ui.notify "No saved workspaces"
+    local untitled_names = untitled.list(config.workspace)
+    local saved_names = store.list()
+    if #untitled_names == 0 and #saved_names == 0 then
+      ui.notify "No workspaces"
       return
     end
     local lines = { "Workspaces:" }
-    for _, name in ipairs(names) do
-      local marker = state.name == name and " *" or ""
+    for _, name in ipairs(untitled_names) do
+      local marker = state.temp_root and state.temp_root:match("/" .. vim.pesc(name) .. "$") and " *" or ""
       table.insert(lines, " - " .. name .. marker)
     end
-    ui.notify(table.concat(lines, "\n"))
-  end
-
-  -- List untitled workspaces.
-  function manager.untitled_list()
-    local names = untitled.list(config.workspace)
-    if #names == 0 then
-      ui.notify "No untitled workspaces"
-      return
-    end
-    local lines = { "Untitled workspaces:" }
-    for _, name in ipairs(names) do
-      local marker = state.temp_root and state.temp_root:match("/" .. vim.pesc(name) .. "$") and " *" or ""
+    for _, name in ipairs(saved_names) do
+      local marker = state.name == name and " *" or ""
       table.insert(lines, " - " .. name .. marker)
     end
     ui.notify(table.concat(lines, "\n"))
@@ -576,6 +566,51 @@ function M.new(config, deps)
     ui.notify(string.format("Workspace: %s (%d roots)", label, #state.roots))
   end
 
+  -- Show workspace roots for current, saved, or untitled workspace.
+  function manager.info(name)
+    local label = nil
+    local roots = nil
+    if not name or name == "" then
+      if not state.temp_root then
+        ui.notify "No workspace open"
+        return
+      end
+      label = state.name or "untitled"
+      roots = state.roots
+    else
+      local entry = store.read(name)
+      if entry and type(entry.roots) == "table" then
+        label = name
+        roots = entry.roots
+      else
+        local found = nil
+        if registry and registry.state then
+          for _, ws in pairs(registry.state.workspaces or {}) do
+            if ws.temp_root and ws.temp_root:match("/" .. vim.pesc(name) .. "$") then
+              found = ws
+              break
+            end
+          end
+        end
+        if not found then
+          ui.notify("Workspace not found: " .. name, vim.log.levels.ERROR)
+          return
+        end
+        label = name
+        roots = found.roots or {}
+      end
+    end
+    local lines = { "Workspace: " .. label, "Roots:" }
+    if #roots == 0 then
+      table.insert(lines, " - (none)")
+    else
+      for _, root in ipairs(roots) do
+        table.insert(lines, " - " .. root)
+      end
+    end
+    ui.notify(table.concat(lines, "\n"))
+  end
+
   -- Complete workspace names.
   function manager.complete_workspaces(arg_lead)
     return complete_workspace_names(store, arg_lead)
@@ -589,6 +624,27 @@ function M.new(config, deps)
   -- Complete rename command args.
   function manager.complete_rename(arg_lead, cmd_line)
     return complete_rename(store, arg_lead, cmd_line)
+  end
+
+  -- Complete workspace names for info (saved + untitled).
+  function manager.complete_info(arg_lead)
+    local names = {}
+    local seen = {}
+    local untitled_names = untitled.list(config.workspace)
+    for _, name in ipairs(untitled_names) do
+      if not seen[name] then
+        table.insert(names, name)
+        seen[name] = true
+      end
+    end
+    local saved_names = store.list()
+    for _, name in ipairs(saved_names) do
+      if not seen[name] then
+        table.insert(names, name)
+        seen[name] = true
+      end
+    end
+    return complete_from_list(names, arg_lead)
   end
 
   -- Expose current manager state.

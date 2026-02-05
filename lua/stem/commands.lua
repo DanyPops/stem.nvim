@@ -8,6 +8,9 @@ function M.setup(api)
     workspaces = function(arg_lead)
       return api.complete_workspaces(arg_lead)
     end,
+    info = function(arg_lead)
+      return api.complete_info(arg_lead)
+    end,
     roots = function(arg_lead)
       return api.complete_roots(arg_lead)
     end,
@@ -57,9 +60,9 @@ function M.setup(api)
     api.status()
   end, { nargs = 0 })
 
-  vim.api.nvim_create_user_command("StemUntitledList", function()
-    api.untitled_list()
-  end, { nargs = 0 })
+  vim.api.nvim_create_user_command("StemInfo", function(opts)
+    api.info(opts.args)
+  end, { nargs = "?", complete = complete.info })
 
   return complete
 end

@@ -101,4 +101,75 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(all:match("listme") ~= nil)
     assert.is_true(all:match("Workspace:") ~= nil)
   end)
+
+  -- List shows untitled workspaces before saved ones.
+  it("lists untitled workspaces above saved ones", function()
+    util.by("Create a saved workspace")
+    stem.new("")
+    stem.save("saved1")
+    stem.close()
+
+    util.by("Create an untitled workspace")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    local untitled_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+
+    util.by("List workspaces")
+    stem.list()
+    restore()
+
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    local all = table.concat(joined, "\n")
+    local lines = vim.split(all, "\n")
+
+    local untitled_idx = nil
+    local saved_idx = nil
+    for i, line in ipairs(lines) do
+      if line:match("^ %- " .. vim.pesc(untitled_name) .. " ?%*?$") then
+        untitled_idx = i
+      end
+      if line:match("^ %- saved1 ?%*?$") then
+        saved_idx = i
+      end
+    end
+    util.by("Verify untitled appears before saved workspace")
+    assert.is_true(untitled_idx ~= nil)
+    assert.is_true(saved_idx ~= nil)
+    assert.is_true(untitled_idx < saved_idx)
+  end)
+
+  -- Workspace info shows roots for current and saved workspaces.
+  it("reports workspace roots via StemInfo", function()
+    util.by("Create a workspace with two roots")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    local dir1 = util.new_temp_dir()
+    local dir2 = util.new_temp_dir()
+    stem.add(dir1)
+    stem.add(dir2)
+    util.by("Remove one root and reuse it in another workspace")
+    stem.remove(dir2)
+    util.by("Show info for current workspace")
+    stem.info("")
+    util.by("Save workspace and show info by name")
+    stem.save("info-me")
+    stem.info("info-me")
+    util.by("Open another workspace and add the removed root")
+    stem.new("info-two")
+    stem.add(dir2)
+    stem.info("info-two")
+    restore()
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    local all = table.concat(joined, "\n")
+    util.by("Verify info output includes roots")
+    assert.is_true(all:match("Workspace:") ~= nil)
+    assert.is_true(all:match(vim.pesc(dir1)) ~= nil)
+    assert.is_true(all:match(vim.pesc(dir2)) ~= nil)
+  end)
 end)

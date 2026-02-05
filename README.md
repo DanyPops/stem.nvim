@@ -52,7 +52,7 @@ test -r /dev/fuse
 - `:StemRename <old> <new>` - rename a saved workspace
 - `:StemList` - list saved workspaces
 - `:StemStatus` - show current workspace status
-- `:StemUntitledList` - list untitled workspaces
+- `:StemInfo [name]` - show workspace roots
 
 ## Session behavior
 

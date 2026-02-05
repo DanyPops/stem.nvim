@@ -91,10 +91,11 @@ function M.setup(opts)
     rename = manager.rename,
     list = manager.list,
     status = manager.status,
-    untitled_list = manager.untitled_list,
+    info = manager.info,
     complete_workspaces = manager.complete_workspaces,
     complete_roots = manager.complete_roots,
     complete_rename = manager.complete_rename,
+    complete_info = manager.complete_info,
   })
   setup_autocmds()
 end
@@ -135,9 +136,9 @@ end
 M.status = function()
   return manager.status()
 end
--- List untitled workspaces.
-M.untitled_list = function()
-  return manager.untitled_list()
+-- Show roots for current or saved workspace.
+M.info = function(name)
+  return manager.info(name)
 end
 
 M.events = events

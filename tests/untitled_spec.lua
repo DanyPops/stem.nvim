@@ -18,24 +18,6 @@ describe("stem.nvim untitled workspaces", function()
     util.flush_by()
   end)
 
-  -- Untitled list includes the current unnamed workspace.
-  it("lists untitled workspaces", function()
-    util.by("Open an unnamed workspace and list it")
-    local messages, restore = util.capture_notify()
-    stem.new("")
-    util.by("List untitled workspaces")
-    stem.untitled_list()
-    restore()
-    local joined = {}
-    for _, item in ipairs(messages) do
-      table.insert(joined, item.msg)
-    end
-    local all = table.concat(joined, "\n")
-    util.by("Verify untitled list output")
-    assert.is_true(all:match("Untitled workspaces:") ~= nil)
-    assert.is_true(all:match("untitled") ~= nil)
-  end)
-
   -- Closing the last instance cleans up untitled directories.
   it("clears all untitled workspaces when last instance closes", function()
     util.by("Close last instance and verify cleanup")
