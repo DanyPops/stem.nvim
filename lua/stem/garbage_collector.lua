@@ -1,3 +1,5 @@
+local ui = require "stem.ui"
+
 local M = {}
 
 -- Garbage collector for orphaned bindfs mounts after crashes.
@@ -52,6 +54,7 @@ function M.new(config, deps)
   local collector = {}
 
   function collector.collect()
+    local errors = {}
     local workspace_cfg = config.workspace or {}
     local named_root = workspace_cfg.temp_root
     local untitled_root = workspace_cfg.temp_untitled_root
@@ -67,7 +70,10 @@ function M.new(config, deps)
           if vim.fn.isdirectory(ws_root) == 1 then
             local locked = workspace_lock and workspace_lock.has_locks(workspace_cfg, name)
             if not locked then
-              mount.unmount_all(named_mounts[ws_root] or {})
+              local unmount_errors = mount.unmount_all(named_mounts[ws_root] or {})
+              for _, err in ipairs(unmount_errors or {}) do
+                table.insert(errors, err)
+              end
               vim.fn.delete(ws_root, "rf")
             end
           end
@@ -82,12 +88,25 @@ function M.new(config, deps)
         if name ~= ".locks" then
           local ws_root = untitled_root .. "/" .. name
           if vim.fn.isdirectory(ws_root) == 1 then
-            mount.unmount_all(untitled_mounts[ws_root] or {})
+            local unmount_errors = mount.unmount_all(untitled_mounts[ws_root] or {})
+            for _, err in ipairs(unmount_errors or {}) do
+              table.insert(errors, err)
+            end
             vim.fn.delete(ws_root, "rf")
           end
         end
       end
     end
+    if #errors > 0 then
+      local lines = { "Garbage collector unmount errors:" }
+      for _, err in ipairs(errors) do
+        if err and err.mount and err.error then
+          table.insert(lines, string.format("- %s: %s", err.mount, err.error))
+        end
+      end
+      ui.notify(table.concat(lines, "\n"), vim.log.levels.WARN)
+    end
+    return errors
   end
 
   return collector

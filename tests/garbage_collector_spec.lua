@@ -162,4 +162,40 @@ describe("stem.nvim garbage collector", function()
     mount.unmount_all(mounts)
     vim.fn.delete(temp_root, "rf")
   end)
+
+  -- Reports unmount failures when cleaning.
+  it("reports unmount errors", function()
+    local gc = require("stem.garbage_collector").new(config, {
+      mount = mount,
+      untitled = untitled,
+      workspace_lock = workspace_lock,
+    })
+
+    util.by("Create a named mount to clean")
+    local roots = { util.new_temp_dir() }
+    local temp_root = config.workspace.temp_root .. "/alpha"
+    local mounts = mount_roots(temp_root, roots)
+    assert.is_true(#mounts > 0)
+
+    util.by("Stub unmount_all to return an error")
+    local errors = { { mount = mounts[1], error = "unmount failed" } }
+    local orig_unmount_all = mount.unmount_all
+    mount.unmount_all = function()
+      return errors
+    end
+
+    util.by("Capture notifications during cleanup")
+    local messages, restore = util.capture_notify()
+    gc.collect()
+    restore()
+    mount.unmount_all = orig_unmount_all
+
+    util.by("Verify unmount error was reported")
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    local all = table.concat(joined, "\n")
+    assert.is_true(all:match("unmount failed") ~= nil)
+  end)
 end)
