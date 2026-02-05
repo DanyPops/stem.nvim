@@ -10,29 +10,6 @@ local function normalize_dir(path)
   return expanded
 end
 
--- Set global and tab-local cwd.
-local function set_cwd(path)
-  if not path or path == "" then
-    return
-  end
-  vim.cmd("cd " .. vim.fn.fnameescape(path))
-  vim.cmd("tcd " .. vim.fn.fnameescape(path))
-end
-
--- Reopen root in oil when following workspace.
-local function open_root_in_oil(config, temp_root)
-  if not config.oil.follow then
-    return
-  end
-  if vim.bo.filetype ~= "oil" then
-    return
-  end
-  local ok, oil = pcall(require, "oil")
-  if ok then
-    pcall(oil.open, temp_root)
-  end
-end
-
 -- Determine context directory from buffer or cwd.
 local function context_dir()
   local buf = vim.api.nvim_get_current_buf()
@@ -122,6 +99,7 @@ function M.new(config, deps)
   local registry = deps.registry
   local events = deps.events
   local lifecycle = require "stem.workspace_lifecycle"
+  local effects = require "stem.workspace_effects"
 
   local state = {
     name = nil,
@@ -196,8 +174,8 @@ function M.new(config, deps)
       untitled = untitled,
       registry = registry,
       events = events,
-      set_cwd = set_cwd,
-      open_root_in_oil = open_root_in_oil,
+      set_cwd = effects.set_cwd,
+      open_root_in_oil = effects.open_root_in_oil,
     }, name, roots, temporary)
   end
 
@@ -209,8 +187,8 @@ function M.new(config, deps)
       untitled = untitled,
       registry = registry,
       events = events,
-      set_cwd = set_cwd,
-      open_root_in_oil = open_root_in_oil,
+      set_cwd = effects.set_cwd,
+      open_root_in_oil = effects.open_root_in_oil,
     })
   end
 
@@ -381,7 +359,7 @@ function M.new(config, deps)
       untitled.cleanup_if_last(config.workspace)
     end
     if state.prev_cwd then
-      set_cwd(state.prev_cwd)
+      effects.set_cwd(state.prev_cwd)
     end
     if registry and registry.module then
       registry.module.remove(registry.state, state.temp_root)
