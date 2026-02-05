@@ -1,16 +1,16 @@
+local lock_utils = require "stem.lock_utils"
+
 local M = {}
 
 -- Named workspace instance locks and stale cleanup.
 local function lock_root(config)
   local dir = config.temp_root .. "/.locks"
-  vim.fn.mkdir(dir, "p")
-  return dir
+  return lock_utils.ensure_dir(dir)
 end
 
 local function lock_dir(config, name)
   local dir = lock_root(config) .. "/" .. name
-  vim.fn.mkdir(dir, "p")
-  return dir
+  return lock_utils.ensure_dir(dir)
 end
 
 local function is_pid_alive(pid)
@@ -29,13 +29,10 @@ local function prune_stale_locks(config, name)
     return
   end
   local dir = lock_root(config) .. "/" .. name
-  if vim.fn.isdirectory(dir) == 0 then
-    return
-  end
-  local entries = vim.fn.readdir(dir)
+  local entries = lock_utils.list_dir(dir)
   for _, entry in ipairs(entries) do
     if not is_pid_alive(entry) then
-      vim.fn.delete(dir .. "/" .. entry)
+      lock_utils.remove_lock(dir .. "/" .. entry)
     end
   end
 end
@@ -51,7 +48,7 @@ function M.ensure_instance_lock(config, name, instance_id)
     return
   end
   prune_stale_locks(config, name)
-  vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, M.instance_lock_path(config, name, instance_id))
+  lock_utils.write_lock(M.instance_lock_path(config, name, instance_id))
 end
 
 -- Release lock for a named workspace instance.
@@ -59,10 +56,10 @@ function M.release_instance_lock(config, name, instance_id)
   if not name or name == "" then
     return
   end
-  vim.fn.delete(M.instance_lock_path(config, name, instance_id))
+  lock_utils.remove_lock(M.instance_lock_path(config, name, instance_id))
   local dir = lock_root(config) .. "/" .. name
   if vim.fn.isdirectory(dir) == 1 then
-    local entries = vim.fn.readdir(dir)
+    local entries = lock_utils.list_dir(dir)
     if #entries == 0 then
       vim.fn.delete(dir, "d")
     end
@@ -79,7 +76,7 @@ function M.has_locks(config, name)
   if vim.fn.isdirectory(dir) == 0 then
     return false
   end
-  local locks = vim.fn.globpath(dir, "*", false, true)
+  local locks = lock_utils.list_glob(dir)
   return #locks > 0
 end
 
@@ -93,7 +90,7 @@ function M.has_other_locks(config, name, instance_id)
   if vim.fn.isdirectory(dir) == 0 then
     return false
   end
-  local entries = vim.fn.readdir(dir)
+  local entries = lock_utils.list_dir(dir)
   for _, entry in ipairs(entries) do
     if entry ~= instance_id then
       return true

@@ -1,16 +1,16 @@
+local lock_utils = require "stem.lock_utils"
+
 local M = {}
 
 -- Untitled workspace naming and lock cleanup.
 local function temp_untitled_root(config)
   local dir = config.temp_untitled_root
-  vim.fn.mkdir(dir, "p")
-  return dir
+  return lock_utils.ensure_dir(dir)
 end
 
 local function lock_dir(config)
   local dir = temp_untitled_root(config) .. "/.locks"
-  vim.fn.mkdir(dir, "p")
-  return dir
+  return lock_utils.ensure_dir(dir)
 end
 
 -- Path for an instance lock file.
@@ -20,12 +20,12 @@ end
 
 -- Create an instance lock file.
 function M.ensure_instance_lock(config, instance_id)
-  vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, M.instance_lock_path(config, instance_id))
+  lock_utils.write_lock(M.instance_lock_path(config, instance_id))
 end
 
 -- Remove an instance lock file.
 function M.release_instance_lock(config, instance_id)
-  vim.fn.delete(M.instance_lock_path(config, instance_id))
+  lock_utils.remove_lock(M.instance_lock_path(config, instance_id))
 end
 
 -- Find the next available untitled name.
@@ -56,7 +56,7 @@ function M.cleanup_if_last(config)
     return
   end
   local base = temp_untitled_root(config)
-  local entries = vim.fn.readdir(base)
+  local entries = lock_utils.list_dir(base)
   for _, entry in ipairs(entries) do
     if entry ~= ".locks" then
       vim.fn.delete(base .. "/" .. entry, "rf")
@@ -68,7 +68,7 @@ end
 function M.list(config)
   local base = temp_untitled_root(config)
   local names = {}
-  local entries = vim.fn.readdir(base)
+  local entries = lock_utils.list_dir(base)
   for _, entry in ipairs(entries) do
     if entry ~= ".locks" then
       table.insert(names, entry)
@@ -80,7 +80,7 @@ end
 
 -- Check if any untitled instance locks exist.
 function M.has_locks(config)
-  local locks = vim.fn.globpath(lock_dir(config), "*", false, true)
+  local locks = lock_utils.list_glob(lock_dir(config))
   return #locks > 0
 end
 
