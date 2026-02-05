@@ -186,7 +186,7 @@ describe("stem.nvim workspace lifecycle", function()
     stem.close()
 
     util.by("Delete one root before opening")
-    local store = require "stem.workspace_store"
+    local store = require "stem.ws.store"
     local saved = store.read("missing-root")
     assert.is_true(saved and type(saved.roots) == "table")
     local found = false

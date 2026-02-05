@@ -1,4 +1,5 @@
 local constants = require "stem.constants"
+local gc_helpers = require "stem.gc.helpers"
 
 local M = {}
 local by_messages = {}
@@ -60,23 +61,38 @@ M.cleanup_test_mounts = function()
   if vim.v.shell_error ~= 0 then
     error("Failed to list bindfs mounts")
   end
-  local targets = {}
-  for _, line in ipairs(lines) do
-    local target = line:match(" on (%S+)" .. constants.mount.mount_type_pattern)
-    if target and target:match("^/tmp/nvim%.[^/]+/0/stem%-untitled/") then
-      table.insert(targets, target)
+  local targets = gc_helpers.parse_bindfs_mount_targets(lines)
+  local roots = gc_helpers.detect_untitled_roots(targets)
+  local filtered_targets = {}
+  for _, target in ipairs(targets) do
+    if target:match("^/tmp/nvim%.[^/]+/0/stem%-untitled/") then
+      table.insert(filtered_targets, target)
     end
   end
-  if #targets == 0 then
+  if #filtered_targets == 0 then
     return
   end
   local unmount = vim.fn.executable(constants.commands.fusermount) == 1
       and { constants.commands.fusermount, "-u" }
     or { constants.commands.umount }
-  for _, target in ipairs(targets) do
+  for _, target in ipairs(filtered_targets) do
     local result = vim.fn.systemlist(vim.list_extend(vim.deepcopy(unmount), { target }))
     if vim.v.shell_error ~= 0 then
       error(string.format("Failed to unmount %s: %s", target, table.concat(result, "\n")))
+    end
+  end
+
+  for root in pairs(roots) do
+    if vim.fn.isdirectory(root) == 1 then
+      local lock_dir = root .. "/" .. constants.names.locks_dir
+      if not gc_helpers.has_live_locks(lock_dir) then
+        local entries = vim.fn.readdir(root)
+        for _, entry in ipairs(entries) do
+          if entry ~= constants.names.locks_dir then
+            vim.fn.delete(root .. "/" .. entry, "rf")
+          end
+        end
+      end
     end
   end
 end

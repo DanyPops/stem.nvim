@@ -5,7 +5,7 @@ describe("stem.nvim workspace lifecycle helpers", function()
   local lifecycle
 
   before_each(function()
-    lifecycle = require "stem.workspace_lifecycle"
+    lifecycle = require "stem.ws.lifecycle"
     util.reset_by()
   end)
 

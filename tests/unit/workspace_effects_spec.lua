@@ -5,7 +5,7 @@ describe("stem.nvim workspace effects", function()
   local original_cmd
 
   before_each(function()
-    effects = require "stem.workspace_effects"
+    effects = require "stem.ws.effects"
     original_cmd = vim.cmd
     util.reset_by()
   end)

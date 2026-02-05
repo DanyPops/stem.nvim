@@ -4,7 +4,7 @@ describe("stem.nvim untitled locks", function()
   local untitled
 
   before_each(function()
-    untitled = require "stem.untitled_manager"
+    untitled = require "stem.ws.untitled_store"
     util.reset_by()
   end)
 

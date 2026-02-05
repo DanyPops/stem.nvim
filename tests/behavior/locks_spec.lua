@@ -30,7 +30,7 @@ describe("stem.nvim workspace locks", function()
     local mount_name = vim.fn.fnamemodify(dir, ":t")
     local mount_path = vim.fn.getcwd() .. "/" .. mount_name
 
-    local locks = require "stem.workspace_lock"
+    local locks = require "stem.ws.locks"
     local lock_config = { temp_root = vim.env.STEM_TMP_ROOT or constants.paths.default_temp_root }
     util.by("Acquire another instance lock")
     locks.ensure_instance_lock(lock_config, "alpha", "other-instance")

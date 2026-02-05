@@ -25,23 +25,23 @@ local config = {
 local events = require("stem.events").new()
 local registry_mod = require "stem.registry"
 local registry_state = registry_mod.new()
-local garbage_collector = require("stem.garbage_collector").new(config, {
+local garbage_collector = require("stem.gc.collector").new(config, {
   registry = {
     module = registry_mod,
     state = registry_state,
   },
   mount = require "stem.mount_manager",
-  untitled = require "stem.untitled_manager",
-  workspace_lock = require "stem.workspace_lock",
+  untitled = require "stem.ws.untitled_store",
+  workspace_lock = require "stem.ws.locks",
 })
 
-local manager = require("stem.workspace_manager").new(config, {
+local manager = require("stem.ws.coordinator").new(config, {
   ui = require "stem.ui",
-  store = require "stem.workspace_store",
+  store = require "stem.ws.store",
   sessions = require "stem.session_manager",
   mount = require "stem.mount_manager",
-  untitled = require "stem.untitled_manager",
-  workspace_lock = require "stem.workspace_lock",
+  untitled = require "stem.ws.untitled_store",
+  workspace_lock = require "stem.ws.locks",
   registry = {
     module = registry_mod,
     state = registry_state,

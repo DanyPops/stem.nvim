@@ -7,7 +7,7 @@ describe("stem.nvim workspace store", function()
   local ws_dir
 
   before_each(function()
-    store = require "stem.workspace_store"
+    store = require "stem.ws.store"
     data_home = vim.fn.stdpath "data"
     ws_dir = data_home .. "/" .. constants.paths.workspace_dir
     vim.fn.delete(ws_dir, "rf")

@@ -14,6 +14,27 @@ local function lock_dir(config)
   return lock_utils.ensure_dir(dir)
 end
 
+local function is_pid_alive(pid)
+  if not pid or pid == "" then
+    return false
+  end
+  if not tostring(pid):match("^%d+$") then
+    return true
+  end
+  vim.fn.system({ constants.commands.kill, constants.process.kill_check_args[1], tostring(pid) })
+  return vim.v.shell_error == 0
+end
+
+local function prune_stale_locks(config)
+  local dir = lock_dir(config)
+  local entries = lock_utils.list_dir(dir)
+  for _, entry in ipairs(entries) do
+    if not is_pid_alive(entry) then
+      lock_utils.remove_lock(dir .. "/" .. entry)
+    end
+  end
+end
+
 -- Path for an instance lock file.
 function M.instance_lock_path(config, instance_id)
   return lock_dir(config) .. "/" .. instance_id
@@ -21,6 +42,7 @@ end
 
 -- Create an instance lock file.
 function M.ensure_instance_lock(config, instance_id)
+  prune_stale_locks(config)
   lock_utils.write_lock(M.instance_lock_path(config, instance_id))
 end
 
@@ -52,6 +74,7 @@ end
 
 -- Cleanup untitled roots if no locks remain.
 function M.cleanup_if_last(config)
+  prune_stale_locks(config)
   local locks = vim.fn.globpath(lock_dir(config), "*", false, true)
   if #locks > 0 then
     return
@@ -81,6 +104,7 @@ end
 
 -- Check if any untitled instance locks exist.
 function M.has_locks(config)
+  prune_stale_locks(config)
   local locks = lock_utils.list_glob(lock_dir(config))
   return #locks > 0
 end

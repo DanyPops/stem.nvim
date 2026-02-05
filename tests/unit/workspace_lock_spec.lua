@@ -4,7 +4,7 @@ describe("stem.nvim workspace lock", function()
   local workspace_lock
 
   before_each(function()
-    workspace_lock = require "stem.workspace_lock"
+    workspace_lock = require "stem.ws.locks"
     util.reset_by()
   end)
 

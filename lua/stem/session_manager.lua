@@ -1,5 +1,5 @@
 local constants = require "stem.constants"
-local workspace_store = require "stem.workspace_store"
+local workspace_store = require "stem.ws.store"
 
 local M = {}
 

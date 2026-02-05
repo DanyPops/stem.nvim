@@ -1,4 +1,5 @@
 local constants = require "stem.constants"
+local helpers = require "stem.gc.helpers"
 local ui = require "stem.ui"
 
 local M = {}
@@ -7,14 +8,7 @@ local M = {}
 
 local function list_bindfs_mounts()
   local lines = vim.fn.systemlist({ constants.commands.mount, "-t", constants.mount.fuse_type })
-  local mounts = {}
-  for _, line in ipairs(lines) do
-    local target = line:match(" on (.+)" .. constants.mount.mount_type_pattern)
-    if target and target ~= "" then
-      table.insert(mounts, target)
-    end
-  end
-  return mounts
+  return helpers.parse_bindfs_mount_targets(lines)
 end
 
 local function path_is_under(path, root)
@@ -61,7 +55,14 @@ function M.new(config, deps)
     local untitled_root = workspace_cfg.temp_untitled_root
     local bindfs_mounts = list_bindfs_mounts()
     local named_mounts = mounts_by_workspace(named_root, bindfs_mounts)
-    local untitled_mounts = mounts_by_workspace(untitled_root, bindfs_mounts)
+    local extra_untitled_roots = helpers.detect_untitled_roots(bindfs_mounts)
+    local untitled_roots = {}
+    if untitled_root and untitled_root ~= "" then
+      untitled_roots[untitled_root] = true
+    end
+    for root in pairs(extra_untitled_roots) do
+      untitled_roots[root] = true
+    end
 
     if named_root and vim.fn.isdirectory(named_root) == 1 then
       local entries = vim.fn.readdir(named_root)
@@ -82,18 +83,24 @@ function M.new(config, deps)
       end
     end
 
-    local has_untitled_locks = untitled and untitled.has_locks(workspace_cfg)
-    if untitled_root and vim.fn.isdirectory(untitled_root) == 1 and not has_untitled_locks then
-      local entries = vim.fn.readdir(untitled_root)
-      for _, name in ipairs(entries) do
-        if name ~= constants.names.locks_dir then
-          local ws_root = untitled_root .. "/" .. name
-          if vim.fn.isdirectory(ws_root) == 1 then
-            local unmount_errors = mount.unmount_all(untitled_mounts[ws_root] or {})
-            for _, err in ipairs(unmount_errors or {}) do
-              table.insert(errors, err)
+    for root in pairs(untitled_roots) do
+      if root and vim.fn.isdirectory(root) == 1 then
+        local lock_dir = root .. "/" .. constants.names.locks_dir
+        local has_untitled_locks = helpers.has_live_locks(lock_dir)
+        if not has_untitled_locks then
+          local untitled_mounts = mounts_by_workspace(root, bindfs_mounts)
+          local entries = vim.fn.readdir(root)
+          for _, name in ipairs(entries) do
+            if name ~= constants.names.locks_dir then
+              local ws_root = root .. "/" .. name
+              if vim.fn.isdirectory(ws_root) == 1 then
+                local unmount_errors = mount.unmount_all(untitled_mounts[ws_root] or {})
+                for _, err in ipairs(unmount_errors or {}) do
+                  table.insert(errors, err)
+                end
+                vim.fn.delete(ws_root, "rf")
+              end
             end
-            vim.fn.delete(ws_root, "rf")
           end
         end
       end
