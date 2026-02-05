@@ -223,6 +223,15 @@ describe("stem.nvim", function()
     local extra = base .. "/untitled1"
     vim.fn.mkdir(extra, "p")
     stem.close()
+    vim.wait(1000, function()
+      local remaining = vim.fn.readdir(base)
+      for _, entry in ipairs(remaining) do
+        if entry ~= ".locks" then
+          return false
+        end
+      end
+      return true
+    end, 50)
     local remaining = vim.fn.readdir(base)
     local has_dirs = false
     for _, entry in ipairs(remaining) do
@@ -366,7 +375,15 @@ describe("stem.nvim", function()
     local mount_path = vim.fn.getcwd() .. "/" .. mount_name
     vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/buffer.txt"))
     local buf = vim.api.nvim_get_current_buf()
-    vim.api.nvim_buf_delete(buf, { force = true })
+    vim.g.stem_redir = ""
+    vim.cmd("redir => g:stem_redir")
+    vim.cmd(string.format("silent! lua vim.api.nvim_buf_delete(%d, { force = true })", buf))
+    vim.cmd("redir END")
+    local captured = vim.g.stem_redir or ""
+    assert.is_true(captured:match("E211") == nil)
+    vim.wait(1000, function()
+      return vim.fn.getftype(mount_path) == ""
+    end, 50)
     assert.is_true(vim.fn.getftype(mount_path) == "")
   end)
 

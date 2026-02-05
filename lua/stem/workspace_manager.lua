@@ -301,6 +301,51 @@ function M.new(config, deps)
         return
       end
     end
+    local candidates = {}
+    if registry and registry.module then
+      local ws = registry.module.get_current(registry.state)
+      if ws and ws.open_buffers then
+        for bufnr in pairs(ws.open_buffers) do
+          candidates[bufnr] = true
+        end
+      end
+    end
+    if state.temp_root then
+      for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(bufnr) then
+          local name = vim.api.nvim_buf_get_name(bufnr)
+          if name and name ~= "" then
+            local path = normalize_dir(name)
+            if registry and registry.module then
+              local ws = registry.module.find_by_path(registry.state, path)
+              if ws and ws.id == state.temp_root then
+                candidates[bufnr] = true
+              end
+            elseif path:sub(1, #state.temp_root) == state.temp_root then
+              candidates[bufnr] = true
+            end
+          end
+        end
+      end
+    end
+    local modified = {}
+    for bufnr in pairs(candidates) do
+      if vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].modified then
+        table.insert(modified, bufnr)
+      end
+    end
+    if #modified > 0 and #vim.api.nvim_list_uis() > 0 then
+      local choice = ui.confirm("Close workspace with unsaved changes?", "&Yes\n&No", 2)
+      if choice ~= 1 then
+        return
+      end
+    end
+    for bufnr in pairs(candidates) do
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        local force = vim.bo[bufnr].modified
+        pcall(vim.api.nvim_buf_delete, bufnr, { force = force })
+      end
+    end
     if state.name then
       sessions.save(state.name, config.session.enabled)
     end
@@ -550,7 +595,9 @@ function M.new(config, deps)
     if events then
       events.emit("buffer_unmapped", { workspace = ws, bufnr = bufnr })
     end
-    maybe_unmount_if_idle()
+    vim.defer_fn(function()
+      maybe_unmount_if_idle()
+    end, 10)
   end
 
   manager.on_buf_delete = manager.on_buf_leave
