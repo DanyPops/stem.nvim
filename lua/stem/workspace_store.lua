@@ -3,6 +3,8 @@ local ui = require "stem.ui"
 local M = {}
 
 -- Persistent storage for workspace root lists.
+
+local SCHEMA_VERSION = 1
 local function workspace_dir()
   local dir = vim.fn.stdpath "data" .. "/stem/workspaces"
   vim.fn.mkdir(dir, "p")
@@ -11,7 +13,7 @@ end
 
 -- Validate workspace name for filesystem safety.
 function M.is_valid_name(name)
-  return name and name ~= "" and name:match("^[%w%._%-]+$")
+  return type(name) == "string" and name ~= "" and name:match("^[%w%._%-]+$") ~= nil
 end
 
 -- Resolve workspace file path.
@@ -40,6 +42,15 @@ function M.read(name)
   if not ok or type(result) ~= "table" then
     return nil
   end
+  if type(result.roots) ~= "table" then
+    return nil
+  end
+  if result.version == nil then
+    result.version = SCHEMA_VERSION
+  end
+  if type(result.version) ~= "number" then
+    return nil
+  end
   return result
 end
 
@@ -50,8 +61,21 @@ function M.write(name, roots)
     ui.notify("Invalid workspace name: " .. tostring(name), vim.log.levels.ERROR)
     return false
   end
-  local encoded = "return " .. vim.inspect({ roots = roots })
-  vim.fn.writefile(vim.split(encoded, "\n"), path)
+  local encoded = "return " .. vim.inspect({ version = SCHEMA_VERSION, roots = roots })
+  local lines = vim.split(encoded, "\n")
+  local dir = vim.fn.fnamemodify(path, ":h")
+  local tmp = dir .. "/" .. vim.fn.fnamemodify(path, ":t") .. "." .. vim.fn.getpid() .. ".tmp"
+  local ok = pcall(vim.fn.writefile, lines, tmp)
+  if not ok then
+    ui.notify("Failed to write workspace: " .. name, vim.log.levels.ERROR)
+    return false
+  end
+  local renamed = vim.fn.rename(tmp, path)
+  if renamed ~= 0 then
+    vim.fn.delete(tmp)
+    ui.notify("Failed to save workspace: " .. name, vim.log.levels.ERROR)
+    return false
+  end
   return true
 end
 
