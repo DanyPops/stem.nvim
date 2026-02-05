@@ -29,4 +29,6 @@ vim.cmd("filetype plugin indent on")
 vim.opt.swapfile = false
 vim.opt.shadafile = "NONE"
 
-require("tests.test_util").reset_editor()
+local test_util = require "tests.test_util"
+test_util.cleanup_test_mounts()
+test_util.reset_editor()

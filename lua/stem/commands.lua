@@ -64,6 +64,10 @@ function M.setup(api)
     api.info(opts.args)
   end, { nargs = "?", complete = complete.info })
 
+  vim.api.nvim_create_user_command("StemCleanup", function()
+    api.cleanup()
+  end, { nargs = 0 })
+
   return complete
 end
 

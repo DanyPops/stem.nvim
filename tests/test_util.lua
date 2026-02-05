@@ -52,6 +52,31 @@ M.ensure_bindfs = function()
   end
 end
 
+M.cleanup_test_mounts = function()
+  local cmd = { "mount", "-t", "fuse.bindfs" }
+  local lines = vim.fn.systemlist(cmd)
+  if vim.v.shell_error ~= 0 then
+    error("Failed to list bindfs mounts")
+  end
+  local targets = {}
+  for _, line in ipairs(lines) do
+    local target = line:match(" on (%S+) type fuse%.bindfs")
+    if target and target:match("^/tmp/nvim%.[^/]+/0/stem%-untitled/") then
+      table.insert(targets, target)
+    end
+  end
+  if #targets == 0 then
+    return
+  end
+  local unmount = vim.fn.executable("fusermount") == 1 and { "fusermount", "-u" } or { "umount" }
+  for _, target in ipairs(targets) do
+    local result = vim.fn.systemlist(vim.list_extend(vim.deepcopy(unmount), { target }))
+    if vim.v.shell_error ~= 0 then
+      error(string.format("Failed to unmount %s: %s", target, table.concat(result, "\n")))
+    end
+  end
+end
+
 M.reset_editor = function()
   local prev_hidden = vim.o.hidden
   vim.o.hidden = true

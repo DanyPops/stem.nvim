@@ -53,6 +53,7 @@ test -r /dev/fuse
 - `:StemList` - list saved workspaces
 - `:StemStatus` - show current workspace status
 - `:StemInfo [name]` - show workspace roots
+- `:StemCleanup` - cleanup orphaned mounts
 
 ## Session behavior
 

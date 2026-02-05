@@ -22,6 +22,15 @@ local config = {
 local events = require("stem.events").new()
 local registry_mod = require "stem.registry"
 local registry_state = registry_mod.new()
+local garbage_collector = require("stem.garbage_collector").new(config, {
+  registry = {
+    module = registry_mod,
+    state = registry_state,
+  },
+  mount = require "stem.mount_manager",
+  untitled = require "stem.untitled_manager",
+  workspace_lock = require "stem.workspace_lock",
+})
 
 local manager = require("stem.workspace_manager").new(config, {
   ui = require "stem.ui",
@@ -81,6 +90,7 @@ function M.setup(opts)
   end
 
   manager.setup()
+  garbage_collector.collect()
   M._complete = commands.setup({
     new = manager.new,
     open = manager.open,
@@ -92,6 +102,7 @@ function M.setup(opts)
     list = manager.list,
     status = manager.status,
     info = manager.info,
+    cleanup = garbage_collector.collect,
     complete_workspaces = manager.complete_workspaces,
     complete_roots = manager.complete_roots,
     complete_rename = manager.complete_rename,
@@ -139,6 +150,10 @@ end
 -- Show roots for current or saved workspace.
 M.info = function(name)
   return manager.info(name)
+end
+-- Cleanup orphaned workspace mounts.
+M.cleanup = function()
+  return garbage_collector.collect()
 end
 
 M.events = events
