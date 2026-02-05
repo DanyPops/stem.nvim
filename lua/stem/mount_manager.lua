@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local ui = require "stem.ui"
 
 local M = {}
@@ -26,7 +27,9 @@ function M.unmount_all(mounts)
   end
   for _, mount in ipairs(mounts) do
     if vim.fn.isdirectory(mount) == 1 then
-      local cmd = vim.fn.executable("fusermount") == 1 and { "fusermount", "-u", mount } or { "umount", mount }
+      local cmd = vim.fn.executable(constants.commands.fusermount) == 1
+          and { constants.commands.fusermount, "-u", mount }
+        or { constants.commands.umount, mount }
       local out = vim.fn.system(cmd)
       if vim.v.shell_error ~= 0 then
         table.insert(errors, { mount = mount, cmd = cmd, error = out })
@@ -40,14 +43,14 @@ end
 function M.clear_temp_root(path, mounts, allowed_root)
   local errors = {}
   if not path or path == "" then
-    table.insert(errors, { path = path, error = "invalid path" })
+    table.insert(errors, { path = path, error = constants.messages.invalid_path })
     return {}, errors
   end
   if allowed_root and allowed_root ~= "" then
     local normalized = normalize(path)
     local allowed = normalize(allowed_root)
     if not is_under(normalized, allowed) then
-      table.insert(errors, { path = path, allowed_root = allowed_root, error = "unsafe path" })
+      table.insert(errors, { path = path, allowed_root = allowed_root, error = constants.messages.unsafe_path })
       return {}, errors
     end
   end
@@ -72,15 +75,15 @@ end
 function M.mount_roots(roots, temp_root, bindfs_args)
   local errors = {}
   if not temp_root then
-    table.insert(errors, { error = "missing temp_root" })
+    table.insert(errors, { error = constants.messages.missing_temp_root })
     return {}, {}, errors
   end
   local mounts = {}
   local mount_map = {}
   local used = {}
-  if vim.fn.executable("bindfs") ~= 1 then
-    ui.notify("bindfs not found; cannot mount workspace", vim.log.levels.ERROR)
-    table.insert(errors, { error = "bindfs missing" })
+  if vim.fn.executable(constants.commands.bindfs) ~= 1 then
+    ui.notify(constants.messages.bindfs_missing, vim.log.levels.ERROR)
+    table.insert(errors, { error = constants.messages.bindfs_missing })
     return mounts, mount_map, errors
   end
   for _, root in ipairs(roots) do
@@ -88,18 +91,18 @@ function M.mount_roots(roots, temp_root, bindfs_args)
     local mount_name = name
     local n = 2
     while used[mount_name] do
-      mount_name = string.format("%s__%d", name, n)
+      mount_name = string.format(constants.mount.disambiguation_fmt, name, n)
       n = n + 1
     end
     used[mount_name] = true
     mount_map[root] = mount_name
     local mount_path = temp_root .. "/" .. mount_name
     if vim.fn.isdirectory(root) == 0 then
-      table.insert(errors, { root = root, error = "not a directory" })
+      table.insert(errors, { root = root, error = constants.messages.not_a_directory })
       goto continue
     end
     vim.fn.mkdir(mount_path, "p")
-    local cmd = { "bindfs" }
+    local cmd = { constants.commands.bindfs }
     for _, arg in ipairs(bindfs_args or {}) do
       table.insert(cmd, arg)
     end
@@ -107,7 +110,7 @@ function M.mount_roots(roots, temp_root, bindfs_args)
     table.insert(cmd, mount_path)
     local out = vim.fn.system(cmd)
     if vim.v.shell_error ~= 0 then
-      ui.notify(string.format("Failed to bindfs %s: %s", root, out), vim.log.levels.WARN)
+      ui.notify(string.format(constants.messages.failed_bindfs, root, out), vim.log.levels.WARN)
       table.insert(errors, { root = root, cmd = cmd, error = out })
     else
       table.insert(mounts, mount_path)

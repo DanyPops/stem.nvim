@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim untitled workspaces", function()
@@ -22,7 +23,7 @@ describe("stem.nvim untitled workspaces", function()
   it("clears all untitled workspaces when last instance closes", function()
     util.by("Close last instance and verify cleanup")
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary"
+    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
     local extra = base .. "/untitled1"
     util.by("Create extra untitled directory")
     vim.fn.mkdir(extra, "p")
@@ -53,7 +54,7 @@ describe("stem.nvim untitled workspaces", function()
   it("keeps other untitled workspaces when another instance is active", function()
     util.by("Create a lock file and close the workspace")
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary"
+    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
     local other = base .. "/untitled1"
     util.by("Create another untitled workspace directory")
     vim.fn.mkdir(other, "p")
@@ -71,7 +72,7 @@ describe("stem.nvim untitled workspaces", function()
     util.by("Hold an untitled lock and close the buffer")
     stem.setup({})
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary"
+    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
     local lock_dir = base .. "/.locks"
     vim.fn.mkdir(lock_dir, "p")
     util.by("Create untitled lock file")

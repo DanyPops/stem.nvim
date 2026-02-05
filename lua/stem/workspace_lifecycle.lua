@@ -1,3 +1,5 @@
+local constants = require "stem.constants"
+
 local M = {}
 
 -- Workspace lifecycle helpers for state and mounts.
@@ -17,7 +19,7 @@ function M.remount_roots(state, ctx)
     ctx.registry.module.set_mounts(ctx.registry.state, state.temp_root, state.mounts, state.mount_map)
   end
   if ctx.events then
-    ctx.events.emit("mounts_changed", state)
+    ctx.events.emit(constants.events.mounts_changed, state)
   end
 end
 

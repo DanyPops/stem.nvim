@@ -1,3 +1,5 @@
+local constants = require "stem.constants"
+
 local M = {}
 
 -- Command wiring: exposes :Stem* user commands.
@@ -19,54 +21,54 @@ function M.setup(api)
     end,
   }
 
-  vim.api.nvim_create_user_command("StemNew", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.new, function(opts)
     api.new(opts.args)
-  end, { nargs = "?" })
+  end, { nargs = constants.command_opts.nargs_optional })
 
-  vim.api.nvim_create_user_command("StemOpen", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.open, function(opts)
     api.open(opts.args)
-  end, { nargs = 1, complete = complete.workspaces })
+  end, { nargs = constants.command_opts.nargs_required, complete = complete.workspaces })
 
-  vim.api.nvim_create_user_command("StemSave", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.save, function(opts)
     api.save(opts.args)
-  end, { nargs = "?", complete = complete.workspaces })
+  end, { nargs = constants.command_opts.nargs_optional, complete = complete.workspaces })
 
-  vim.api.nvim_create_user_command("StemClose", function()
+  vim.api.nvim_create_user_command(constants.user_commands.close, function()
     api.close()
-  end, { nargs = 0 })
+  end, { nargs = constants.command_opts.nargs_none })
 
-  vim.api.nvim_create_user_command("StemAdd", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.add, function(opts)
     api.add(opts.args)
-  end, { nargs = "?", complete = "dir" })
+  end, { nargs = constants.command_opts.nargs_optional, complete = constants.command_opts.complete_dir })
 
-  vim.api.nvim_create_user_command("StemRemove", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.remove, function(opts)
     api.remove(opts.args)
-  end, { nargs = 1, complete = complete.roots })
+  end, { nargs = constants.command_opts.nargs_required, complete = complete.roots })
 
-  vim.api.nvim_create_user_command("StemRename", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.rename, function(opts)
     local args = vim.split(opts.args, "%s+")
     if #args == 1 then
       api.rename(args[1], nil)
     else
       api.rename(args[1], args[2])
     end
-  end, { nargs = "+", complete = complete.rename })
+  end, { nargs = constants.command_opts.nargs_plus, complete = complete.rename })
 
-  vim.api.nvim_create_user_command("StemList", function()
+  vim.api.nvim_create_user_command(constants.user_commands.list, function()
     api.list()
-  end, { nargs = 0 })
+  end, { nargs = constants.command_opts.nargs_none })
 
-  vim.api.nvim_create_user_command("StemStatus", function()
+  vim.api.nvim_create_user_command(constants.user_commands.status, function()
     api.status()
-  end, { nargs = 0 })
+  end, { nargs = constants.command_opts.nargs_none })
 
-  vim.api.nvim_create_user_command("StemInfo", function(opts)
+  vim.api.nvim_create_user_command(constants.user_commands.info, function(opts)
     api.info(opts.args)
-  end, { nargs = "?", complete = complete.info })
+  end, { nargs = constants.command_opts.nargs_optional, complete = complete.info })
 
-  vim.api.nvim_create_user_command("StemCleanup", function()
+  vim.api.nvim_create_user_command(constants.user_commands.cleanup, function()
     api.cleanup()
-  end, { nargs = 0 })
+  end, { nargs = constants.command_opts.nargs_none })
 
   return complete
 end

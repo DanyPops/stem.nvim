@@ -1,3 +1,5 @@
+local constants = require "stem.constants"
+
 local M = {}
 
 -- Workspace orchestration: lifecycle, mounts, buffers, and sessions.
@@ -14,7 +16,9 @@ end
 local function context_dir()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
-  if vim.bo[buf].filetype == "oil" or (bufname and bufname:match("^oil%-%w+://")) then
+  if vim.bo[buf].filetype == constants.oil.filetype
+    or (bufname and bufname:match(constants.oil.uri_pattern))
+  then
     local ok, oil = pcall(require, "oil")
     if ok and oil.get_current_dir then
       local oil_dir = oil.get_current_dir()
@@ -77,7 +81,7 @@ local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   end
   if path == root then
     local target = temp_root .. "/" .. mount_name
-    vim.cmd("edit " .. vim.fn.fnameescape(target))
+    vim.cmd(constants.vim.edit_cmd .. vim.fn.fnameescape(target))
     return
   end
   if path:sub(1, #root + 1) ~= root .. "/" then
@@ -85,7 +89,7 @@ local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   end
   local rel = path:sub(#root + 2)
   local target = temp_root .. "/" .. mount_name .. "/" .. rel
-  vim.cmd("edit " .. vim.fn.fnameescape(target))
+  vim.cmd(constants.vim.edit_cmd .. vim.fn.fnameescape(target))
 end
 
 -- Build a manager bound to config and dependencies.
@@ -114,14 +118,14 @@ function M.new(config, deps)
 
   -- Validate bindfs and FUSE availability.
   local function bootstrap()
-    if vim.env.STEM_SKIP_BOOTSTRAP == "1" then
+    if vim.env[constants.env.skip_bootstrap] == "1" then
       return
     end
-    if vim.fn.executable("bindfs") ~= 1 then
-      error("stem.nvim requires bindfs to be installed")
+    if vim.fn.executable(constants.commands.bindfs) ~= 1 then
+      error(constants.messages.bootstrap_bindfs)
     end
     if vim.fn.filereadable("/dev/fuse") == 0 then
-      error("stem.nvim requires FUSE (/dev/fuse) to be available")
+      error(constants.messages.bootstrap_fuse)
     end
   end
 
@@ -152,7 +156,7 @@ function M.new(config, deps)
     state.mount_map = {}
     registry.module.set_mounts(registry.state, id, {}, {})
     if events then
-      events.emit("workspace_unmounted", state)
+      events.emit(constants.events.workspace_unmounted, state)
     end
   end
 
@@ -215,22 +219,22 @@ function M.new(config, deps)
       manager.add(base_dir)
     end
     if workspace_name then
-      ui.notify("Opened workspace: " .. workspace_name)
+      ui.notify(string.format(constants.messages.open_workspace, workspace_name))
       sessions.load(workspace_name, config.session.enabled, config.session.auto_load)
     else
-      ui.notify "Opened unnamed workspace"
+      ui.notify(constants.messages.open_unnamed)
     end
   end
 
   -- Open a saved workspace.
   function manager.open(name)
     if not name or name == "" then
-      ui.notify("Workspace name required", vim.log.levels.ERROR)
+      ui.notify(constants.messages.workspace_name_required, vim.log.levels.ERROR)
       return
     end
     local entry = store.read(name)
     if not entry or type(entry.roots) ~= "table" then
-      ui.notify("Workspace not found: " .. name, vim.log.levels.ERROR)
+      ui.notify(string.format(constants.messages.workspace_not_found, name), vim.log.levels.ERROR)
       return
     end
     local missing = {}
@@ -244,7 +248,8 @@ function M.new(config, deps)
     end
     if #missing > 0 then
       ui.notify(
-        "Workspace has missing roots:\n- " .. table.concat(missing, "\n- "),
+        constants.messages.missing_roots .. "\n" .. constants.ui.list_item_prefix
+          .. table.concat(missing, "\n" .. constants.ui.list_item_prefix),
         vim.log.levels.ERROR
       )
       store.write(name, roots)
@@ -253,7 +258,7 @@ function M.new(config, deps)
     if workspace_lock then
       workspace_lock.ensure_instance_lock(config.workspace, name, state.instance_id)
     end
-    ui.notify("Opened workspace: " .. name)
+    ui.notify(string.format(constants.messages.open_workspace, name))
     sessions.load(name, config.session.enabled, config.session.auto_load)
   end
 
@@ -261,14 +266,14 @@ function M.new(config, deps)
   function manager.save(name)
     local workspace_name = name ~= "" and name or state.name
     if not workspace_name or workspace_name == "" then
-      workspace_name = vim.fn.input "Workspace name: "
+      workspace_name = vim.fn.input(constants.ui.workspace_name_prompt)
     end
     if not workspace_name or workspace_name == "" then
-      ui.notify("Save cancelled", vim.log.levels.WARN)
+      ui.notify(constants.messages.save_cancelled, vim.log.levels.WARN)
       return
     end
     if not store.is_valid_name(workspace_name) then
-      ui.notify("Invalid workspace name: " .. workspace_name, vim.log.levels.ERROR)
+      ui.notify(string.format(constants.messages.invalid_workspace_name, workspace_name), vim.log.levels.ERROR)
       return
     end
     if not store.write(workspace_name, state.roots) then
@@ -281,13 +286,13 @@ function M.new(config, deps)
     if workspace_lock then
       workspace_lock.ensure_instance_lock(config.workspace, state.name, state.instance_id)
     end
-    ui.notify("Saved workspace: " .. workspace_name)
+    ui.notify(string.format(constants.messages.saved_workspace, workspace_name))
   end
 
   -- Close workspace and cleanup mounts.
   function manager.close()
     if state.temporary and #state.roots > 0 and config.workspace.confirm_close and #vim.api.nvim_list_uis() > 0 then
-      local choice = ui.confirm("Close unnamed workspace without saving?", "&Yes\n&No", 2)
+      local choice = ui.confirm(constants.messages.close_unnamed_confirm, "&Yes\n&No", 2)
       if choice ~= 1 then
         return
       end
@@ -326,7 +331,7 @@ function M.new(config, deps)
       end
     end
     if #modified > 0 and #vim.api.nvim_list_uis() > 0 then
-      local choice = ui.confirm("Close workspace with unsaved changes?", "&Yes\n&No", 2)
+      local choice = ui.confirm(constants.messages.close_unsaved_confirm, "&Yes\n&No", 2)
       if choice ~= 1 then
         return
       end
@@ -370,24 +375,24 @@ function M.new(config, deps)
     state.roots = {}
     state.temp_root = nil
     state.prev_cwd = nil
-    ui.notify "Workspace closed"
+    ui.notify(constants.messages.workspace_closed)
   end
 
   -- Add a root to the workspace.
   function manager.add(dir)
     local path = dir and dir ~= "" and normalize_dir(dir) or context_dir()
     if not path or path == "" then
-      ui.notify("Directory required", vim.log.levels.ERROR)
+      ui.notify(constants.messages.directory_required, vim.log.levels.ERROR)
       return
     end
     if vim.fn.isdirectory(path) == 0 then
-      ui.notify("Not a directory: " .. path, vim.log.levels.ERROR)
+      ui.notify(string.format(constants.messages.not_a_directory, path), vim.log.levels.ERROR)
       return
     end
     ensure_workspace()
     for _, root in ipairs(state.roots) do
       if root == path then
-        ui.notify("Already added: " .. path, vim.log.levels.WARN)
+        ui.notify(string.format(constants.messages.already_added, path), vim.log.levels.WARN)
         return
       end
     end
@@ -397,17 +402,17 @@ function M.new(config, deps)
       registry.module.set_roots(registry.state, state.temp_root, state.roots)
     end
     maybe_reopen_in_workspace(state.temp_root, state.mount_map, path)
-    ui.notify("Added: " .. path)
+    ui.notify(string.format(constants.messages.added, path))
   end
 
   -- Remove a root from the workspace.
   function manager.remove(dir)
     if not dir or dir == "" then
-      ui.notify("Directory required", vim.log.levels.ERROR)
+      ui.notify(constants.messages.directory_required, vim.log.levels.ERROR)
       return
     end
     if not state.temp_root then
-      ui.notify("No workspace open", vim.log.levels.ERROR)
+      ui.notify(constants.messages.no_workspace_open, vim.log.levels.ERROR)
       return
     end
     local path = normalize_dir(dir)
@@ -428,7 +433,7 @@ function M.new(config, deps)
       if #matches == 1 then
         idx = matches[1]
       else
-        ui.notify("Directory not found: " .. dir, vim.log.levels.ERROR)
+        ui.notify(string.format(constants.messages.directory_not_found, dir), vim.log.levels.ERROR)
         return
       end
     end
@@ -437,7 +442,7 @@ function M.new(config, deps)
     if registry and registry.module then
       registry.module.set_roots(registry.state, state.temp_root, state.roots)
     end
-    ui.notify("Removed: " .. path)
+    ui.notify(string.format(constants.messages.removed, path))
   end
 
   -- Rename current or saved workspace.
@@ -445,45 +450,45 @@ function M.new(config, deps)
     if arg2 then
       local entry = store.read(arg1)
       if not entry then
-        ui.notify("Workspace not found: " .. arg1, vim.log.levels.ERROR)
+        ui.notify(string.format(constants.messages.workspace_not_found, arg1), vim.log.levels.ERROR)
         return
       end
       if not store.is_valid_name(arg2) then
-        ui.notify("Invalid workspace name: " .. arg2, vim.log.levels.ERROR)
+        ui.notify(string.format(constants.messages.invalid_workspace_name, arg2), vim.log.levels.ERROR)
         return
       end
       local from_path = store.path(arg1)
       local to_path = store.path(arg2)
       if vim.fn.filereadable(to_path) == 1 then
-        ui.notify("Workspace already exists: " .. arg2, vim.log.levels.ERROR)
+        ui.notify(string.format(constants.messages.workspace_exists, arg2), vim.log.levels.ERROR)
         return
       end
       vim.fn.rename(from_path, to_path)
       if state.name == arg1 then
         set_workspace(arg2, state.roots, false)
       end
-      ui.notify(string.format("Renamed workspace: %s -> %s", arg1, arg2))
+      ui.notify(string.format(constants.messages.renamed_workspace, arg1, arg2))
       return
     end
 
     if not state.name then
-      ui.notify("No workspace open", vim.log.levels.ERROR)
+      ui.notify(constants.messages.no_workspace_open, vim.log.levels.ERROR)
       return
     end
     local new_name = arg1
     if not new_name or new_name == "" then
-      ui.notify("New name required", vim.log.levels.ERROR)
+      ui.notify(constants.messages.new_name_required, vim.log.levels.ERROR)
       return
     end
     if not store.is_valid_name(new_name) then
-      ui.notify("Invalid workspace name: " .. new_name, vim.log.levels.ERROR)
+      ui.notify(string.format(constants.messages.invalid_workspace_name, new_name), vim.log.levels.ERROR)
       return
     end
     local current_file = store.path(state.name)
     local target_file = store.path(new_name)
     if current_file and vim.fn.filereadable(current_file) == 1 then
       if vim.fn.filereadable(target_file) == 1 then
-        ui.notify("Workspace already exists: " .. new_name, vim.log.levels.ERROR)
+        ui.notify(string.format(constants.messages.workspace_exists, new_name), vim.log.levels.ERROR)
         return
       end
       vim.fn.rename(current_file, target_file)
@@ -493,7 +498,7 @@ function M.new(config, deps)
       end
     end
     set_workspace(new_name, state.roots, false)
-    ui.notify("Renamed workspace to: " .. new_name)
+    ui.notify(string.format(constants.messages.renamed_workspace_to, new_name))
   end
 
   -- List workspaces (untitled first, then saved).
@@ -501,17 +506,18 @@ function M.new(config, deps)
     local untitled_names = untitled.list(config.workspace)
     local saved_names = store.list()
     if #untitled_names == 0 and #saved_names == 0 then
-      ui.notify "No workspaces"
+      ui.notify(constants.messages.no_workspaces)
       return
     end
-    local lines = { "Workspaces:" }
+    local lines = { constants.messages.list_header }
     for _, name in ipairs(untitled_names) do
-      local marker = state.temp_root and state.temp_root:match("/" .. vim.pesc(name) .. "$") and " *" or ""
-      table.insert(lines, " - " .. name .. marker)
+      local marker = state.temp_root and state.temp_root:match("/" .. vim.pesc(name) .. "$")
+        and constants.ui.list_current_marker or ""
+      table.insert(lines, constants.ui.list_item_prefix .. name .. marker)
     end
     for _, name in ipairs(saved_names) do
-      local marker = state.name == name and " *" or ""
-      table.insert(lines, " - " .. name .. marker)
+      local marker = state.name == name and constants.ui.list_current_marker or ""
+      table.insert(lines, constants.ui.list_item_prefix .. name .. marker)
     end
     ui.notify(table.concat(lines, "\n"))
   end
@@ -519,11 +525,11 @@ function M.new(config, deps)
   -- Report current workspace status.
   function manager.status()
     if not state.temp_root then
-      ui.notify "No workspace open"
+      ui.notify(constants.messages.no_workspace_open)
       return
     end
-    local label = state.name or "undefined"
-    ui.notify(string.format("Workspace: %s (%d roots)", label, #state.roots))
+    local label = state.name or constants.names.undefined
+    ui.notify(string.format(constants.messages.status_header .. " %s (%d roots)", label, #state.roots))
   end
 
   -- Show workspace roots for current, saved, or untitled workspace.
@@ -532,10 +538,10 @@ function M.new(config, deps)
     local roots = nil
     if not name or name == "" then
       if not state.temp_root then
-        ui.notify "No workspace open"
+        ui.notify(constants.messages.no_workspace_open)
         return
       end
-      label = state.name or "untitled"
+      label = state.name or constants.names.untitled
       roots = state.roots
     else
       local entry = store.read(name)
@@ -553,19 +559,19 @@ function M.new(config, deps)
           end
         end
         if not found then
-          ui.notify("Workspace not found: " .. name, vim.log.levels.ERROR)
+          ui.notify(string.format(constants.messages.workspace_not_found, name), vim.log.levels.ERROR)
           return
         end
         label = name
         roots = found.roots or {}
       end
     end
-    local lines = { "Workspace: " .. label, "Roots:" }
+    local lines = { constants.messages.status_header .. " " .. label, constants.ui.roots_header }
     if #roots == 0 then
-      table.insert(lines, " - (none)")
+      table.insert(lines, constants.ui.empty_roots_item)
     else
       for _, root in ipairs(roots) do
-        table.insert(lines, " - " .. root)
+        table.insert(lines, constants.ui.list_item_prefix .. root)
       end
     end
     ui.notify(table.concat(lines, "\n"))
@@ -628,7 +634,7 @@ function M.new(config, deps)
     end
     registry.module.add_buffer(registry.state, ws.id, bufnr)
     if events then
-      events.emit("buffer_mapped", { workspace = ws, bufnr = bufnr })
+      events.emit(constants.events.buffer_mapped, { workspace = ws, bufnr = bufnr })
     end
   end
 
@@ -643,7 +649,7 @@ function M.new(config, deps)
     end
     local ws = registry.module.register(registry.state, id, {})
     if events then
-      events.emit("buffer_unmapped", { workspace = ws, bufnr = bufnr })
+      events.emit(constants.events.buffer_unmapped, { workspace = ws, bufnr = bufnr })
     end
     vim.defer_fn(function()
       maybe_unmount_if_idle()

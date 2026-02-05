@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim mount manager", function()
@@ -38,7 +39,7 @@ describe("stem.nvim mount manager", function()
     util.by("Stub bindfs executable to missing")
     local orig = vim.fn.executable
     vim.fn.executable = function(cmd)
-      if cmd == "bindfs" then
+      if cmd == constants.commands.bindfs then
         return 0
       end
       return orig(cmd)
@@ -63,7 +64,7 @@ describe("stem.nvim mount manager", function()
     util.by("Force umount usage and attempt unmount")
     local orig_executable = vim.fn.executable
     vim.fn.executable = function(cmd)
-      if cmd == "fusermount" then
+      if cmd == constants.commands.fusermount then
         return 1
       end
       return orig_executable(cmd)

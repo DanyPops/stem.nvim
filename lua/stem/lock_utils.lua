@@ -1,3 +1,5 @@
+local constants = require "stem.constants"
+
 local M = {}
 
 -- Shared filesystem helpers for lock files.
@@ -15,11 +17,11 @@ function M.list_dir(path)
 end
 
 function M.list_glob(path)
-  return vim.fn.globpath(path, "*", false, true)
+  return vim.fn.globpath(path, constants.files.glob_all, false, true)
 end
 
 function M.write_lock(path)
-  vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, path)
+  vim.fn.writefile({ os.date(constants.time.lock_timestamp_fmt) }, path)
 end
 
 function M.remove_lock(path)

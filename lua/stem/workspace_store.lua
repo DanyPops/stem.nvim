@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local ui = require "stem.ui"
 
 local M = {}
@@ -6,7 +7,7 @@ local M = {}
 
 local SCHEMA_VERSION = 1
 local function workspace_dir()
-  local dir = vim.fn.stdpath "data" .. "/stem/workspaces"
+  local dir = vim.fn.stdpath "data" .. "/" .. constants.paths.workspace_dir
   vim.fn.mkdir(dir, "p")
   return dir
 end
@@ -21,7 +22,7 @@ function M.path(name)
   if not M.is_valid_name(name) then
     return nil
   end
-  return workspace_dir() .. "/" .. name .. ".lua"
+  return workspace_dir() .. "/" .. name .. constants.files.workspace_ext
 end
 
 -- Load a workspace definition from disk.
@@ -32,7 +33,7 @@ function M.read(name)
   end
   local chunk, err = loadfile(path)
   if not chunk then
-    ui.notify(string.format("Failed to load workspace %s: %s", name, err or "unknown error"), vim.log.levels.WARN)
+    ui.notify(string.format(constants.messages.failed_load_workspace, name, err or "unknown error"), vim.log.levels.WARN)
     return nil
   end
   if setfenv then
@@ -58,22 +59,22 @@ end
 function M.write(name, roots)
   local path = M.path(name)
   if not path then
-    ui.notify("Invalid workspace name: " .. tostring(name), vim.log.levels.ERROR)
+    ui.notify(string.format(constants.messages.invalid_workspace_name, tostring(name)), vim.log.levels.ERROR)
     return false
   end
   local encoded = "return " .. vim.inspect({ version = SCHEMA_VERSION, roots = roots })
   local lines = vim.split(encoded, "\n")
   local dir = vim.fn.fnamemodify(path, ":h")
-  local tmp = dir .. "/" .. vim.fn.fnamemodify(path, ":t") .. "." .. vim.fn.getpid() .. ".tmp"
+  local tmp = dir .. "/" .. vim.fn.fnamemodify(path, ":t") .. "." .. vim.fn.getpid() .. constants.files.temp_ext
   local ok = pcall(vim.fn.writefile, lines, tmp)
   if not ok then
-    ui.notify("Failed to write workspace: " .. name, vim.log.levels.ERROR)
+    ui.notify(string.format(constants.messages.failed_write_workspace, name), vim.log.levels.ERROR)
     return false
   end
   local renamed = vim.fn.rename(tmp, path)
   if renamed ~= 0 then
     vim.fn.delete(tmp)
-    ui.notify("Failed to save workspace: " .. name, vim.log.levels.ERROR)
+    ui.notify(string.format(constants.messages.failed_save_workspace, name), vim.log.levels.ERROR)
     return false
   end
   return true
@@ -82,7 +83,7 @@ end
 -- List saved workspace names.
 function M.list()
   local dir = workspace_dir()
-  local files = vim.fn.globpath(dir, "*.lua", false, true)
+  local files = vim.fn.globpath(dir, "*" .. constants.files.workspace_ext, false, true)
   local names = {}
   for _, file in ipairs(files) do
     local name = vim.fn.fnamemodify(file, ":t:r")

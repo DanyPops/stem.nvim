@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local ui = require "stem.ui"
 
 local M = {}
@@ -5,10 +6,10 @@ local M = {}
 -- Garbage collector for orphaned bindfs mounts after crashes.
 
 local function list_bindfs_mounts()
-  local lines = vim.fn.systemlist({ "mount", "-t", "fuse.bindfs" })
+  local lines = vim.fn.systemlist({ constants.commands.mount, "-t", constants.mount.fuse_type })
   local mounts = {}
   for _, line in ipairs(lines) do
-    local target = line:match(" on (.+) type fuse%.bindfs")
+    local target = line:match(" on (.+)" .. constants.mount.mount_type_pattern)
     if target and target ~= "" then
       table.insert(mounts, target)
     end
@@ -65,7 +66,7 @@ function M.new(config, deps)
     if named_root and vim.fn.isdirectory(named_root) == 1 then
       local entries = vim.fn.readdir(named_root)
       for _, name in ipairs(entries) do
-        if name ~= ".locks" then
+        if name ~= constants.names.locks_dir then
           local ws_root = named_root .. "/" .. name
           if vim.fn.isdirectory(ws_root) == 1 then
             local locked = workspace_lock and workspace_lock.has_locks(workspace_cfg, name)
@@ -85,7 +86,7 @@ function M.new(config, deps)
     if untitled_root and vim.fn.isdirectory(untitled_root) == 1 and not has_untitled_locks then
       local entries = vim.fn.readdir(untitled_root)
       for _, name in ipairs(entries) do
-        if name ~= ".locks" then
+        if name ~= constants.names.locks_dir then
           local ws_root = untitled_root .. "/" .. name
           if vim.fn.isdirectory(ws_root) == 1 then
             local unmount_errors = mount.unmount_all(untitled_mounts[ws_root] or {})
@@ -98,7 +99,7 @@ function M.new(config, deps)
       end
     end
     if #errors > 0 then
-      local lines = { "Garbage collector unmount errors:" }
+      local lines = { constants.messages.gc_unmount_errors_header }
       for _, err in ipairs(errors) do
         if err and err.mount and err.error then
           table.insert(lines, string.format("- %s: %s", err.mount, err.error))

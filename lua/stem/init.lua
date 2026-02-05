@@ -2,13 +2,15 @@ local M = {}
 
 -- Plugin entrypoint: builds core services and exposes public API.
 
+local constants = require "stem.constants"
+
 local config = {
   workspace = {
     auto_add_cwd = true,
     confirm_close = true,
-    temp_root = vim.env.STEM_TMP_ROOT or "/tmp/stem.nvim/saved",
-    temp_untitled_root = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem.nvim/temp",
-    bindfs_args = { "--no-allow-other" },
+    temp_root = vim.env[constants.env.tmp_root] or constants.paths.default_temp_root,
+    temp_untitled_root = vim.env[constants.env.tmp_untitled_root] or constants.paths.default_temp_untitled_root,
+    bindfs_args = vim.deepcopy(constants.bindfs.default_args),
   },
   session = {
     enabled = true,
@@ -50,17 +52,17 @@ local commands = require "stem.commands"
 
 -- Autocmds keep buffer tracking and cleanup in sync.
 local function setup_autocmds()
-  vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  vim.api.nvim_create_autocmd(constants.autocmds.buf_enter, {
     callback = function(args)
       manager.on_buf_enter(args.buf)
     end,
   })
-  vim.api.nvim_create_autocmd({ "BufWinLeave", "BufDelete" }, {
+  vim.api.nvim_create_autocmd(constants.autocmds.buf_leave, {
     callback = function(args)
       manager.on_buf_leave(args.buf)
     end,
   })
-  vim.api.nvim_create_autocmd("VimLeavePre", {
+  vim.api.nvim_create_autocmd(constants.autocmds.vim_leave_pre, {
     callback = function()
       if manager.state().temp_root then
         pcall(manager.close)

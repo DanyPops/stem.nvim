@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim mounts", function()
@@ -79,8 +80,9 @@ describe("stem.nvim mounts", function()
     stem.add(dir)
     restore()
     local saw_failure = false
+    local prefix = constants.messages.failed_bindfs:match("^[^%%]+")
     for _, item in ipairs(messages) do
-      if item.msg:match("Failed to bindfs") then
+      if item.msg:match("^" .. vim.pesc(prefix)) then
         saw_failure = true
       end
     end

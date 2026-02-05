@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim sessions", function()
@@ -31,7 +32,7 @@ describe("stem.nvim sessions", function()
     util.by("Save workspace to persist session")
     stem.save("sess")
     stem.close()
-    local session_path = data_home .. "/stem/sessions/sess.vim"
+    local session_path = data_home .. "/" .. constants.paths.session_dir .. "/sess.vim"
     util.by("Verify session file exists")
     assert.is_true(vim.fn.filereadable(session_path) == 1)
     util.by("Open saved workspace to load session")

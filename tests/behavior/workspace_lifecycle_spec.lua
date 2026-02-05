@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim workspace lifecycle", function()
@@ -23,7 +24,7 @@ describe("stem.nvim workspace lifecycle", function()
   -- Setup succeeds only when bindfs and FUSE are available.
   it("bootstraps bindfs and FUSE availability", function()
     util.by("Check bindfs and /dev/fuse availability before setup")
-    local has_bindfs = vim.fn.executable("bindfs") == 1
+    local has_bindfs = vim.fn.executable(constants.commands.bindfs) == 1
     local has_fuse = vim.fn.filereadable("/dev/fuse") == 1
     util.by("Attempt to run stem.setup")
     local ok, err = pcall(stem.setup, {})
@@ -41,7 +42,7 @@ describe("stem.nvim workspace lifecycle", function()
     stem.new("")
     util.by("Verify cwd and temp root")
     local cwd = vim.fn.getcwd()
-    local temp_root = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary"
+    local temp_root = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
     assert.is_true(cwd:match(vim.pesc(temp_root) .. "/untitled$") ~= nil)
     assert.is_true(vim.fn.isdirectory(cwd) == 1)
   end)
@@ -55,13 +56,13 @@ describe("stem.nvim workspace lifecycle", function()
     stem.add(dir)
     util.by("Save workspace as alpha")
     stem.save("alpha")
-    local ws_file = data_home .. "/stem/workspaces/alpha.lua"
+    local ws_file = data_home .. "/" .. constants.paths.workspace_dir .. "/alpha.lua"
     assert.is_true(vim.fn.filereadable(ws_file) == 1)
     util.by("Close workspace before reopening")
     stem.close()
     util.by("Open saved workspace")
     stem.open("alpha")
-    local named_root = vim.env.STEM_TMP_ROOT or "/tmp/stem/named"
+    local named_root = vim.env.STEM_TMP_ROOT or constants.paths.default_temp_root
     util.by("Verify named root cwd")
     assert.is_true(vim.fn.getcwd():match(vim.pesc(named_root) .. "/alpha$") ~= nil)
   end)
@@ -74,8 +75,8 @@ describe("stem.nvim workspace lifecycle", function()
     stem.save("one")
     util.by("Rename workspace to two")
     stem.rename("one", "two")
-    local old_file = data_home .. "/stem/workspaces/one.lua"
-    local new_file = data_home .. "/stem/workspaces/two.lua"
+    local old_file = data_home .. "/" .. constants.paths.workspace_dir .. "/one.lua"
+    local new_file = data_home .. "/" .. constants.paths.workspace_dir .. "/two.lua"
     util.by("Verify old file removed and new file exists")
     assert.is_true(vim.fn.filereadable(old_file) == 0)
     assert.is_true(vim.fn.filereadable(new_file) == 1)
@@ -99,7 +100,7 @@ describe("stem.nvim workspace lifecycle", function()
     local all = table.concat(joined, "\n")
     util.by("Verify list and status output")
     assert.is_true(all:match("listme") ~= nil)
-    assert.is_true(all:match("Workspace:") ~= nil)
+    assert.is_true(all:match(vim.pesc(constants.messages.status_header)) ~= nil)
   end)
 
   -- List shows untitled workspaces before saved ones.
@@ -168,7 +169,7 @@ describe("stem.nvim workspace lifecycle", function()
     end
     local all = table.concat(joined, "\n")
     util.by("Verify info output includes roots")
-    assert.is_true(all:match("Workspace:") ~= nil)
+    assert.is_true(all:match(vim.pesc(constants.messages.status_header)) ~= nil)
     assert.is_true(all:match(vim.pesc(dir1)) ~= nil)
     assert.is_true(all:match(vim.pesc(dir2)) ~= nil)
   end)

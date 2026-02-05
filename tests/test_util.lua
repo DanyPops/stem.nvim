@@ -1,3 +1,5 @@
+local constants = require "stem.constants"
+
 local M = {}
 local by_messages = {}
 
@@ -47,20 +49,20 @@ M.capture_notify = function()
 end
 
 M.ensure_bindfs = function()
-  if vim.fn.executable("bindfs") ~= 1 or vim.fn.filereadable("/dev/fuse") == 0 then
+  if vim.fn.executable(constants.commands.bindfs) ~= 1 or vim.fn.filereadable("/dev/fuse") == 0 then
     error("bindfs and /dev/fuse are required for tests")
   end
 end
 
 M.cleanup_test_mounts = function()
-  local cmd = { "mount", "-t", "fuse.bindfs" }
+  local cmd = { constants.commands.mount, "-t", constants.mount.fuse_type }
   local lines = vim.fn.systemlist(cmd)
   if vim.v.shell_error ~= 0 then
     error("Failed to list bindfs mounts")
   end
   local targets = {}
   for _, line in ipairs(lines) do
-    local target = line:match(" on (%S+) type fuse%.bindfs")
+    local target = line:match(" on (%S+)" .. constants.mount.mount_type_pattern)
     if target and target:match("^/tmp/nvim%.[^/]+/0/stem%-untitled/") then
       table.insert(targets, target)
     end
@@ -68,7 +70,9 @@ M.cleanup_test_mounts = function()
   if #targets == 0 then
     return
   end
-  local unmount = vim.fn.executable("fusermount") == 1 and { "fusermount", "-u" } or { "umount" }
+  local unmount = vim.fn.executable(constants.commands.fusermount) == 1
+      and { constants.commands.fusermount, "-u" }
+    or { constants.commands.umount }
   for _, target in ipairs(targets) do
     local result = vim.fn.systemlist(vim.list_extend(vim.deepcopy(unmount), { target }))
     if vim.v.shell_error ~= 0 then

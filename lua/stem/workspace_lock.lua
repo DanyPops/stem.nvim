@@ -1,10 +1,11 @@
+local constants = require "stem.constants"
 local lock_utils = require "stem.lock_utils"
 
 local M = {}
 
 -- Named workspace instance locks and stale cleanup.
 local function lock_root(config)
-  local dir = config.temp_root .. "/.locks"
+  local dir = config.temp_root .. "/" .. constants.names.locks_dir
   return lock_utils.ensure_dir(dir)
 end
 
@@ -20,7 +21,7 @@ local function is_pid_alive(pid)
   if not tostring(pid):match("^%d+$") then
     return true
   end
-  vim.fn.system({ "kill", "-0", tostring(pid) })
+  vim.fn.system({ constants.commands.kill, constants.process.kill_check_args[1], tostring(pid) })
   return vim.v.shell_error == 0
 end
 

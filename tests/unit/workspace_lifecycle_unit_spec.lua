@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim workspace lifecycle helpers", function()
@@ -43,7 +44,8 @@ describe("stem.nvim workspace lifecycle helpers", function()
       },
       untitled = {
         temp_root_for = function(_, name, temporary)
-          return "/tmp/stem.nvim/" .. (temporary and "temp" or "saved") .. "/" .. name
+          local base = temporary and constants.paths.default_temp_untitled_root or constants.paths.default_temp_root
+          return base .. "/" .. name
         end,
       },
       registry = {
@@ -76,7 +78,7 @@ describe("stem.nvim workspace lifecycle helpers", function()
     util.by("Verify state fields updated")
     assert.is_true(state.name == "alpha")
     assert.is_true(state.temporary == false)
-    assert.is_true(state.temp_root == "/tmp/stem.nvim/saved/alpha")
+    assert.is_true(state.temp_root == constants.paths.default_temp_root .. "/alpha")
     assert.is_true(#state.mounts == 1)
 
     util.by("Verify mount and registry were invoked")

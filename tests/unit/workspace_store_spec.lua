@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim workspace store", function()
@@ -8,7 +9,7 @@ describe("stem.nvim workspace store", function()
   before_each(function()
     store = require "stem.workspace_store"
     data_home = vim.fn.stdpath "data"
-    ws_dir = data_home .. "/stem/workspaces"
+    ws_dir = data_home .. "/" .. constants.paths.workspace_dir
     vim.fn.delete(ws_dir, "rf")
     vim.fn.mkdir(ws_dir, "p")
     util.reset_by()

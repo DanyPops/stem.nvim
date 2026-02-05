@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim garbage collector", function()
@@ -21,9 +22,9 @@ describe("stem.nvim garbage collector", function()
   end)
 
   local function mount_present(target)
-    local lines = vim.fn.systemlist({ "mount", "-t", "fuse.bindfs" })
+    local lines = vim.fn.systemlist({ constants.commands.mount, "-t", constants.mount.fuse_type })
     for _, line in ipairs(lines) do
-      if line:match(" on " .. vim.pesc(target) .. " type fuse%.bindfs") then
+      if line:match(" on " .. vim.pesc(target) .. constants.mount.mount_type_pattern) then
         return true
       end
     end

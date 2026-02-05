@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local lock_utils = require "stem.lock_utils"
 
 local M = {}
@@ -9,7 +10,7 @@ local function temp_untitled_root(config)
 end
 
 local function lock_dir(config)
-  local dir = temp_untitled_root(config) .. "/.locks"
+  local dir = temp_untitled_root(config) .. "/" .. constants.names.locks_dir
   return lock_utils.ensure_dir(dir)
 end
 
@@ -35,18 +36,18 @@ function M.next_untitled_name(config)
   local used = {}
   for _, path in ipairs(files) do
     local name = vim.fn.fnamemodify(path, ":t")
-    if name:match("^untitled%d*$") then
+    if name:match(constants.patterns.untitled_name) then
       used[name] = true
     end
   end
-  if not used.untitled then
-    return "untitled"
+  if not used[constants.names.untitled] then
+    return constants.names.untitled
   end
   local i = 1
-  while used["untitled" .. i] do
+  while used[constants.names.untitled .. i] do
     i = i + 1
   end
-  return "untitled" .. i
+  return constants.names.untitled .. i
 end
 
 -- Cleanup untitled roots if no locks remain.
@@ -58,7 +59,7 @@ function M.cleanup_if_last(config)
   local base = temp_untitled_root(config)
   local entries = lock_utils.list_dir(base)
   for _, entry in ipairs(entries) do
-    if entry ~= ".locks" then
+    if entry ~= constants.names.locks_dir then
       vim.fn.delete(base .. "/" .. entry, "rf")
     end
   end
@@ -70,7 +71,7 @@ function M.list(config)
   local names = {}
   local entries = lock_utils.list_dir(base)
   for _, entry in ipairs(entries) do
-    if entry ~= ".locks" then
+    if entry ~= constants.names.locks_dir then
       table.insert(names, entry)
     end
   end

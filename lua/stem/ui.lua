@@ -1,10 +1,12 @@
+local constants = require "stem.constants"
+
 local M = {}
 
 -- UI helpers for notifications and confirms.
 
 -- Notify with a consistent title.
 function M.notify(msg, level)
-  vim.notify(msg, level or vim.log.levels.INFO, { title = "stem" })
+  vim.notify(msg, level or vim.log.levels.INFO, { title = constants.ui.notify_title })
 end
 
 -- Prompt a confirm dialog.

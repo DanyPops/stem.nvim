@@ -1,3 +1,4 @@
+local constants = require "stem.constants"
 local util = require "tests.test_util"
 
 describe("stem.nvim validation", function()
@@ -28,11 +29,12 @@ describe("stem.nvim validation", function()
     util.by("Save invalid workspace name")
     stem.save("bad/name")
     restore()
-    local ws_file = data_home .. "/stem/workspaces/bad/name.lua"
+    local ws_file = data_home .. "/" .. constants.paths.workspace_dir .. "/bad/name.lua"
     assert.is_true(vim.fn.filereadable(ws_file) == 0)
     local saw_invalid = false
+    local expected = string.format(constants.messages.invalid_workspace_name, "bad/name")
     for _, item in ipairs(messages) do
-      if item.msg:match("Invalid workspace name") then
+      if item.msg == expected then
         saw_invalid = true
       end
     end
@@ -48,8 +50,9 @@ describe("stem.nvim validation", function()
     stem.open("missing")
     restore()
     local saw_missing = false
+    local expected = string.format(constants.messages.workspace_not_found, "missing")
     for _, item in ipairs(messages) do
-      if item.msg:match("Workspace not found") then
+      if item.msg == expected then
         saw_missing = true
       end
     end
@@ -68,8 +71,9 @@ describe("stem.nvim validation", function()
     stem.add(file)
     restore()
     local saw_error = false
+    local expected = string.format(constants.messages.not_a_directory, file)
     for _, item in ipairs(messages) do
-      if item.msg:match("Not a directory") then
+      if item.msg == expected then
         saw_error = true
       end
     end
@@ -87,8 +91,9 @@ describe("stem.nvim validation", function()
     stem.remove(dir)
     restore()
     local saw_error = false
+    local expected = string.format(constants.messages.directory_not_found, dir)
     for _, item in ipairs(messages) do
-      if item.msg:match("Directory not found") then
+      if item.msg == expected then
         saw_error = true
       end
     end
@@ -110,8 +115,9 @@ describe("stem.nvim validation", function()
     stem.rename("one", "two")
     restore()
     local saw_error = false
+    local expected = string.format(constants.messages.workspace_exists, "two")
     for _, item in ipairs(messages) do
-      if item.msg:match("Workspace already exists") then
+      if item.msg == expected then
         saw_error = true
       end
     end
