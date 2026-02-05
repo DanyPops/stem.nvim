@@ -186,7 +186,8 @@ function M.new(config, deps)
     then
       return
     end
-    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
+    local allowed_root = state.temporary and config.workspace.temp_untitled_root or config.workspace.temp_root
+    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts, allowed_root)
     state.mount_map = {}
     registry.module.set_mounts(registry.state, id, {}, {})
     if events then
@@ -199,7 +200,8 @@ function M.new(config, deps)
     if not state.temp_root then
       return
     end
-    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
+    local allowed_root = state.temporary and config.workspace.temp_untitled_root or config.workspace.temp_root
+    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts, allowed_root)
     state.mounts, state.mount_map = mount.mount_roots(
       state.roots,
       state.temp_root,
@@ -398,7 +400,8 @@ function M.new(config, deps)
       end
     end
     if state.temp_root and not keep_mounts then
-      state.mounts = mount.clear_temp_root(state.temp_root, state.mounts)
+      local allowed_root = state.temporary and config.workspace.temp_untitled_root or config.workspace.temp_root
+      state.mounts = mount.clear_temp_root(state.temp_root, state.mounts, allowed_root)
       vim.fn.delete(state.temp_root, "rf")
     end
     if state.temporary then
