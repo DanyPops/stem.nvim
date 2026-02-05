@@ -121,6 +121,7 @@ function M.new(config, deps)
   local workspace_lock = deps.workspace_lock
   local registry = deps.registry
   local events = deps.events
+  local lifecycle = require "stem.workspace_lifecycle"
 
   local state = {
     name = nil,
@@ -144,24 +145,6 @@ function M.new(config, deps)
     if vim.fn.filereadable("/dev/fuse") == 0 then
       error("stem.nvim requires FUSE (/dev/fuse) to be available")
     end
-  end
-
-  -- Register workspace state in registry.
-  local function register_workspace()
-    if not registry or not registry.module then
-      return
-    end
-    local id = state.temp_root
-    registry.module.register(registry.state, id, {
-      id = id,
-      name = state.name,
-      temporary = state.temporary,
-      roots = state.roots,
-      temp_root = state.temp_root,
-      mounts = state.mounts,
-      mount_map = state.mount_map,
-    })
-    registry.module.set_current(registry.state, id)
   end
 
   -- Unmount when no buffers and no locks.
@@ -197,43 +180,38 @@ function M.new(config, deps)
 
   -- (Re)mount roots into temp root.
   local function mount_roots()
-    if not state.temp_root then
-      return
-    end
-    local allowed_root = state.temporary and config.workspace.temp_untitled_root or config.workspace.temp_root
-    state.mounts = mount.clear_temp_root(state.temp_root, state.mounts, allowed_root)
-    state.mounts, state.mount_map = mount.mount_roots(
-      state.roots,
-      state.temp_root,
-      config.workspace.bindfs_args
-    )
-    if registry and registry.module then
-      registry.module.set_mounts(registry.state, state.temp_root, state.mounts, state.mount_map)
-    end
-    if events then
-      events.emit("mounts_changed", state)
-    end
+    lifecycle.remount_roots(state, {
+      config = config,
+      mount = mount,
+      registry = registry,
+      events = events,
+    })
   end
 
   -- Set active workspace state and mount roots.
   local function set_workspace(name, roots, temporary)
-    state.name = name
-    state.roots = roots or {}
-    state.temporary = temporary
-    state.temp_root = untitled.temp_root_for(config.workspace, name, temporary)
-    mount_roots()
-    state.prev_cwd = state.prev_cwd or vim.fn.getcwd()
-    set_cwd(state.temp_root)
-    open_root_in_oil(config, state.temp_root)
-    register_workspace()
+    lifecycle.set_workspace(state, {
+      config = config,
+      mount = mount,
+      untitled = untitled,
+      registry = registry,
+      events = events,
+      set_cwd = set_cwd,
+      open_root_in_oil = open_root_in_oil,
+    }, name, roots, temporary)
   end
 
   -- Ensure a temporary workspace exists.
   local function ensure_workspace()
-    if state.temp_root then
-      return
-    end
-    set_workspace(state.name, {}, true)
+    lifecycle.ensure_workspace(state, {
+      config = config,
+      mount = mount,
+      untitled = untitled,
+      registry = registry,
+      events = events,
+      set_cwd = set_cwd,
+      open_root_in_oil = open_root_in_oil,
+    })
   end
 
   local manager = {}
@@ -321,15 +299,10 @@ function M.new(config, deps)
     if state.temporary then
       untitled.release_instance_lock(config.workspace, state.instance_id)
     end
-    state.name = workspace_name
-    state.temporary = false
+    set_workspace(workspace_name, state.roots, false)
     if workspace_lock then
       workspace_lock.ensure_instance_lock(config.workspace, state.name, state.instance_id)
     end
-    state.temp_root = untitled.temp_root_for(config.workspace, state.name, state.temporary)
-    mount_roots()
-    set_cwd(state.temp_root)
-    register_workspace()
     ui.notify("Saved workspace: " .. workspace_name)
   end
 
@@ -509,12 +482,7 @@ function M.new(config, deps)
       end
       vim.fn.rename(from_path, to_path)
       if state.name == arg1 then
-        state.name = arg2
-        state.temporary = false
-        state.temp_root = untitled.temp_root_for(config.workspace, state.name, state.temporary)
-        mount_roots()
-        set_cwd(state.temp_root)
-        register_workspace()
+        set_workspace(arg2, state.roots, false)
       end
       ui.notify(string.format("Renamed workspace: %s -> %s", arg1, arg2))
       return
@@ -546,12 +514,7 @@ function M.new(config, deps)
         return
       end
     end
-    state.name = new_name
-    state.temporary = false
-    state.temp_root = untitled.temp_root_for(config.workspace, state.name, state.temporary)
-    mount_roots()
-    set_cwd(state.temp_root)
-    register_workspace()
+    set_workspace(new_name, state.roots, false)
     ui.notify("Renamed workspace to: " .. new_name)
   end
 
