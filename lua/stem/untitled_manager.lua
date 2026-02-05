@@ -1,5 +1,6 @@
 local M = {}
 
+-- Untitled workspace naming and lock cleanup.
 local function temp_untitled_root(config)
   local dir = config.temp_untitled_root
   vim.fn.mkdir(dir, "p")
@@ -12,18 +13,22 @@ local function lock_dir(config)
   return dir
 end
 
+-- Path for an instance lock file.
 function M.instance_lock_path(config, instance_id)
   return lock_dir(config) .. "/" .. instance_id
 end
 
+-- Create an instance lock file.
 function M.ensure_instance_lock(config, instance_id)
   vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, M.instance_lock_path(config, instance_id))
 end
 
+-- Remove an instance lock file.
 function M.release_instance_lock(config, instance_id)
   vim.fn.delete(M.instance_lock_path(config, instance_id))
 end
 
+-- Find the next available untitled name.
 function M.next_untitled_name(config)
   local base = temp_untitled_root(config)
   local files = vim.fn.globpath(base, "*", false, true)
@@ -44,6 +49,7 @@ function M.next_untitled_name(config)
   return "untitled" .. i
 end
 
+-- Cleanup untitled roots if no locks remain.
 function M.cleanup_if_last(config)
   local locks = vim.fn.globpath(lock_dir(config), "*", false, true)
   if #locks > 0 then
@@ -58,6 +64,7 @@ function M.cleanup_if_last(config)
   end
 end
 
+-- List existing untitled workspaces.
 function M.list(config)
   local base = temp_untitled_root(config)
   local names = {}
@@ -71,11 +78,13 @@ function M.list(config)
   return names
 end
 
+-- Check if any untitled instance locks exist.
 function M.has_locks(config)
   local locks = vim.fn.globpath(lock_dir(config), "*", false, true)
   return #locks > 0
 end
 
+-- Resolve temp root for named or untitled workspaces.
 function M.temp_root_for(config, name, temporary)
   local base = config.temp_root
   vim.fn.mkdir(base, "p")

@@ -1,5 +1,8 @@
 local M = {}
 
+-- Registry holds workspace metadata and buffer associations.
+
+-- Create an empty registry state.
 function M.new()
   return {
     workspaces = {},
@@ -21,6 +24,7 @@ local function ensure_workspace(registry, id)
   return registry.workspaces[id]
 end
 
+-- Register or update workspace metadata.
 function M.register(registry, id, data)
   local ws = ensure_workspace(registry, id)
   for k, v in pairs(data or {}) do
@@ -29,14 +33,17 @@ function M.register(registry, id, data)
   return ws
 end
 
+-- Remove a workspace from registry.
 function M.remove(registry, id)
   registry.workspaces[id] = nil
 end
 
+-- Mark the current workspace id.
 function M.set_current(registry, id)
   registry.current_id = id
 end
 
+-- Fetch current workspace metadata.
 function M.get_current(registry)
   if not registry.current_id then
     return nil
@@ -44,6 +51,7 @@ function M.get_current(registry)
   return registry.workspaces[registry.current_id]
 end
 
+-- List known workspace ids.
 function M.list_ids(registry)
   local ids = {}
   for id in pairs(registry.workspaces) do
@@ -53,23 +61,27 @@ function M.list_ids(registry)
   return ids
 end
 
+-- Update workspace roots list.
 function M.set_roots(registry, id, roots)
   local ws = ensure_workspace(registry, id)
   ws.roots = roots or {}
 end
 
+-- Update mounts and root->mount mapping.
 function M.set_mounts(registry, id, mounts, mount_map)
   local ws = ensure_workspace(registry, id)
   ws.mounts = mounts or {}
   ws.mount_map = mount_map or {}
 end
 
+-- Track a buffer as belonging to a workspace.
 function M.add_buffer(registry, id, bufnr)
   local ws = ensure_workspace(registry, id)
   ws.open_buffers[bufnr] = true
   registry.buffer_map[bufnr] = id
 end
 
+-- Untrack a buffer and return its workspace id.
 function M.remove_buffer(registry, bufnr)
   local id = registry.buffer_map[bufnr]
   if not id then
@@ -83,6 +95,7 @@ function M.remove_buffer(registry, bufnr)
   return id
 end
 
+-- Count tracked buffers for a workspace.
 function M.buffer_count(registry, id)
   local ws = registry.workspaces[id]
   if not ws then
@@ -95,6 +108,7 @@ function M.buffer_count(registry, id)
   return count
 end
 
+-- Find workspace by absolute path prefix.
 function M.find_by_path(registry, path)
   for _, ws in pairs(registry.workspaces) do
     if ws.temp_root and path:sub(1, #ws.temp_root) == ws.temp_root then

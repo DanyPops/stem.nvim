@@ -1,5 +1,8 @@
 local M = {}
 
+-- Command wiring: exposes :Stem* user commands.
+
+-- Register user commands and return completion handlers.
 function M.setup(api)
   local complete = {
     workspaces = function(arg_lead)

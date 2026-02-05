@@ -2,16 +2,19 @@ local ui = require "stem.ui"
 
 local M = {}
 
+-- Persistent storage for workspace root lists.
 local function workspace_dir()
   local dir = vim.fn.stdpath "data" .. "/stem/workspaces"
   vim.fn.mkdir(dir, "p")
   return dir
 end
 
+-- Validate workspace name for filesystem safety.
 function M.is_valid_name(name)
   return name and name ~= "" and name:match("^[%w%._%-]+$")
 end
 
+-- Resolve workspace file path.
 function M.path(name)
   if not M.is_valid_name(name) then
     return nil
@@ -19,6 +22,7 @@ function M.path(name)
   return workspace_dir() .. "/" .. name .. ".lua"
 end
 
+-- Load a workspace definition from disk.
 function M.read(name)
   local path = M.path(name)
   if not path or vim.fn.filereadable(path) == 0 then
@@ -39,6 +43,7 @@ function M.read(name)
   return result
 end
 
+-- Write a workspace definition to disk.
 function M.write(name, roots)
   local path = M.path(name)
   if not path then
@@ -50,6 +55,7 @@ function M.write(name, roots)
   return true
 end
 
+-- List saved workspace names.
 function M.list()
   local dir = workspace_dir()
   local files = vim.fn.globpath(dir, "*.lua", false, true)

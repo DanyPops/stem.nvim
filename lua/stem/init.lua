@@ -1,11 +1,13 @@
 local M = {}
 
+-- Plugin entrypoint: builds core services and exposes public API.
+
 local config = {
   workspace = {
     auto_add_cwd = true,
     confirm_close = true,
-    temp_root = vim.env.STEM_TMP_ROOT or "/tmp/stem/named",
-    temp_untitled_root = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem/temporary",
+    temp_root = vim.env.STEM_TMP_ROOT or "/tmp/stem.nvim/saved",
+    temp_untitled_root = vim.env.STEM_TMP_UNTITLED_ROOT or "/tmp/stem.nvim/temp",
     bindfs_args = { "--no-allow-other" },
   },
   session = {
@@ -37,6 +39,7 @@ local manager = require("stem.workspace_manager").new(config, {
 
 local commands = require "stem.commands"
 
+-- Autocmds keep buffer tracking and cleanup in sync.
 local function setup_autocmds()
   vim.api.nvim_create_autocmd({ "BufEnter" }, {
     callback = function(args)
@@ -63,6 +66,7 @@ M._complete = {
   rename = manager.complete_rename,
 }
 
+-- Configure stem and register commands/autocmds.
 function M.setup(opts)
   if opts and type(opts) == "table" then
     if opts.session then
@@ -95,33 +99,43 @@ function M.setup(opts)
   setup_autocmds()
 end
 
+-- Start a new workspace.
 M.new = function(name)
   return manager.new(name)
 end
+-- Open a saved workspace by name.
 M.open = function(name)
   return manager.open(name)
 end
+-- Save current workspace, optionally as name.
 M.save = function(name)
   return manager.save(name)
 end
+-- Close current workspace and cleanup.
 M.close = function()
   return manager.close()
 end
+-- Add a root directory to the workspace.
 M.add = function(dir)
   return manager.add(dir)
 end
+-- Remove a root directory from the workspace.
 M.remove = function(dir)
   return manager.remove(dir)
 end
+-- Rename current or saved workspace.
 M.rename = function(a, b)
   return manager.rename(a, b)
 end
+-- List saved workspaces.
 M.list = function()
   return manager.list()
 end
+-- Report current workspace status.
 M.status = function()
   return manager.status()
 end
+-- List untitled workspaces.
 M.untitled_list = function()
   return manager.untitled_list()
 end

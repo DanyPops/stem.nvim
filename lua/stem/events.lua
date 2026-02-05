@@ -1,5 +1,8 @@
 local M = {}
 
+-- Simple event emitter for workspace lifecycle signals.
+
+-- Create a new emitter with on/emit methods.
 function M.new()
   local listeners = {}
 

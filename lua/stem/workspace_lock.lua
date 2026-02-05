@@ -1,5 +1,6 @@
 local M = {}
 
+-- Named workspace instance locks and stale cleanup.
 local function lock_root(config)
   local dir = config.temp_root .. "/.locks"
   vim.fn.mkdir(dir, "p")
@@ -39,10 +40,12 @@ local function prune_stale_locks(config, name)
   end
 end
 
+-- Path for a named workspace lock file.
 function M.instance_lock_path(config, name, instance_id)
   return lock_dir(config, name) .. "/" .. instance_id
 end
 
+-- Create lock for a named workspace instance.
 function M.ensure_instance_lock(config, name, instance_id)
   if not name or name == "" then
     return
@@ -51,6 +54,7 @@ function M.ensure_instance_lock(config, name, instance_id)
   vim.fn.writefile({ os.date("!%Y-%m-%dT%H:%M:%SZ") }, M.instance_lock_path(config, name, instance_id))
 end
 
+-- Release lock for a named workspace instance.
 function M.release_instance_lock(config, name, instance_id)
   if not name or name == "" then
     return
@@ -65,6 +69,7 @@ function M.release_instance_lock(config, name, instance_id)
   end
 end
 
+-- Check if any locks exist for a workspace.
 function M.has_locks(config, name)
   if not name or name == "" then
     return false
@@ -78,6 +83,7 @@ function M.has_locks(config, name)
   return #locks > 0
 end
 
+-- Check if other instances hold a lock.
 function M.has_other_locks(config, name, instance_id)
   if not name or name == "" then
     return false

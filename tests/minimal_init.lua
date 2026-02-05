@@ -28,3 +28,5 @@ end
 vim.cmd("filetype plugin indent on")
 vim.opt.swapfile = false
 vim.opt.shadafile = "NONE"
+
+require("tests.test_util").reset_editor()

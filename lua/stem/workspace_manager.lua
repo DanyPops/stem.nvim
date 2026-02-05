@@ -1,5 +1,8 @@
 local M = {}
 
+-- Workspace orchestration: lifecycle, mounts, buffers, and sessions.
+
+-- Normalize path to absolute directory form.
 local function normalize_dir(path)
   local expanded = vim.fn.expand(path)
   expanded = vim.fn.fnamemodify(expanded, ":p")
@@ -7,6 +10,7 @@ local function normalize_dir(path)
   return expanded
 end
 
+-- Set global and tab-local cwd.
 local function set_cwd(path)
   if not path or path == "" then
     return
@@ -15,6 +19,7 @@ local function set_cwd(path)
   vim.cmd("tcd " .. vim.fn.fnameescape(path))
 end
 
+-- Reopen root in oil when following workspace.
 local function open_root_in_oil(config, temp_root)
   if not config.oil.follow then
     return
@@ -28,6 +33,7 @@ local function open_root_in_oil(config, temp_root)
   end
 end
 
+-- Determine context directory from buffer or cwd.
 local function context_dir()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
@@ -55,6 +61,7 @@ local function context_dir()
   return normalize_dir(vim.fn.getcwd(0, 0))
 end
 
+-- Filter list by prefix for completion.
 local function complete_from_list(list, arg_lead)
   local matches = {}
   for _, item in ipairs(list) do
@@ -65,10 +72,12 @@ local function complete_from_list(list, arg_lead)
   return matches
 end
 
+-- Complete workspace names from store.
 local function complete_workspace_names(store, arg_lead)
   return complete_from_list(store.list(), arg_lead)
 end
 
+-- Complete rename first arg only.
 local function complete_rename(store, arg_lead, cmd_line)
   local args = vim.split(cmd_line, "%s+")
   if #args <= 2 then
@@ -77,6 +86,7 @@ local function complete_rename(store, arg_lead, cmd_line)
   return {}
 end
 
+-- Reopen buffer inside mounted namespace.
 local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   local buf = vim.api.nvim_get_current_buf()
   local name = vim.api.nvim_buf_get_name(buf)
@@ -101,6 +111,7 @@ local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   vim.cmd("edit " .. vim.fn.fnameescape(target))
 end
 
+-- Build a manager bound to config and dependencies.
 function M.new(config, deps)
   local ui = deps.ui
   local store = deps.store
@@ -122,6 +133,7 @@ function M.new(config, deps)
     instance_id = tostring(vim.fn.getpid()),
   }
 
+  -- Validate bindfs and FUSE availability.
   local function bootstrap()
     if vim.env.STEM_SKIP_BOOTSTRAP == "1" then
       return
@@ -134,6 +146,7 @@ function M.new(config, deps)
     end
   end
 
+  -- Register workspace state in registry.
   local function register_workspace()
     if not registry or not registry.module then
       return
@@ -151,6 +164,7 @@ function M.new(config, deps)
     registry.module.set_current(registry.state, id)
   end
 
+  -- Unmount when no buffers and no locks.
   local function maybe_unmount_if_idle()
     if not registry or not registry.module then
       return
@@ -180,6 +194,7 @@ function M.new(config, deps)
     end
   end
 
+  -- (Re)mount roots into temp root.
   local function mount_roots()
     if not state.temp_root then
       return
@@ -198,6 +213,7 @@ function M.new(config, deps)
     end
   end
 
+  -- Set active workspace state and mount roots.
   local function set_workspace(name, roots, temporary)
     state.name = name
     state.roots = roots or {}
@@ -210,6 +226,7 @@ function M.new(config, deps)
     register_workspace()
   end
 
+  -- Ensure a temporary workspace exists.
   local function ensure_workspace()
     if state.temp_root then
       return
@@ -219,10 +236,12 @@ function M.new(config, deps)
 
   local manager = {}
 
+  -- Initialize manager preconditions.
   function manager.setup()
     bootstrap()
   end
 
+  -- Create a new workspace.
   function manager.new(name)
     local base_dir = context_dir()
     local workspace_name = name ~= "" and name or nil
@@ -245,6 +264,7 @@ function M.new(config, deps)
     end
   end
 
+  -- Open a saved workspace.
   function manager.open(name)
     if not name or name == "" then
       ui.notify("Workspace name required", vim.log.levels.ERROR)
@@ -263,6 +283,7 @@ function M.new(config, deps)
     sessions.load(name, config.session.enabled, config.session.auto_load)
   end
 
+  -- Save current workspace to disk.
   function manager.save(name)
     local workspace_name = name ~= "" and name or state.name
     if not workspace_name or workspace_name == "" then
@@ -294,6 +315,7 @@ function M.new(config, deps)
     ui.notify("Saved workspace: " .. workspace_name)
   end
 
+  -- Close workspace and cleanup mounts.
   function manager.close()
     if state.temporary and #state.roots > 0 and config.workspace.confirm_close and #vim.api.nvim_list_uis() > 0 then
       local choice = ui.confirm("Close unnamed workspace without saving?", "&Yes\n&No", 2)
@@ -381,6 +403,7 @@ function M.new(config, deps)
     ui.notify "Workspace closed"
   end
 
+  -- Add a root to the workspace.
   function manager.add(dir)
     local path = dir and dir ~= "" and normalize_dir(dir) or context_dir()
     if not path or path == "" then
@@ -407,6 +430,7 @@ function M.new(config, deps)
     ui.notify("Added: " .. path)
   end
 
+  -- Remove a root from the workspace.
   function manager.remove(dir)
     if not dir or dir == "" then
       ui.notify("Directory required", vim.log.levels.ERROR)
@@ -446,6 +470,7 @@ function M.new(config, deps)
     ui.notify("Removed: " .. path)
   end
 
+  -- Rename current or saved workspace.
   function manager.rename(arg1, arg2)
     if arg2 then
       local entry = store.read(arg1)
@@ -511,6 +536,7 @@ function M.new(config, deps)
     ui.notify("Renamed workspace to: " .. new_name)
   end
 
+  -- List saved workspaces.
   function manager.list()
     local names = store.list()
     if #names == 0 then
@@ -525,6 +551,7 @@ function M.new(config, deps)
     ui.notify(table.concat(lines, "\n"))
   end
 
+  -- List untitled workspaces.
   function manager.untitled_list()
     local names = untitled.list(config.workspace)
     if #names == 0 then
@@ -539,6 +566,7 @@ function M.new(config, deps)
     ui.notify(table.concat(lines, "\n"))
   end
 
+  -- Report current workspace status.
   function manager.status()
     if not state.temp_root then
       ui.notify "No workspace open"
@@ -548,22 +576,27 @@ function M.new(config, deps)
     ui.notify(string.format("Workspace: %s (%d roots)", label, #state.roots))
   end
 
+  -- Complete workspace names.
   function manager.complete_workspaces(arg_lead)
     return complete_workspace_names(store, arg_lead)
   end
 
+  -- Complete roots by prefix.
   function manager.complete_roots(arg_lead)
     return complete_from_list(state.roots, arg_lead)
   end
 
+  -- Complete rename command args.
   function manager.complete_rename(arg_lead, cmd_line)
     return complete_rename(store, arg_lead, cmd_line)
   end
 
+  -- Expose current manager state.
   function manager.state()
     return state
   end
 
+  -- Track buffer entering a workspace.
   function manager.on_buf_enter(bufnr)
     if not registry or not registry.module then
       return
@@ -583,6 +616,7 @@ function M.new(config, deps)
     end
   end
 
+  -- Untrack buffer leaving a workspace.
   function manager.on_buf_leave(bufnr)
     if not registry or not registry.module then
       return

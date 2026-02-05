@@ -2,6 +2,8 @@ local ui = require "stem.ui"
 
 local M = {}
 
+-- Mount lifecycle helpers for bindfs-backed roots.
+-- Unmount a list of mount paths.
 function M.unmount_all(mounts)
   if #mounts == 0 then
     return
@@ -17,6 +19,7 @@ function M.unmount_all(mounts)
   end
 end
 
+-- Clear temp root contents and unmount prior mounts.
 function M.clear_temp_root(path, mounts)
   if not path or path == "" then
     return {}
@@ -35,6 +38,7 @@ function M.clear_temp_root(path, mounts)
   return {}
 end
 
+-- Mount roots into temp_root and return mounts/map.
 function M.mount_roots(roots, temp_root, bindfs_args)
   if not temp_root then
     return {}, {}

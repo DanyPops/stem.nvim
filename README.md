@@ -1,26 +1,44 @@
 # stem.nvim
 
-A lightweight pseudo-workspace plugin for Neovim. It builds a temporary root
-under `/tmp/stem/<name>` and mounts multiple directories into it, letting you
-work across multiple repositories with a single working directory.
+Create a single workspace root so AI/tools can work across multiple repositories.
+
+Stem builds a temporary root under `/tmp/stem.nvim/<name>` and mounts multiple
+directories into it, letting you work across repositories with one working
+directory.
 
 ## Requirements
 
 - `bindfs` (FUSE) is required and runs without root.
 - Stem will error on startup if `bindfs` or FUSE are unavailable.
 
-## Why FUSE?
+Check requirements:
 
-Stem aims to emulate Cursor-style multi-repo workspaces inside Neovim. Cursor can
-present multiple roots as a single workspace by aggregating them in the UI and
-indexer, but Neovim and most tools are path-centric and expect a real directory.
-FUSE (via `bindfs`) is the most practical way to provide a true, namespaced
-workspace path without root access.
+```bash
+command -v bindfs
+test -r /dev/fuse
+```
 
-## Storage
+## Install (lazy.nvim)
 
-Each workspace is stored as a Lua file in `stdpath("data")/stem/workspaces/`.
-Lua is used because it is Neovim-native, commentable, and easy to hand-edit.
+```lua
+{
+  "DanyPops/stem.nvim",
+  config = function()
+    require("stem").setup()
+  end,
+}
+```
+
+## Quickstart
+
+```
+:StemNew my-workspace
+:StemAdd ~/code/repo-a
+:StemAdd ~/code/repo-b
+:StemSave my-workspace
+:StemClose
+:StemOpen my-workspace
+```
 
 ## Commands
 
@@ -42,6 +60,19 @@ On `:StemClose`, a session is saved for the current workspace (if named) to
 `stdpath("data")/stem/sessions/<name>.vim`. When opening a workspace with
 `:StemOpen` or `:StemNew <name>`, a matching session is automatically loaded.
 
+## Storage
+
+Each workspace is stored as a Lua file in `stdpath("data")/stem/workspaces/`.
+Lua is used because it is Neovim-native, commentable, and easy to hand-edit.
+
+## Why FUSE?
+
+Stem aims to emulate Cursor-style multi-repo workspaces inside Neovim. Cursor can
+present multiple roots as a single workspace by aggregating them in the UI and
+indexer, but Neovim and most tools are path-centric and expect a real directory.
+FUSE (via `bindfs`) is the most practical way to provide a true, namespaced
+workspace path without root access.
+
 ## Options
 
 ```lua
@@ -49,8 +80,8 @@ require("stem").setup({
   workspace = {
     auto_add_cwd = true,
     confirm_close = true,
-    temp_root = "/tmp/stem/named",
-    temp_untitled_root = "/tmp/stem/temporary",
+    temp_root = "/tmp/stem.nvim/saved",
+    temp_untitled_root = "/tmp/stem.nvim/temp",
     bindfs_args = { "--no-allow-other" },
   },
   session = {
@@ -62,3 +93,8 @@ require("stem").setup({
   },
 })
 ```
+
+## Development
+
+- Tests: `make test`
+- Requires `bindfs` and `/dev/fuse` for the suite to run

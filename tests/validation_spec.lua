@@ -1,0 +1,121 @@
+local util = require "tests.test_util"
+
+describe("stem.nvim validation", function()
+  local stem
+  local data_home
+
+  before_each(function()
+    data_home = vim.fn.stdpath "data"
+    util.ensure_bindfs()
+    stem = util.reset_stem()
+    util.reset_editor()
+    util.reset_by()
+    local temp_cwd = util.new_temp_dir()
+    vim.cmd("cd " .. vim.fn.fnameescape(temp_cwd))
+    vim.cmd("tcd " .. vim.fn.fnameescape(temp_cwd))
+  end)
+
+  after_each(function()
+    pcall(stem.close)
+    util.flush_by()
+  end)
+
+  -- Invalid workspace names are rejected on save.
+  it("rejects invalid workspace names on save", function()
+    util.by("Attempt to save a workspace with an invalid name")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    util.by("Save invalid workspace name")
+    stem.save("bad/name")
+    restore()
+    local ws_file = data_home .. "/stem/workspaces/bad/name.lua"
+    assert.is_true(vim.fn.filereadable(ws_file) == 0)
+    local saw_invalid = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Invalid workspace name") then
+        saw_invalid = true
+      end
+    end
+    util.by("Verify invalid name was reported")
+    assert.is_true(saw_invalid)
+  end)
+
+  -- Opening a missing workspace reports an error.
+  it("rejects non-existent workspace on open", function()
+    util.by("Attempt to open a missing workspace")
+    local messages, restore = util.capture_notify()
+    util.by("Open missing workspace")
+    stem.open("missing")
+    restore()
+    local saw_missing = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Workspace not found") then
+        saw_missing = true
+      end
+    end
+    util.by("Verify missing workspace was reported")
+    assert.is_true(saw_missing)
+  end)
+
+  -- Adding a non-directory path is rejected.
+  it("rejects non-directory on add", function()
+    util.by("Attempt to add a non-directory path")
+    local dir = util.new_temp_dir()
+    local file = util.new_temp_file(dir, "notadir.txt")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    util.by("Add non-directory path")
+    stem.add(file)
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Not a directory") then
+        saw_error = true
+      end
+    end
+    util.by("Verify error was reported")
+    assert.is_true(saw_error)
+  end)
+
+  -- Removing an unknown directory reports an error.
+  it("rejects unknown directory on remove", function()
+    util.by("Attempt to remove a directory that was never added")
+    local dir = util.new_temp_dir()
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    util.by("Remove unknown directory")
+    stem.remove(dir)
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Directory not found") then
+        saw_error = true
+      end
+    end
+    util.by("Verify error was reported")
+    assert.is_true(saw_error)
+  end)
+
+  -- Renaming to an existing workspace name is rejected.
+  it("prevents renaming to an existing workspace", function()
+    util.by("Create two workspaces and try to rename to existing")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    util.by("Save workspace one")
+    stem.save("one")
+    stem.new("")
+    util.by("Save workspace two")
+    stem.save("two")
+    util.by("Attempt to rename one to two")
+    stem.rename("one", "two")
+    restore()
+    local saw_error = false
+    for _, item in ipairs(messages) do
+      if item.msg:match("Workspace already exists") then
+        saw_error = true
+      end
+    end
+    util.by("Verify rename error was reported")
+    assert.is_true(saw_error)
+  end)
+end)

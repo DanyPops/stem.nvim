@@ -2,6 +2,7 @@ local workspace_store = require "stem.workspace_store"
 
 local M = {}
 
+-- Session save/load helpers for named workspaces.
 local function session_dir()
   local dir = vim.fn.stdpath "data" .. "/stem/sessions"
   vim.fn.mkdir(dir, "p")
@@ -15,6 +16,7 @@ local function session_file(name)
   return session_dir() .. "/" .. name .. ".vim"
 end
 
+-- Load session file if enabled and present.
 function M.load(name, enabled, auto_load)
   if not enabled or not auto_load then
     return
@@ -26,6 +28,7 @@ function M.load(name, enabled, auto_load)
   vim.cmd("silent! source " .. vim.fn.fnameescape(path))
 end
 
+-- Save a session file if enabled.
 function M.save(name, enabled)
   if not enabled then
     return
