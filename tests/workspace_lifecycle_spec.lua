@@ -172,4 +172,61 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(all:match(vim.pesc(dir1)) ~= nil)
     assert.is_true(all:match(vim.pesc(dir2)) ~= nil)
   end)
+
+  -- Opening a workspace prunes missing roots from the store.
+  it("prunes missing roots when opening a workspace", function()
+    util.by("Create and save a workspace with two roots")
+    stem.new("")
+    local dir1 = util.new_temp_dir()
+    local dir2 = util.new_temp_dir()
+    stem.add(dir1)
+    stem.add(dir2)
+    stem.save("missing-root")
+    stem.close()
+
+    util.by("Delete one root before opening")
+    local store = require "stem.workspace_store"
+    local saved = store.read("missing-root")
+    assert.is_true(saved and type(saved.roots) == "table")
+    local found = false
+    for _, root in ipairs(saved.roots) do
+      if root == dir2 then
+        found = true
+        break
+      end
+    end
+    assert.is_true(found)
+    local deleted = vim.fn.delete(dir2, "rf")
+    assert.is_true(deleted == 0)
+    assert.is_true(vim.fn.isdirectory(dir2) == 0)
+
+    util.by("Open workspace and capture missing-root notification")
+    local messages, restore = util.capture_notify()
+    stem.open("missing-root")
+    restore()
+
+    util.by("Verify missing root was reported")
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    local all = table.concat(joined, "\n")
+    assert.is_true(all:match(vim.pesc(dir2)) ~= nil)
+
+    util.by("Verify store was updated to remove missing root")
+    local entry = store.read("missing-root")
+    assert.is_true(entry and type(entry.roots) == "table")
+    local has_dir1 = false
+    local has_dir2 = false
+    for _, root in ipairs(entry.roots) do
+      if root == dir1 then
+        has_dir1 = true
+      end
+      if root == dir2 then
+        has_dir2 = true
+      end
+    end
+    assert.is_true(has_dir1)
+    assert.is_true(has_dir2 == false)
+  end)
 end)

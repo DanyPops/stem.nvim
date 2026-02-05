@@ -275,7 +275,23 @@ function M.new(config, deps)
       ui.notify("Workspace not found: " .. name, vim.log.levels.ERROR)
       return
     end
-    set_workspace(name, entry.roots, false)
+    local missing = {}
+    local roots = {}
+    for _, root in ipairs(entry.roots) do
+      if vim.fn.isdirectory(root) == 1 then
+        table.insert(roots, root)
+      else
+        table.insert(missing, root)
+      end
+    end
+    if #missing > 0 then
+      ui.notify(
+        "Workspace has missing roots:\n- " .. table.concat(missing, "\n- "),
+        vim.log.levels.ERROR
+      )
+      store.write(name, roots)
+    end
+    set_workspace(name, roots, false)
     if workspace_lock then
       workspace_lock.ensure_instance_lock(config.workspace, name, state.instance_id)
     end
