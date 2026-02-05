@@ -17,6 +17,7 @@ local config = {
     auto_load = true,
   },
   oil = {
+    enabled = true,
     follow = true,
   },
 }

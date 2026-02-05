@@ -90,10 +90,22 @@ require("stem").setup({
     auto_load = true,
   },
   oil = {
+    enabled = true,
     follow = true,
   },
 })
 ```
+
+## Oil integration
+
+Stem can integrate with [oil.nvim](https://github.com/stevearc/oil.nvim) to
+follow workspace roots in Oil buffers. Thanks to the oil.nvim project for the
+great plugin and inspiration.
+
+If `oil.enabled` is `true` (default) and `oil.follow` is enabled, Stem will use
+Oil's current directory when it detects an Oil buffer and will open the workspace
+root inside Oil after workspace changes. If Oil isn't installed, Stem continues
+without any dependency on it.
 
 ## Development
 

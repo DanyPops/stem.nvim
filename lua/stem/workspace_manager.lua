@@ -1,4 +1,5 @@
 local constants = require "stem.constants"
+local oil = require "stem.integrations.oil"
 
 local M = {}
 
@@ -16,16 +17,9 @@ end
 local function context_dir()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
-  if vim.bo[buf].filetype == constants.oil.filetype
-    or (bufname and bufname:match(constants.oil.uri_pattern))
-  then
-    local ok, oil = pcall(require, "oil")
-    if ok and oil.get_current_dir then
-      local oil_dir = oil.get_current_dir()
-      if oil_dir and oil_dir ~= "" then
-        return normalize_dir(oil_dir)
-      end
-    end
+  local oil_dir = oil.current_dir(buf)
+  if oil_dir and oil_dir ~= "" then
+    return normalize_dir(oil_dir)
   end
 
   local name = vim.api.nvim_buf_get_name(buf)

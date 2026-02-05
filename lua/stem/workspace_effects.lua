@@ -1,4 +1,5 @@
 local constants = require "stem.constants"
+local oil = require "stem.integrations.oil"
 
 local M = {}
 
@@ -15,16 +16,7 @@ end
 
 -- Reopen root in oil when following workspace.
 function M.open_root_in_oil(config, temp_root)
-  if not config.oil.follow then
-    return
-  end
-  if vim.bo.filetype ~= constants.oil.filetype then
-    return
-  end
-  local ok, oil = pcall(require, "oil")
-  if ok then
-    pcall(oil.open, temp_root)
-  end
+  oil.open_root(config, temp_root)
 end
 
 return M
