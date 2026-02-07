@@ -2,7 +2,49 @@ local constants = require "stem.constants"
 local gc_helpers = require "stem.gc.helpers"
 
 local M = {}
+
+local function color(code, text)
+  return string.format("\27[%sm%s\27[0m", code, text)
+end
+
+local colors = {
+  by = 33,
+  note = 93,
+}
+
+local function time_tag()
+  local sec, usec = vim.loop.gettimeofday()
+  local ms = math.floor(usec / 1000)
+  return os.date("%H:%M:%S", sec) .. "." .. string.format("%03d", ms)
+end
+
+local function time_prefix()
+  return "[" .. time_tag() .. "] "
+end
+
+local function print_labeled(indent, label, color_code, msg)
+  local raw_label = indent .. label .. " "
+  local prefix = time_prefix() .. indent .. color(color_code, label) .. " "
+  local cont_prefix = time_prefix() .. string.rep(" ", #raw_label)
+  local lines = vim.split(tostring(msg), "\n", { plain = true })
+  if #lines == 0 then
+    print(prefix)
+    return
+  end
+  for i, line in ipairs(lines) do
+    if i == 1 then
+      print(prefix .. line)
+    else
+      print(cont_prefix .. line)
+    end
+  end
+end
 local by_messages = {}
+local notify_listeners = {}
+local notify_installed = false
+local notify_passthrough = nil
+local current_test = nil
+local current_test_messages = {}
 
 -- Test helpers for temp files, reset, and step logging.
 
@@ -40,12 +82,40 @@ end
 
 M.capture_notify = function()
   local messages = {}
-  local orig = vim.notify
-  vim.notify = function(msg, level, opts)
+  local remove = M.add_notify_listener(function(msg, level, opts)
     table.insert(messages, { msg = msg, level = level, opts = opts })
+  end)
+  return messages, remove
+end
+
+M.add_notify_listener = function(fn)
+  table.insert(notify_listeners, fn)
+  return function()
+    for i, cb in ipairs(notify_listeners) do
+      if cb == fn then
+        table.remove(notify_listeners, i)
+        break
+      end
+    end
   end
-  return messages, function()
-    vim.notify = orig
+end
+
+M.install_notify_capture = function(disable_passthrough)
+  if notify_installed then
+    return
+  end
+  notify_installed = true
+  notify_passthrough = vim.notify
+  vim.notify = function(msg, level, opts)
+    for _, cb in ipairs(notify_listeners) do
+      pcall(cb, msg, level, opts)
+    end
+  if current_test then
+    print_labeled("  ", "[Note]", colors.note, msg)
+    end
+    if not disable_passthrough and notify_passthrough then
+      return notify_passthrough(msg, level, opts)
+    end
   end
 end
 
@@ -149,14 +219,38 @@ M.assert_temp_root_clean = function()
 end
 
 M.by = function(msg)
+  if current_test then
+    print_labeled("  ", "[By]", colors.by, msg)
+    return
+  end
   table.insert(by_messages, msg)
 end
 
 M.flush_by = function()
   for _, msg in ipairs(by_messages) do
-    vim.notify(("By: %s"):format(msg))
+    print_labeled("  ", "[By]", colors.by, msg)
   end
   by_messages = {}
+end
+
+M.set_current_test = function(name)
+  current_test = name
+  current_test_messages[current_test] = current_test_messages[current_test] or {}
+end
+
+M.flush_current_test = function()
+  if not current_test then
+    return
+  end
+  local messages = current_test_messages[current_test] or {}
+  for _, msg in ipairs(messages) do
+    print_labeled("  ", "[Note]", colors.note, msg)
+  end
+  current_test_messages[current_test] = {}
+end
+
+M.clear_current_test = function()
+  current_test = nil
 end
 
 return M

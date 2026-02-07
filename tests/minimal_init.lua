@@ -19,6 +19,8 @@ vim.env.STEM_TMP_UNTITLED_ROOT = "/tmp/stem.nvim.test/temp"
 local root = vim.fn.fnamemodify(vim.fn.expand("<sfile>:p"), ":h:h")
 vim.opt.rtp:prepend(root)
 vim.g.stem_test_root = root
+local lua_root = root .. "/lua"
+package.path = lua_root .. "/?.lua;" .. lua_root .. "/?/init.lua;" .. package.path
 
 local plenary_candidates = {
   root .. "/.deps/plenary.nvim",
@@ -27,7 +29,7 @@ local plenary_candidates = {
 }
 for _, path in ipairs(plenary_candidates) do
   if path and path ~= "" and vim.fn.isdirectory(path) == 1 then
-    vim.opt.rtp:prepend(path)
+    vim.opt.rtp:append(path)
     break
   end
 end
@@ -38,6 +40,7 @@ vim.opt.swapfile = false
 vim.opt.shadafile = "NONE"
 
 local test_util = require "tests.test_util"
+test_util.install_notify_capture(true)
 test_util.cleanup_test_mounts()
 test_util.reset_editor()
 vim.api.nvim_create_autocmd("VimLeavePre", {

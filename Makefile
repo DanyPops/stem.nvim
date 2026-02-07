@@ -7,9 +7,9 @@ TEST_OIL_INIT ?= tests/minimal_init_oil.lua
 TEST_DIR ?= tests
 TEST_BEHAVIOR_DIR ?= tests/behavior
 TEST_UNIT_DIR ?= tests/unit
-TEST_OPTS ?= { minimal_init = '$(TEST_INIT)', sequential = true, keep_going = true }
-TEST_DEFAULT_OPTS ?= { minimal_init = '$(TEST_DEFAULT_INIT)', sequential = true, keep_going = true }
-TEST_OIL_OPTS ?= { minimal_init = '$(TEST_OIL_INIT)', sequential = true, keep_going = true }
+TEST_OPTS ?= { minimal_init = '$(TEST_INIT)', sequential = true, keep_going = true, verbose = true }
+TEST_DEFAULT_OPTS ?= { minimal_init = '$(TEST_DEFAULT_INIT)', sequential = true, keep_going = true, verbose = true }
+TEST_OIL_OPTS ?= { minimal_init = '$(TEST_OIL_INIT)', sequential = true, keep_going = true, verbose = true }
 TEST_INTEGRATIONS_DIR ?= tests/behavior/integrations
 # sequential keeps output ordered across spec files
 
