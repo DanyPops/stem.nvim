@@ -1,0 +1,2193 @@
+
+sourcing "nvim_exec2()"
+line 1:     amenu     PopUp.Open\ in\ web\ browser  gx
+line 2:     anoremenu PopUp.Inspect                 <Cmd>Inspect<CR>
+line 3:     anoremenu PopUp.Go\ to\ definition      <Cmd>lua vim.lsp.buf.definition()<CR>
+line 4:     anoremenu PopUp.Show\ Diagnostics       <Cmd>lua vim.diagnostic.open_float()<CR>
+line 5:     anoremenu PopUp.Show\ All\ Diagnostics  <Cmd>lua vim.diagnostic.setqflist()<CR>
+line 6:     anoremenu PopUp.Configure\ Diagnostics  <Cmd>help vim.diagnostic.config()<CR>
+line 7:     anoremenu PopUp.-1-                     <Nop>
+line 8:     vnoremenu PopUp.Cut                     "+x
+line 9:     vnoremenu PopUp.Copy                    "+y
+line 10:     anoremenu PopUp.Paste                   "+gP
+line 11:     vnoremenu PopUp.Paste                   "+P
+line 12:     vnoremenu PopUp.Delete                  "_x
+line 13:     nnoremenu PopUp.Select\ All             ggVG
+line 14:     vnoremenu PopUp.Select\ All             gg0oG$
+line 15:     inoremenu PopUp.Select\ All             <C-Home><C-O>VG
+line 16:     anoremenu PopUp.-2-                     <Nop>
+line 17:     anoremenu PopUp.How-to\ disable\ mouse  <Cmd>help disable-mouse<CR>
+line 18:   
+finished sourcing nvim_exec2()
+Searching for "ftplugin.vim" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/ftplugin.vim"
+Searching for "/usr/share/nvim/runtime/ftplugin.vim"
+sourcing "/usr/share/nvim/runtime/ftplugin.vim"
+line 1: " Vim support file to switch on loading plugins for file types
+line 2: "
+line 3: " Maintainer:^IThe Vim Project <https://github.com/vim/vim>
+line 4: " Last change:^I2023 Aug 10
+line 5: " Former Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 6: 
+line 7: if exists("did_load_ftplugin")
+line 8:   finish
+line 9: endif
+line 10: let did_load_ftplugin = 1
+line 11: 
+line 12: augroup filetypeplugin
+line 13:   au FileType * call s:LoadFTPlugin()
+line 14: 
+line 15:   func! s:LoadFTPlugin()
+line 39: augroup END
+finished sourcing /usr/share/nvim/runtime/ftplugin.vim
+Searching for "/usr/lib64/nvim/ftplugin.vim"
+Searching for "indent.vim" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/indent.vim"
+Searching for "/usr/share/nvim/runtime/indent.vim"
+sourcing "/usr/share/nvim/runtime/indent.vim"
+line 1: " Vim support file to switch on loading indent files for file types
+line 2: "
+line 3: " Maintainer:^IThe Vim Project <https://github.com/vim/vim>
+line 4: " Last Change:^I2023 Aug 10
+line 5: " Former Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 6: 
+line 7: if exists("did_indent_on")
+line 8:   finish
+line 9: endif
+line 10: let did_indent_on = 1
+line 11: 
+line 12: augroup filetypeindent
+line 13:   au FileType * call s:LoadIndent()
+line 14:   func! s:LoadIndent()
+line 33: augroup END
+finished sourcing /usr/share/nvim/runtime/indent.vim
+Searching for "/usr/lib64/nvim/indent.vim"
+could not source "/home/dpopsuev/.config/kdedefaults/nvim/sysinit.vim"
+could not source "/etc/xdg/nvim/sysinit.vim"
+could not source "/usr/share/kde-settings/kde-profile/default/xdg/nvim/sysinit.vim"
+sourcing "$VIM/sysinit.vim"
+line 1: let g:python_host_prog = '/usr/bin/python2'
+line 2: let g:python3_host_prog = '/usr/bin/python3'
+line 3: 
+line 4: augroup Fedora
+line 5:   autocmd!
+line 6:   " RPM spec file template
+line 7:   autocmd BufNewFile *.spec silent! 0read /usr/share/nvim/template.spec
+line 8: augroup END
+line 9: 
+line 10: " vim: et ts=2 sw=2
+finished sourcing $VIM/sysinit.vim
+sourcing "/home/dpopsuev/.config/nvim/init.lua"
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/filetype.lua
+line 1: sourcing "/usr/share/nvim/runtime/filetype.lua"
+line 0: sourcing "nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0"
+line 1:   augroup filetypedetect
+line 2:   runtime! ftdetect/*.{vim,lua}
+Searching for "ftdetect/*.{vim,lua}" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/ftdetect/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/ftdetect/*.{vim,lua}"
+Searching for "/usr/share/nvim/runtime/ftdetect/*.{vim,lua}"
+Searching for "/usr/lib64/nvim/ftdetect/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/ftdetect/*.{vim,lua}"
+not found in runtime path: "ftdetect/*.{vim,lua}"
+line 3:   augroup END
+finished sourcing nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0
+continuing in /usr/share/nvim/runtime/filetype.lua
+finished sourcing /usr/share/nvim/runtime/filetype.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/plugin/snacks.lua
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/plugin/snacks.lua"
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/plugin/snacks.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/plugin/zen-mode.vim
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/plugin/zen-mode.vim"
+line 1: if !has('nvim-0.5')
+line 2:   echohl WarningMsg
+line 3:   echom "ZenMode needs Neovim >= 0.5"
+line 4:   echohl None
+line 5:   finish
+line 6: endif
+line 7: command! -bar ZenMode lua require("zen-mode").toggle()
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/plugin/zen-mode.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: highlight default ZenBg guibg=#131419 guifg=#131419
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: autocmd ColorScheme * lua require("zen-mode.config").colors()
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/plugin/nvim-treesitter.lua
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/plugin/nvim-treesitter.lua"
+Executing: command! -bar -nargs=* -complete=custom,nvim_treesitter#installed_parsers TSUpdate lua require'nvim-treesitter.install'.commands.TSUpdate['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -bang -complete=custom,nvim_treesitter#installable_parsers TSInstallSync lua require'nvim-treesitter.install'.commands.TSInstallSync['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#installed_parsers TSUninstall lua require'nvim-treesitter.install'.commands.TSUninstall['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -bang -complete=custom,nvim_treesitter#installable_parsers TSInstallFromGrammar lua require'nvim-treesitter.install'.commands.TSInstallFromGrammar['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=* -complete=custom,nvim_treesitter#installed_parsers TSUpdateSync lua require'nvim-treesitter.install'.commands.TSUpdateSync['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -bang -complete=custom,nvim_treesitter#installable_parsers TSInstall lua require'nvim-treesitter.install'.commands.TSInstall['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=? -complete=custom,nvim_treesitter#available_modules TSModuleInfo lua require'nvim-treesitter.info'.commands.TSModuleInfo['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=0 TSInstallInfo lua require'nvim-treesitter.info'.commands.TSInstallInfo['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#available_query_groups TSEditQueryUserAfter lua require'nvim-treesitter.configs'.commands.TSEditQueryUserAfter['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#available_query_groups TSEditQuery lua require'nvim-treesitter.configs'.commands.TSEditQuery['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=0 TSConfigInfo lua require'nvim-treesitter.configs'.commands.TSConfigInfo['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#available_modules TSToggle lua require'nvim-treesitter.configs'.commands.TSToggle['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#available_modules TSDisable lua require'nvim-treesitter.configs'.commands.TSDisable['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=+ -complete=custom,nvim_treesitter#available_modules TSEnable lua require'nvim-treesitter.configs'.commands.TSEnable['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=1 -complete=custom,nvim_treesitter#available_modules TSBufToggle lua require'nvim-treesitter.configs'.commands.TSBufToggle['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=1 -complete=custom,nvim_treesitter#available_modules TSBufDisable lua require'nvim-treesitter.configs'.commands.TSBufDisable['run<bang>'](<f-args>)
+Executing: command! -bar -nargs=1 -complete=custom,nvim_treesitter#available_modules TSBufEnable lua require'nvim-treesitter.configs'.commands.TSBufEnable['run<bang>'](<f-args>)
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/plugin/nvim-treesitter.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+Searching for "parser/lua.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/lua.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/lua.so"
+Searching for "/usr/share/nvim/runtime/parser/lua.so"
+Searching for "/usr/lib64/nvim/parser/lua.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/lua.so"
+Searching for "parser/vim.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/vim.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/vim.so"
+Searching for "/usr/share/nvim/runtime/parser/vim.so"
+Searching for "/usr/lib64/nvim/parser/vim.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/vim.so"
+Searching for "parser/vimdoc.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/vimdoc.so"
+Searching for "/usr/share/nvim/runtime/parser/vimdoc.so"
+Searching for "/usr/lib64/nvim/parser/vimdoc.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/vimdoc.so"
+Searching for "parser/tsx.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/tsx.so"
+Searching for "/usr/share/nvim/runtime/parser/tsx.so"
+Searching for "/usr/lib64/nvim/parser/tsx.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/tsx.so"
+Searching for "parser/html.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/html.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/html.so"
+Searching for "/usr/share/nvim/runtime/parser/html.so"
+Searching for "/usr/lib64/nvim/parser/html.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/html.so"
+Searching for "parser/css.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/css.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/css.so"
+Searching for "/usr/share/nvim/runtime/parser/css.so"
+Searching for "/usr/lib64/nvim/parser/css.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/css.so"
+Searching for "parser/typescript.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/typescript.so"
+Searching for "/usr/share/nvim/runtime/parser/typescript.so"
+Searching for "/usr/lib64/nvim/parser/typescript.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/typescript.so"
+Searching for "parser/javascript.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/javascript.so"
+Searching for "/usr/share/nvim/runtime/parser/javascript.so"
+Searching for "/usr/lib64/nvim/parser/javascript.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/javascript.so"
+Searching for "parser/go.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/go.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/go.so"
+Searching for "/usr/share/nvim/runtime/parser/go.so"
+Searching for "/usr/lib64/nvim/parser/go.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/go.so"
+Searching for "parser/c.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/c.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/c.so"
+Searching for "/usr/share/nvim/runtime/parser/c.so"
+Searching for "/usr/lib64/nvim/parser/c.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/c.so"
+Searching for "parser/zig.so" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/zig.so"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/zig.so"
+Searching for "/usr/share/nvim/runtime/parser/zig.so"
+Searching for "/usr/lib64/nvim/parser/zig.so"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/zig.so"
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/plugin/nvim-web-devicons.vim
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/plugin/nvim-web-devicons.vim"
+line 1: if exists('g:loaded_devicons') | finish | endif
+line 1:  finish | endif
+line 1:  endif
+line 2: 
+line 3: let s:save_cpo = &cpo
+line 4: set cpo&vim
+line 5: 
+line 6: " TODO change so its easier to get
+line 7: let g:nvim_web_devicons = 1
+line 8: 
+line 9: let &cpo = s:save_cpo
+line 10: unlet s:save_cpo
+line 11: 
+line 12: let g:loaded_devicons = 1
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/plugin/nvim-web-devicons.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/plugin/lspconfig.lua
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/plugin/lspconfig.lua"
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/plugin/lspconfig.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+Executing command: "'/usr/bin/mount' '-t' 'fuse.bindfs'"
+
+
+Executing command: "'/usr/bin/fusermount' '-u' '/tmp/stem.nvim/temp/untitled/stem.nvim'"
+
+
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/editorconfig.lua
+line 1: sourcing "/usr/share/nvim/runtime/plugin/editorconfig.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/editorconfig.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/man.lua
+line 1: sourcing "/usr/share/nvim/runtime/plugin/man.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/man.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/matchparen.vim
+line 1: sourcing "/usr/share/nvim/runtime/plugin/matchparen.vim"
+line 1: " Vim plugin for showing matching parens
+line 2: " Maintainer:^IThe Vim Project <https://github.com/vim/vim>
+line 3: " Last Change:^I2025 Mar 14
+line 4: " Former Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 5: 
+line 6: " Exit quickly when:
+line 7: " - this plugin was already loaded (or disabled)
+line 8: " - when 'compatible' is set
+line 9: " - Vim has no support for :defer
+line 10: if exists("g:loaded_matchparen") || &cp || exists(":defer") != 2
+line 12:   finish
+line 13: endif
+line 14: let g:loaded_matchparen = 1
+line 15: 
+line 16: if !exists("g:matchparen_timeout")
+line 17:   let g:matchparen_timeout = 300
+line 18: endif
+line 19: if !exists("g:matchparen_insert_timeout")
+line 20:   let g:matchparen_insert_timeout = 60
+line 21: endif
+line 22: if !exists("g:matchparen_disable_cursor_hl")
+line 23:   let g:matchparen_disable_cursor_hl = 0
+line 24: endif
+line 25: 
+line 26: augroup matchparen
+line 27:   " Replace all matchparen autocommands
+line 28:   autocmd! CursorMoved,CursorMovedI,WinEnter,WinScrolled * call s:Highlight_Matching_Pair()
+line 29:   autocmd! BufWinEnter * autocmd SafeState * ++once call s:Highlight_Matching_Pair()
+line 30:   autocmd! WinLeave,BufLeave * call s:Remove_Matches()
+line 31:   autocmd! TextChanged,TextChangedI * call s:Highlight_Matching_Pair()
+line 32:   autocmd! TextChangedP * call s:Remove_Matches()
+line 33: augroup END
+line 34: 
+line 35: " Skip the rest if it was already done.
+line 36: if exists("*s:Highlight_Matching_Pair")
+line 37:   finish
+line 38: endif
+line 39: 
+line 40: let s:cpo_save = &cpo
+line 41: set cpo-=C
+line 42: 
+line 43: " The function that is invoked (very often) to define a ":match" highlighting
+line 44: " for any matching paren.
+line 45: func s:Highlight_Matching_Pair()
+line 202: 
+line 203: func s:Remove_Matches()
+line 211: 
+line 212: " Define commands that will disable and enable the plugin.
+line 213: command DoMatchParen call s:DoMatchParen()
+line 214: command NoMatchParen call s:NoMatchParen()
+line 215: 
+line 216: func s:NoMatchParen()
+line 223: 
+line 224: func s:DoMatchParen()
+line 230: 
+line 231: let &cpo = s:cpo_save
+line 232: unlet s:cpo_save
+finished sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+line 1: sourcing "/usr/share/nvim/runtime/plugin/netrwPlugin.vim"
+line 1: " Load the netrw package.
+line 2: 
+line 3: if &cp || exists("g:loaded_netrw") || exists("g:loaded_netrwPlugin")
+line 4:   finish
+finished sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/osc52.lua
+line 1: sourcing "/usr/share/nvim/runtime/plugin/osc52.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/osc52.lua
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/shada.vim
+line 1: sourcing "/usr/share/nvim/runtime/plugin/shada.vim"
+line 1: if exists('g:loaded_shada_plugin')
+line 2:   finish
+line 3: endif
+line 4: let g:loaded_shada_plugin = 1
+line 5: 
+line 6: augroup ShaDaCommands
+line 7:   autocmd!
+line 8:   autocmd BufReadCmd *.shada,*.shada.tmp.[a-z] :if !empty(v:cmdarg)|throw '++opt not supported'|endif |call setline('.', shada#get_strings(readfile(expand('<afile>'),'b'))) |setlocal filetype=shada
+line 12:   autocmd FileReadCmd *.shada,*.shada.tmp.[a-z] :if !empty(v:cmdarg)|throw '++opt not supported'|endif |call append("'[", shada#get_strings(readfile(expand('<afile>'), 'b')))
+line 15:   autocmd BufWriteCmd *.shada,*.shada.tmp.[a-z] :if !empty(v:cmdarg)|throw '++opt not supported'|endif |if writefile(shada#get_binstrings(getline(1, '$')),expand('<afile>'), 'b') == 0 |  let &l:modified = (expand('<afile>') is# bufname(+expand('<abuf>'))? 0: stridx(&cpoptions, '+') != -1) |endif
+line 23:   autocmd FileWriteCmd *.shada,*.shada.tmp.[a-z] :if !empty(v:cmdarg)|throw '++opt not supported'|endif |call writefile(shada#get_binstrings(getline(min([line("'["), line("']")]),max([line("'["), line("']")]))),expand('<afile>'),'b')
+line 30:   autocmd FileAppendCmd *.shada,*.shada.tmp.[a-z] :if !empty(v:cmdarg)|throw '++opt not supported'|endif |call writefile(shada#get_binstrings(getline(min([line("'["), line("']")]),max([line("'["), line("']")]))),expand('<afile>'),'ab')
+line 37:   autocmd SourceCmd *.shada,*.shada.tmp.[a-z] :execute 'rshada' fnameescape(expand('<afile>'))
+line 39: augroup END
+finished sourcing /usr/share/nvim/runtime/plugin/shada.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0"
+line 1: source /usr/share/nvim/runtime/plugin/spellfile.vim
+line 1: sourcing "/usr/share/nvim/runtime/plugin/spellfile.vim"
+line 1: " Vim plugin for downloading spell files
+line 2: 
+line 3: if exists("loaded_spellfile_plugin") || &cp || exists("#SpellFileMissing")
+line 4:   finish
+line 5: endif
+line 6: let loaded_spellfile_plugin = 1
+line 7: 
+line 8: autocmd SpellFileMissing * call spellfile#LoadFile(expand('<amatch>'))
+finished sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+continuing in nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+finished sourcing nvim_exec2() called at /home/dpopsuev/.config/nvim/init.lua:0
+continuing in /home/dpopsuev/.config/nvim/init.lua
+Executing User Autocommands for "LazyDone"
+autocommand <Lua 92: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/util.lua:183>
+
+Executing: 
+Executing ColorSchemePre Autocommands for "*"
+autocommand <Lua 93: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/loader.lua:31>
+
+Executing: 
+Searching for "colors/monokai-pro-ristretto.*" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/Projects/stem.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/colors/monokai-pro-ristretto.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/colors/monokai-pro-ristretto.*"
+line 0: sourcing "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/colors/monokai-pro-ristretto.lua"
+Executing: hi! link LazyDir LazyUrl
+Executing: hi! link MasonHighlightBlockBold LazyH1
+Executing: hi! link MasonHeader LazyH1
+Executing: hi! link MasonNormal LazyNormal
+Executing: hi! link MasonHeading LazyH2
+Executing: hi! link MasonMutedBlock LazyButton
+Executing: hi! link MasonLink LazyUrl
+Executing: hi! link VisualNOS Visual
+Executing: hi! link MsgSeparator ModeMsg
+Executing: hi! link ModeMsg Normal
+Executing: hi! link MsgArea ModeMsg
+Executing: hi! link @lsp.typemod.variable.static @constant
+Executing: hi! link @lsp.typemod.variable.injected @variable
+Executing: hi! link @lsp.typemod.variable.defaultLibrary @variable.builtin
+Executing: hi! link @lsp.typemod.variable.callable @function
+Executing: hi! link @lsp.typemod.struct.defaultLibrary @type.builtin
+Executing: hi! link @lsp.typemod.string.injected @string
+Executing: hi! link @lsp.typemod.operator.injected @operator
+Executing: hi! link @lsp.typemod.method.defaultLibrary @function.builtin
+Executing: hi! link @lsp.typemod.macro.defaultLibrary @function.builtin
+Executing: hi! link @lsp.typemod.keyword.injected @keyword
+Executing: hi! link @lsp.typemod.function.defaultLibrary @function.builtin
+Executing: hi! link @lsp.typemod.enumMember.defaultLibrary @constant.builtin
+Executing: hi! link @lsp.typemod.enum.defaultLibrary @type.builtin
+Executing: hi! link @lsp.typemod.class.defaultLibrary @type.builtin
+Executing: hi! link @lsp.type.typeAlias @type.definition
+Executing: hi! link @lsp.type.selfTypeKeyword @variable.builtin
+Executing: hi! link @lsp.type.selfKeyword @variable.builtin
+Executing: hi! link @lsp.type.property @property
+Executing: hi! link @lsp.type.operator @operator
+Executing: hi! link @lsp.type.number @number
+Executing: hi! link @lsp.type.namespace @module
+Executing: hi! link @lsp.type.lifetime @keyword.storage
+Executing: hi! link @lsp.type.enumMember @constant
+Executing: hi! link @lsp.type.enum @type
+Executing: hi! link @lsp.type.deriveHelper @attribute
+Executing: hi! link @lsp.type.decorator @attribute
+Executing: hi! link @lsp.type.comment @comment
+Executing: hi! link @lsp.type.builtinType @type.builtin
+Executing: hi! link @lsp.type.boolean @boolean
+Executing: hi! link @lsp.type.string @string
+Executing: hi! link @lsp.type.namespace.python @variable
+Executing: hi! link @lsp.type.keyword @keyword
+Executing: hi! link @lsp.type.generic @variable
+Executing: hi! link @lsp.type.escapeSequence @string.escape
+Executing: hi! link @lsp.typemod.keyword.async @keyword.coroutine
+Executing: hi! link @lsp.type.formatSpecifier @markup.list
+Executing ColorScheme Autocommands for "*"
+autocommand lua require("zen-mode.config").colors()
+
+Executing: lua require("zen-mode.config").colors()
+line 0: sourcing "nvim_exec2() called at ColorScheme Autocommands for "*":0"
+line 1: highlight default ZenBg guibg=#292323 guifg=#292323
+finished sourcing nvim_exec2() called at ColorScheme Autocommands for "*":0
+continuing in ColorScheme Autocommands for "*"
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 154: ~/.local/share/nvim/lazy/mini.statusline/lua/mini/statusline.lua:528>
+
+Executing: 
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 125: ~/.local/share/nvim/lazy/nvim-web-devicons/lua/nvim-web-devicons.lua:160>
+
+Executing: 
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 140: ~/.local/share/nvim/lazy/oil.nvim/lua/oil/init.lua:969>
+
+Executing: 
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/colors/monokai-pro-ristretto.lua
+continuing in /home/dpopsuev/.config/nvim/init.lua
+Executing ColorScheme Autocommands for "*"
+autocommand lua require("zen-mode.config").colors()
+
+Executing: lua require("zen-mode.config").colors()
+line 0: sourcing "nvim_exec2() called at ColorScheme Autocommands for "*":0"
+line 1: highlight default ZenBg guibg=#292323 guifg=#292323
+finished sourcing nvim_exec2() called at ColorScheme Autocommands for "*":0
+continuing in ColorScheme Autocommands for "*"
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 154: ~/.local/share/nvim/lazy/mini.statusline/lua/mini/statusline.lua:528>
+
+Executing: 
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 125: ~/.local/share/nvim/lazy/nvim-web-devicons/lua/nvim-web-devicons.lua:160>
+
+Executing: 
+Executing ColorScheme Autocommands for "*"
+autocommand <Lua 140: ~/.local/share/nvim/lazy/oil.nvim/lua/oil/init.lua:969>
+
+Executing: 
+finished sourcing /home/dpopsuev/.config/nvim/init.lua
+Searching for "filetype.lua filetype.vim" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/filetype.lua"
+Searching for "/home/dpopsuev/.config/nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/filetype.vim"
+Searching for "/home/dpopsuev/Projects/stem.nvim/filetype.lua"
+Searching for "/home/dpopsuev/Projects/stem.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/filetype.vim"
+Searching for "/usr/share/nvim/runtime/filetype.lua"
+sourcing "/usr/share/nvim/runtime/filetype.lua"
+finished sourcing /usr/share/nvim/runtime/filetype.lua
+Searching for "/usr/share/nvim/runtime/filetype.vim"
+Searching for "/usr/lib64/nvim/filetype.lua"
+Searching for "/usr/lib64/nvim/filetype.vim"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/filetype.lua"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/filetype.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/filetype.lua"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/filetype.vim"
+sourcing "/usr/share/nvim/runtime/syntax/syntax.vim"
+line 1: " Vim syntax support file
+line 2: " Maintainer:^IThe Vim Project <https://github.com/vim/vim>
+line 3: " Last Change:^I2023 Aug 10
+line 4: " Former Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 5: 
+line 6: " This file is used for ":syntax on".
+line 7: " It installs the autocommands and starts highlighting for all buffers.
+line 8: 
+line 9: if !has("syntax")
+line 10:   finish
+line 11: endif
+line 12: 
+line 13: " If Syntax highlighting appears to be on already, turn it off first, so that
+line 14: " any leftovers are cleared.
+line 15: if exists("syntax_on") || exists("syntax_manual")
+line 16:   so <sfile>:p:h/nosyntax.vim
+line 17: endif
+line 18: 
+line 19: " Load the Syntax autocommands and set the default methods for highlighting.
+line 20: runtime syntax/synload.vim
+Searching for "syntax/synload.vim" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/Projects/stem.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/syntax/synload.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/syntax/synload.vim"
+Searching for "/usr/share/nvim/runtime/syntax/synload.vim"
+line 20: sourcing "/usr/share/nvim/runtime/syntax/synload.vim"
+line 1: " Vim syntax support file
+line 2: " Maintainer:^IThe Vim Project <https://github.com/vim/vim>
+line 3: " Last Change:^I2023 Aug 10
+line 4: " Former Maintainer:^IBram Moolenaar <Bram@vim.org>
+line 5: 
+line 6: " This file sets up for syntax highlighting.
+line 7: " It is loaded from "syntax.vim" and "manual.vim".
+line 8: " 1. Set the default highlight groups.
+line 9: " 2. Install Syntax autocommands for all the available syntax files.
+line 10: 
+line 11: if !has("syntax")
+line 12:   finish
+line 13: endif
+line 14: 
+line 15: " let others know that syntax has been switched on
+line 16: let syntax_on = 1
+line 17: 
+line 18: " Line continuation is used here, remove 'C' from 'cpoptions'
+line 19: let s:cpo_save = &cpo
+line 20: set cpo&vim
+line 21: 
+line 22: " First remove all old syntax autocommands.
+line 23: au! Syntax
+line 24: 
+line 25: au Syntax *^I^Icall s:SynSet()
+line 26: 
+line 27: fun! s:SynSet()
+line 58: 
+line 59: 
+line 60: " Handle adding doxygen to other languages (C, C++, C#, IDL, java, php, DataScript)
+line 61: au Syntax c,cpp,cs,idl,java,php,datascript if (exists('b:load_doxygen_syntax') && b:load_doxygen_syntax)^I|| (exists('g:load_doxygen_syntax') && g:load_doxygen_syntax)   | runtime! syntax/doxygen.vim | endif
+line 66: 
+line 67: 
+line 68: " Source the user-specified syntax highlighting file
+line 69: if exists("mysyntaxfile")
+line 70:   let s:fname = expand(mysyntaxfile)
+line 71:   if filereadable(s:fname)
+line 72:     execute "source " . fnameescape(s:fname)
+line 73:   endif
+line 74: endif
+line 75: 
+line 76: " Restore 'cpoptions'
+line 77: let &cpo = s:cpo_save
+line 78: unlet s:cpo_save
+finished sourcing /usr/share/nvim/runtime/syntax/synload.vim
+continuing in /usr/share/nvim/runtime/syntax/syntax.vim
+line 21: 
+line 22: " Load the FileType autocommands if not done yet.
+line 23: if exists("did_load_filetypes")
+line 24:   let s:did_ft = 1
+line 25: else
+line 26:   filetype on
+line 27:   let s:did_ft = 0
+line 28: endif
+line 29: 
+line 30: " Set up the connection between FileType and Syntax autocommands.
+line 31: " This makes the syntax automatically set when the file type is detected
+line 32: " unless treesitter highlighting is enabled.
+line 33: " Avoid an error when 'verbose' is set and <amatch> expansion fails.
+line 34: augroup syntaxset
+line 35:   au! FileType *^Iif !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+line 36: augroup END
+line 37: 
+line 38: " Execute the syntax autocommands for the each buffer.
+line 39: " If the filetype wasn't detected yet, do that now.
+line 40: " Always do the syntaxset autocommands, for buffers where the 'filetype'
+line 41: " already was set manually (e.g., help buffers).
+line 42: doautoall syntaxset FileType
+Executing FileType Autocommands for "*"
+autocommand if !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+
+Executing: if !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+Executing:  0verbose exe "set syntax=" . expand("<amatch>") | endif
+Executing:  endif
+line 43: if !s:did_ft
+line 44:   doautoall filetypedetect BufRead
+line 45: endif
+finished sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+Reading ShaDa file "/home/dpopsuev/.local/state/nvim/shada/main.shada" info marks oldfiles
+Executing BufWinEnter Autocommands for "*"
+autocommand <Lua 159: ~/.local/share/nvim/lazy/oil.nvim/lua/oil/init.lua:1340>
+
+Executing: 
+Executing BufWinEnter Autocommands for "*"
+autocommand autocmd SafeState * ++once call s:Highlight_Matching_Pair()
+
+Executing: autocmd SafeState * ++once call s:Highlight_Matching_Pair()
+Executing BufEnter Autocommands for "*"
+autocommand <Lua 131: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/init.lua:190>
+
+Executing: 
+Executing BufEnter Autocommands for "*"
+autocommand <Lua 158: ~/.local/share/nvim/lazy/oil.nvim/lua/oil/init.lua:1307>
+
+Executing: 
+Executing BufEnter Autocommands for "*"
+autocommand <Lua 214: ~/Projects/stem.nvim/lua/stem/init.lua:58>
+
+Executing: 
+autocommand <Lua 238: ~/.local/share/nvim/lazy/monokai-pro.nvim/lua/monokai-pro/theme/triggers/event.lua:36>
+
+Executing: 
+Executing VimEnter Autocommands for "*"
+autocommand <Lua 70: vim/_defaults.lua:0>
+
+Executing: 
+autocommand <Lua 71: vim/_defaults.lua:0>
+
+Executing: 
+Executing VimEnter Autocommands for "*"
+autocommand <Lua 102: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/handler/event.lua:72>
+
+line 0: sourcing "nvim_exec2() called at VimEnter Autocommands for "*":0"
+line 1: source /home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/plugin/colorizer.vim
+line 1: sourcing "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/plugin/colorizer.vim"
+line 1: if exists('g:loaded_colorizer')
+line 2:   finish
+line 3: endif
+line 4: 
+line 5: command! ColorizerAttachToBuffer lua require'colorizer'.attach_to_buffer(0)
+line 6: command! ColorizerDetachFromBuffer lua require'colorizer'.detach_from_buffer(0)
+line 7: command! ColorizerReloadAllBuffers lua require'colorizer'.reload_all_buffers()
+line 8: command! ColorizerToggle lua local c = require'colorizer' if c.is_buffer_attached(0) then c.detach_from_buffer(0) else c.attach_to_buffer(0) end
+line 11: 
+line 12: let g:loaded_colorizer = 1
+finished sourcing /home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/plugin/colorizer.vim
+continuing in nvim_exec2() called at VimEnter Autocommands for "*":0
+finished sourcing nvim_exec2() called at VimEnter Autocommands for "*":0
+continuing in VimEnter Autocommands for "*"
+line 0: sourcing "nvim_exec2() called at VimEnter Autocommands for "*":0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at VimEnter Autocommands for "*":0
+continuing in VimEnter Autocommands for "*"
+line 0: sourcing "nvim_exec2() called at VimEnter Autocommands for "*":0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at VimEnter Autocommands for "*":0
+continuing in VimEnter Autocommands for "*"
+Executing: augroup ColorizerSetup
+Executing: autocmd!
+Executing: autocmd FileType * lua COLORIZER_SETUP_HOOK()
+Executing: augroup END
+Executing: 
+Executing VimEnter Autocommands for "*"
+autocommand <Lua 239: ~/.local/share/nvim/lazy/monokai-pro.nvim/lua/monokai-pro/theme/triggers/event.lua:36>
+
+Executing: 
+autocommand <Lua 240: ~/.local/share/nvim/lazy/monokai-pro.nvim/lua/monokai-pro/theme/triggers/event.lua:36>
+
+Executing: 
+Executing UIEnter Autocommands for "*"
+autocommand <Lua 90: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/config.lua:327>
+
+Executing: 
+Executing UIEnter Autocommands for "*"
+autocommand <Lua 132: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/init.lua:190>
+
+Executing: 
+Executing UIEnter Autocommands for "*"
+autocommand <Lua 229: /usr/share/nvim/runtime/plugin/osc52.lua:8>
+
+Executing: 
+Executing UIEnter Autocommands for "*"
+autocommand <Lua 234: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/util.lua:189>
+
+Executing: 
+Searching for "autoload/provider/clipboard.vim" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/Projects/stem.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/autoload/provider/clipboard.vim"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/autoload/provider/clipboard.vim"
+Searching for "/usr/share/nvim/runtime/autoload/provider/clipboard.vim"
+sourcing "/usr/share/nvim/runtime/autoload/provider/clipboard.vim"
+line 1: " The clipboard provider uses shell commands to communicate with the clipboard.
+line 2: " The provider function will only be registered if a supported command is
+line 3: " available.
+line 4: 
+line 5: if exists('g:loaded_clipboard_provider')
+line 6:   finish
+line 7: endif
+line 8: " Default to 0.  provider#clipboard#Executable() may set 2.
+line 9: " To force a reload:
+line 10: "   :unlet g:loaded_clipboard_provider
+line 11: "   :runtime autoload/provider/clipboard.vim
+line 12: let g:loaded_clipboard_provider = 0
+line 13: 
+line 14: let s:copy = {}
+line 15: let s:paste = {}
+line 16: let s:clipboard = {}
+line 17: 
+line 18: " When caching is enabled, store the jobid of the xclip/xsel process keeping
+line 19: " ownership of the selection, so we know how long the cache is valid.
+line 20: let s:selection = { 'owner': 0, 'data': [], 'stderr_buffered': v:true }
+line 21: 
+line 22: function! s:selection.on_exit(jobid, data, event) abort
+line 35: 
+line 36: let s:selections = { '*': s:selection, '+': copy(s:selection) }
+line 37: 
+line 38: function! s:try_cmd(cmd, ...) abort
+line 51: 
+line 52: " Returns TRUE if `cmd` exits with success, else FALSE.
+line 53: function! s:cmd_ok(cmd) abort
+line 57: 
+line 58: function! s:split_cmd(cmd) abort
+line 61: 
+line 62: function! s:set_osc52() abort
+line 69: 
+line 70: function! s:set_pbcopy() abort
+line 78: 
+line 79: function! s:set_wayland() abort
+line 86: 
+line 87: function! s:set_wayclip() abort
+line 94: 
+line 95: function! s:set_xsel() abort
+line 102: 
+line 103: function! s:set_xclip() abort
+line 110: 
+line 111: function! s:set_lemonade() abort
+line 118: 
+line 119: function! s:set_doitclient() abort
+line 126: 
+line 127: function! s:set_win32yank() abort
+line 139: 
+line 140: function! s:set_putclip() abort
+line 147: 
+line 148: function! s:set_clip() abort
+line 155: 
+line 156: function! s:set_termux() abort
+line 163: 
+line 164: function! s:set_tmux() abort
+line 176: 
+line 177: let s:cache_enabled = 1
+line 178: let s:err = ''
+line 179: 
+line 180: function! provider#clipboard#Error() abort
+line 183: 
+line 184: function! provider#clipboard#Executable() abort
+line 269: 
+line 270: function! s:clipboard.get(reg) abort
+line 285: 
+line 286: function! s:clipboard.set(lines, regtype, reg) abort
+line 343: 
+line 344: function! provider#clipboard#Call(method, args) abort
+line 355: 
+line 356: " eval_has_provider() decides based on this variable.
+line 357: let g:loaded_clipboard_provider = empty(provider#clipboard#Executable()) ? 0 : 2
+calling provider#clipboard#Executable()
+
+line 1:   " Setting g:clipboard to v:false explicitly opts-in to using the "builtin" clipboard providers below
+line 2:   if exists('g:clipboard') && g:clipboard isnot# v:false
+line 3:     if v:t_string ==# type(g:clipboard)
+line 4:       " Handle string form of g:clipboard for all builtin providers
+line 5:       if 'osc52' == g:clipboard
+line 6:         " User opted-in to OSC 52 by manually setting g:clipboard.
+line 7:         return s:set_osc52()
+line 8:       elseif 'pbcopy' == g:clipboard
+line 9:         return s:set_pbcopy()
+line 10:       elseif 'wl-copy' == g:clipboard
+line 11:         return s:set_wayland()
+line 12:       elseif 'wayclip' == g:clipboard
+line 13:         return s:set_wayclip()
+line 14:       elseif 'xsel' == g:clipboard
+line 15:         return s:set_xsel()
+line 16:       elseif 'xclip' == g:clipboard
+line 17:         return s:set_xclip()
+line 18:       elseif 'lemonade' == g:clipboard
+line 19:         return s:set_lemonade()
+line 20:       elseif 'doitclient' == g:clipboard
+line 21:         return s:set_doitclient()
+line 22:       elseif 'win32yank' == g:clipboard
+line 23:         return s:set_win32yank()
+line 24:       elseif 'putclip' == g:clipboard
+line 25:         return s:set_putclip()
+line 26:       elseif 'clip' == g:clipboard
+line 27:         return s:set_clip()
+line 28:       elseif 'termux' == g:clipboard
+line 29:         return s:set_termux()
+line 30:       elseif 'tmux' == g:clipboard
+line 31:         return s:set_tmux()
+line 32:       endif
+line 33:     endif
+line 34: 
+line 35:     if type({}) isnot# type(g:clipboard) || type({}) isnot# type(get(g:clipboard, 'copy', v:null)) || type({}) isnot# type(get(g:clipboard, 'paste', v:null))
+line 38:       let s:err = 'clipboard: invalid g:clipboard'
+line 39:       return ''
+line 40:     endif
+line 41: 
+line 42:     let s:copy = {}
+line 43:     let s:copy['+'] = s:split_cmd(get(g:clipboard.copy, '+', v:null))
+line 44:     let s:copy['*'] = s:split_cmd(get(g:clipboard.copy, '*', v:null))
+line 45: 
+line 46:     let s:paste = {}
+line 47:     let s:paste['+'] = s:split_cmd(get(g:clipboard.paste, '+', v:null))
+line 48:     let s:paste['*'] = s:split_cmd(get(g:clipboard.paste, '*', v:null))
+line 49: 
+line 50:     let s:cache_enabled = get(g:clipboard, 'cache_enabled', 0)
+line 51:     return get(g:clipboard, 'name', 'g:clipboard')
+line 52:   elseif has('mac')
+line 53:     return s:set_pbcopy()
+line 54:   elseif !empty($WAYLAND_DISPLAY) && executable('wl-copy') && executable('wl-paste')
+line 55:     return s:set_wayland()
+calling <SNR>57_set_wayland()
+
+line 1:   let s:copy['+'] = ['wl-copy', '--type', 'text/plain']
+line 2:   let s:paste['+'] = ['wl-paste', '--no-newline']
+line 3:   let s:copy['*'] = ['wl-copy', '--primary', '--type', 'text/plain']
+line 4:   let s:paste['*'] = ['wl-paste', '--no-newline', '--primary']
+line 5:   return 'wl-copy'
+<SNR>57_set_wayland returning 'wl-copy'
+
+continuing in provider#clipboard#Executable
+
+provider#clipboard#Executable returning 'wl-copy'
+
+continuing in /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+
+finished sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+Executing CursorMoved Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in CursorMoved Autocommands for "*"
+
+Executing CursorMoved Autocommands for "<buffer=1>"
+autocommand <Lua 232: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/dashboard.lua:720>
+
+Executing: 
+Executing CursorMoved Autocommands for "*"
+autocommand <Lua 248: vim/_editor.lua:0>
+
+Executing: 
+Executing TextChanged Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in TextChanged Autocommands for "*"
+
+Executing TextChanged Autocommands for "*"
+autocommand <Lua 246: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/scroll.lua:185>
+
+Executing: 
+Executing SafeState Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in SafeState Autocommands for "*"
+
+Executing TermResponse Autocommands for "*"
+autocommand <Lua 69: vim/_defaults.lua:0>
+
+Executing OptionSet Autocommands for "background"
+autocommand <Lua 124: ~/.local/share/nvim/lazy/nvim-web-devicons/lua/nvim-web-devicons.lua:469>
+
+Executing: 
+Executing: 
+Executing TermResponse Autocommands for "*"
+autocommand <Lua 264: /usr/share/nvim/runtime/lua/vim/termcap.lua:36>
+
+Executing: 
+Executing User Autocommands for "VeryLazy"
+autocommand <Lua 91: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/config.lua:338>
+
+Executing: 
+Executing User Autocommands for "VeryLazy"
+autocommand <Lua 105: ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/handler/event.lua:72>
+
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup filetypedetect
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+line 0: sourcing "nvim_exec2() called at User Autocommands for "VeryLazy":0"
+line 1: augroup END
+finished sourcing nvim_exec2() called at User Autocommands for "VeryLazy":0
+continuing in User Autocommands for "VeryLazy"
+Executing: 
+
+
+--- Terminal info --- {{{
+&term: screen-256color
+Description: GNU Screen with 256 colors
+Aliases: screen-256color
+Boolean capabilities:
+  auto_left_margin          bw         = false
+  auto_right_margin         am         = true
+  no_esc_ctlc               xsb        = false
+  ceol_standout_glitch      xhp        = false
+  eat_newline_glitch        xenl       = true
+  erase_overstrike          eo         = false
+  generic_type              gn         = false
+  hard_copy                 hc         = false
+  has_meta_key              km         = true
+  has_status_line           hs         = false
+  insert_null_glitch        in         = false
+  memory_above              da         = false
+  memory_below              db         = false
+  move_insert_mode          mir        = true
+  move_standout_mode        msgr       = true
+  over_strike               os         = false
+  status_line_esc_ok        eslok      = false
+  dest_tabs_magic_smso      xt         = false
+  tilde_glitch              hz         = false
+  transparent_underline     ul         = false
+  xon_xoff                  xon        = false
+  needs_xon_xoff            nxon       = false
+  prtr_silent               mc5i       = false
+  hard_cursor               chts       = false
+  non_rev_rmcup             nrrmc      = false
+  no_pad_char               npc        = false
+  non_dest_scroll_region    ndscr      = false
+  can_change                ccc        = false
+  back_color_erase          bce        = false
+  hue_lightness_saturation  hls        = false
+  col_addr_glitch           xhpa       = false
+  cr_cancels_micro_mode     crxm       = false
+  has_print_wheel           daisy      = false
+  row_addr_glitch           xvpa       = false
+  semi_auto_right_margin    sam        = false
+  cpi_changes_res           cpix       = false
+  lpi_changes_res           lpix       = false
+  backspaces_with_bs        OTbs       = true
+  crt_no_scrolling          OTns       = false
+  no_correctly_working_cr   OTnc       = false
+  gnu_has_meta_key          OTMT       = false
+  linefeed_is_newline       OTNL       = false
+  has_hardware_tabs         OTpt       = true
+  return_does_clr_eol       OTxr       = false
+Numeric capabilities:
+  columns                   cols       = 80
+  init_tabs                 it         = 8
+  lines                     lines      = 24
+  lines_of_memory           lm         = -1
+  magic_cookie_glitch       xmc        = -1
+  padding_baud_rate         pb         = -1
+  virtual_terminal          vt         = -1
+  width_status_line         wsl        = -1
+  num_labels                nlab       = -1
+  label_height              lh         = -1
+  label_width               lw         = -1
+  max_attributes            ma         = -1
+  maximum_windows           wnum       = -1
+  max_colors                colors     = 256
+  max_pairs                 pairs      = 65536
+  no_color_video            ncv        = -1
+  buffer_capacity           bufsz      = -1
+  dot_vert_spacing          spinv      = -1
+  dot_horz_spacing          spinh      = -1
+  max_micro_address         maddr      = -1
+  max_micro_jump            mjump      = -1
+  micro_col_size            mcs        = -1
+  micro_line_size           mls        = -1
+  number_of_pins            npins      = -1
+  output_res_char           orc        = -1
+  output_res_line           orl        = -1
+  output_res_horz_inch      orhi       = -1
+  output_res_vert_inch      orvi       = -1
+  print_rate                cps        = -1
+  wide_char_size            widcs      = -1
+  buttons                   btns       = -1
+  bit_image_entwining       bitwin     = -1
+  bit_image_type            bitype     = -1
+  magic_cookie_glitch_ul    OTug       = -1
+  carriage_return_delay     OTdC       = -1
+  new_line_delay            OTdN       = -1
+  backspace_delay           OTdB       = -1
+  horizontal_tab_delay      OTdT       = -1
+  number_of_function_keys   OTkn       = -1
+String capabilities:
+  back_tab                  cbt        = ^[[Z
+  bell                      bel        = ^G
+  carriage_return           cr         = ^M
+  change_scroll_region      csr        = ^[[%i%p1%d;%p2%dr
+  clear_all_tabs            tbc        = ^[[3g
+  clear_screen              clear      = ^[[H^[[J
+  clr_eol                   el         = ^[[K
+  clr_eos                   ed         = ^[[J
+  column_address            hpa        = ^[[%i%p1%dG
+  cursor_address            cup        = ^[[%i%p1%d;%p2%dH
+  cursor_down               cud1       = ^@
+  cursor_home               home       = ^[[H
+  cursor_invisible          civis      = ^[[?25l
+  cursor_left               cub1       = ^H
+  cursor_normal             cnorm      = ^[[34h^[[?25h
+  cursor_right              cuf1       = ^[[C
+  cursor_up                 cuu1       = ^[M
+  cursor_visible            cvvis      = ^[[34l
+  delete_character          dch1       = ^[[P
+  delete_line               dl1        = ^[[M
+  enter_alt_charset_mode    smacs      = ^N
+  enter_blink_mode          blink      = ^[[5m
+  enter_bold_mode           bold       = ^[[1m
+  enter_ca_mode             smcup      = ^[[?1049h
+  enter_dim_mode            dim        = ^[[2m
+  enter_insert_mode         smir       = ^[[4h
+  enter_reverse_mode        rev        = ^[[7m
+  enter_standout_mode       smso       = ^[[3m
+  enter_underline_mode      smul       = ^[[4m
+  exit_alt_charset_mode     rmacs      = ^O
+  exit_attribute_mode       sgr0       = ^[[m^O
+  exit_ca_mode              rmcup      = ^[[?1049l
+  exit_insert_mode          rmir       = ^[[4l
+  exit_standout_mode        rmso       = ^[[23m
+  exit_underline_mode       rmul       = ^[[24m
+  flash_screen              flash      = ^[g
+  from_status_line          fsl        = ^[\
+  init_2string              is2        = ^[)0
+  insert_line               il1        = ^[[L
+  key_backspace             kbs        = ^?
+  key_dc                    kdch1      = ^[[3~
+  key_down                  kcud1      = ^[OB
+  key_f1                    kf1        = ^[OP
+  key_f10                   kf10       = ^[[21~
+  key_f2                    kf2        = ^[OQ
+  key_f3                    kf3        = ^[OR
+  key_f4                    kf4        = ^[OS
+  key_f5                    kf5        = ^[[15~
+  key_f6                    kf6        = ^[[17~
+  key_f7                    kf7        = ^[[18~
+  key_f8                    kf8        = ^[[19~
+  key_f9                    kf9        = ^[[20~
+  key_home                  khome      = ^[[1~
+  key_ic                    kich1      = ^[[2~
+  key_left                  kcub1      = ^[OD
+  key_npage                 knp        = ^[[6~
+  key_ppage                 kpp        = ^[[5~
+  key_right                 kcuf1      = ^[OC
+  key_up                    kcuu1      = ^[OA
+  keypad_local              rmkx       = ^[[?1l^[>
+  keypad_xmit               smkx       = ^[[?1h^[=
+  newline                   nel        = ^[E
+  parm_dch                  dch        = ^[[%p1%dP
+  parm_delete_line          dl         = ^[[%p1%dM
+  parm_down_cursor          cud        = ^[[%p1%dB
+  parm_ich                  ich        = ^[[%p1%d@
+  parm_index                indn       = ^[[%p1%dS
+  parm_insert_line          il         = ^[[%p1%dL
+  parm_left_cursor          cub        = ^[[%p1%dD
+  parm_right_cursor         cuf        = ^[[%p1%dC
+  parm_rindex               rin        = ^[[%p1%dT
+  parm_up_cursor            cuu        = ^[[%p1%dA
+  reset_2string             rs2        = ^[c^[[?1000l^[[?25h
+  restore_cursor            rc         = ^[8
+  row_address               vpa        = ^[[%i%p1%dd
+  save_cursor               sc         = ^[7
+  scroll_forward            ind        = ^@
+  scroll_reverse            ri         = ^[M
+  set_attributes            sgr        = ^[[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t^N%e^O%;
+  set_tab                   hts        = ^[H
+  tab                       ht         = 	
+  to_status_line            tsl        = ^[_
+  acs_chars                 acsc       = ++,,--..00``aaffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~
+  key_btab                  kcbt       = ^[[Z
+  ena_acs                   enacs      = ^[(B^[)0
+  key_end                   kend       = ^[[4~
+  key_f11                   kf11       = ^[[23~
+  key_f12                   kf12       = ^[[24~
+  clr_bol                   el1        = ^[[1K
+  user6                     u6         = ^[[%i%d;%dR
+  user7                     u7         = ^[[6n
+  user8                     u8         = ^[[?1;2c
+  user9                     u9         = ^[[c
+  orig_pair                 op         = ^[[39;49m
+  key_mouse                 kmous      = ^[[M
+  set_a_foreground          setaf      = ^[[%?%p1%{8}%<%t3%p1%d%e%p1%{16}%<%t9%p1%{8}%-%d%e38;5;%p1%d%;m
+  set_a_background          setab      = ^[[%?%p1%{8}%<%t4%p1%d%e%p1%{16}%<%t10%p1%{8}%-%d%e48;5;%p1%d%;m
+Extended boolean capabilities:
+  AX                        = true
+  G0                        = true
+Extended numeric capabilities:
+  U8                        = 1
+Extended string capabilities:
+  BD                        = ^[[?2004l
+  BE                        = ^[[?2004h
+  E0                        = ^[(B
+  PE                        = ^[[201~
+  PS                        = ^[[200~
+  S0                        = ^[(%p1%c
+  Ss                        = ^[[%p1%d q
+  Se                        = ^[[ q
+  ext.enter_altfont_mode    = ^[[11m
+  setrgbf                   = ^[[38;2;%p1%d;%p2%d;%p3%dm
+  setrgbb                   = ^[[48;2;%p1%d;%p2%d;%p3%dm
+  ext.set_cursor_color      = ^[]12;%p1%s^G
+  ext.reset_cursor_color    = ^[]112^G
+  ext.save_title            = ^[[22;0t
+  ext.restore_title         = ^[[23;0t
+  ext.set_title             = ^[_%p2%s^[\
+  ext.enable_lr_margin      = ^[[?69h
+  ext.disable_lr_margin     = ^[[?69l
+  ext.enable_bpaste         = ^[[?2004h
+  ext.disable_bpaste        = ^[[?2004l
+  ext.enable_focus          = ^[[?1004h
+  ext.disable_focus         = ^[[?1004l
+  ext.enable_mouse          = ^[[?1002h^[[?1006h
+  ext.disable_mouse         = ^[[?1002l^[[?1006l
+  ext.enable_mouse_move     = ^[[?1003h
+  ext.disable_mouse_move    = ^[[?1003l
+}}}
+
+Executing WinResized Autocommands for "*"
+autocommand <Lua 102: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/dashboard.lua:251>
+
+Executing: 
+Executing WinScrolled Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in WinScrolled Autocommands for "*"
+
+Executing WinScrolled Autocommands for "*"
+autocommand <Lua 251: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/scroll.lua:219>
+
+Executing: 
+Executing CursorMoved Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in CursorMoved Autocommands for "*"
+
+Executing CursorMoved Autocommands for "*"
+autocommand <Lua 248: vim/_editor.lua:0>
+
+Executing: 
+Executing CursorMoved Autocommands for "<buffer=1>"
+autocommand <Lua 226: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/dashboard.lua:720>
+
+Executing: 
+Executing TextChanged Autocommands for "*"
+autocommand call s:Highlight_Matching_Pair()
+
+Executing: call s:Highlight_Matching_Pair()
+calling <SNR>38_Highlight_Matching_Pair()
+
+line 1:   if !exists("w:matchparen_ids")
+line 2:     let w:matchparen_ids = []
+line 3:   endif
+line 4:   " Remove any previous match.
+line 5:   call s:Remove_Matches()
+calling <SNR>38_Remove_Matches()
+
+line 1:   if exists('w:paren_hl_on') && w:paren_hl_on
+line 2:     while !empty(w:matchparen_ids)
+line 3:       silent! call remove(w:matchparen_ids, 0)->matchdelete()
+line 4:     endwhile
+line 5:     let w:paren_hl_on = 0
+line 6:   endif
+<SNR>38_Remove_Matches returning #0
+
+continuing in <SNR>38_Highlight_Matching_Pair
+
+line 6: 
+line 7:   " Avoid that we remove the popup menu.
+line 8:   " Return when there are no colors (looks like the cursor jumps).
+line 9:   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+line 10:     return
+line 11:   endif
+line 12: 
+line 13:   " Get the character under the cursor and check if it's in 'matchpairs'.
+line 14:   let c_lnum = line('.')
+line 15:   let c_col = col('.')
+line 16:   let before = 0
+line 17: 
+line 18:   let text = getline(c_lnum)
+line 19:   let c_before = text->strpart(0, c_col - 1)->slice(-1)
+line 20:   let c = text->strpart(c_col - 1)->slice(0, 1)
+line 21:   let plist = split(&matchpairs, '.\zs[:,]')
+line 22:   let i = index(plist, c)
+line 23:   if i < 0
+line 24:     " not found, in Insert mode try character before the cursor
+line 25:     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+line 26:       let before = strlen(c_before)
+line 27:       let c = c_before
+line 28:       let i = index(plist, c)
+line 29:     endif
+line 30:     if i < 0
+line 31:       " not found, nothing to do
+line 32:       return
+<SNR>38_Highlight_Matching_Pair returning #0
+
+continuing in TextChanged Autocommands for "*"
+
+Executing TextChanged Autocommands for "*"
+autocommand <Lua 246: ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/scroll.lua:185>
+
+Executing: 
+
+sourcing "nvim_exec2()"
+line 1: cd /tmp/stem.nvim/temp/untitled
+chdir(/tmp/stem.nvim/temp/untitled)
+                                   [global] /tmp/stem.nvim/temp/untitled
+finished sourcing nvim_exec2()
+sourcing "nvim_exec2()"
+line 1: tcd /tmp/stem.nvim/temp/untitled
+                                        [tabpage] /tmp/stem.nvim/temp/untitled
+finished sourcing nvim_exec2()
+Executing command: "'/usr/bin/bindfs' '--no-allow-other' '/home/dpopsuev/Projects/stem.nvim' '/tmp/stem.nvim/temp/untitled/stem.nvim'"
+
+
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing WinClosed Autocommands for "1003"
+autocommand <Lua 314: ~/.local/share/nvim/lazy/noice.nvim/lua/noice/view/scrollbar.lua:58>
+
+Executing: 
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing FileType Autocommands for "*"
+autocommand call s:LoadFTPlugin()
+
+Executing: call s:LoadFTPlugin()
+calling <SNR>2_LoadFTPlugin()
+
+line 1:     if exists("b:undo_ftplugin")
+line 2:       exe b:undo_ftplugin
+line 3:       unlet! b:undo_ftplugin b:did_ftplugin
+line 4:     endif
+line 5: 
+line 6:     let s = expand("<amatch>")
+line 7:     if s != ""
+line 8:       if &cpo =~# "S" && exists("b:did_ftplugin")
+line 9: ^I" In compatible mode options are reset to the global values, need to
+line 10: ^I" set the local values also when a plugin was already used.
+line 11: ^Iunlet b:did_ftplugin
+line 12:       endif
+line 13: 
+line 14:       " When there is a dot it is used to separate filetype names.  Thus for
+line 15:       " "aaa.bbb" load "aaa" and then "bbb".
+line 16:       for name in split(s, '\.')
+line 17:         " Load Lua ftplugins after Vim ftplugins _per directory_
+line 18:         " TODO(clason): use nvim__get_runtime when supports globs and modeline
+line 19:         " XXX: "[.]" in the first pattern makes it a wildcard on Windows
+line 20:         exe $'runtime! ftplugin/{name}[.]{{vim,lua}} ftplugin/{name}_*.{{vim,lua}} ftplugin/{name}/*.{{vim,lua}}'
+line 20: runtime! ftplugin/snacks_notif[.]{vim,lua} ftplugin/snacks_notif_*.{vim,lua} ftplugin/snacks_notif/*.{vim,lua}
+Searching for "ftplugin/snacks_notif[.]{vim,lua} ftplugin/snacks_notif_*.{vim,lua} ftplugin/snacks_notif/*.{vim,lua}" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.config/nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.config/nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/Projects/stem.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/Projects/stem.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/Projects/stem.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/usr/share/nvim/runtime/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/usr/share/nvim/runtime/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/usr/share/nvim/runtime/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/usr/lib64/nvim/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/usr/lib64/nvim/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/usr/lib64/nvim/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/ftplugin/snacks_notif/*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/ftplugin/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/ftplugin/snacks_notif_*.{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/ftplugin/snacks_notif/*.{vim,lua}"
+not found in runtime path: "ftplugin/snacks_notif[.]{vim,lua} ftplugin/snacks_notif_*.{vim,lua} ftplugin/snacks_notif/*.{vim,lua}"
+line 21:       endfor
+line 16:       for name in split(s, '\.')
+line 17:         " Load Lua ftplugins after Vim ftplugins _per directory_
+line 18:         " TODO(clason): use nvim__get_runtime when supports globs and modeline
+line 19:         " XXX: "[.]" in the first pattern makes it a wildcard on Windows
+line 20:         exe $'runtime! ftplugin/{name}[.]{{vim,lua}} ftplugin/{name}_*.{{vim,lua}} ftplugin/{name}/*.{{vim,lua}}'
+line 21:       endfor
+line 22:     endif
+<SNR>2_LoadFTPlugin returning #0
+
+continuing in FileType Autocommands for "*"
+
+Executing FileType Autocommands for "*"
+autocommand call s:LoadIndent()
+
+Executing: call s:LoadIndent()
+calling <SNR>3_LoadIndent()
+
+line 1:     if exists("b:undo_indent")
+line 2:       exe b:undo_indent
+line 3:       unlet! b:undo_indent b:did_indent
+line 4:     endif
+line 5:     let s = expand("<amatch>")
+line 6:     if s != ""
+line 7:       if exists("b:did_indent")
+line 8: ^Iunlet b:did_indent
+line 9:       endif
+line 10: 
+line 11:       " When there is a dot it is used to separate filetype names.  Thus for
+line 12:       " "aaa.bbb" load "indent/aaa.vim" and then "indent/bbb.vim".
+line 13:       for name in split(s, '\.')
+line 14:         " XXX: "[.]" in the pattern makes it a wildcard on Windows
+line 15:         exe $'runtime! indent/{name}[.]{{vim,lua}}'
+line 15: runtime! indent/snacks_notif[.]{vim,lua}
+Searching for "indent/snacks_notif[.]{vim,lua}" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/Projects/stem.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/usr/share/nvim/runtime/indent/snacks_notif[.]{vim,lua}"
+Searching for "/usr/lib64/nvim/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/indent/snacks_notif[.]{vim,lua}"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/indent/snacks_notif[.]{vim,lua}"
+not found in runtime path: "indent/snacks_notif[.]{vim,lua}"
+line 16:       endfor
+line 13:       for name in split(s, '\.')
+line 14:         " XXX: "[.]" in the pattern makes it a wildcard on Windows
+line 15:         exe $'runtime! indent/{name}[.]{{vim,lua}}'
+line 16:       endfor
+line 17:     endif
+<SNR>3_LoadIndent returning #0
+
+continuing in FileType Autocommands for "*"
+
+Executing FileType Autocommands for "*"
+autocommand <Lua 121: ~/.local/share/nvim/lazy/nvim-treesitter/lua/nvim-treesitter/configs.lua:132>
+
+Searching for "parser/snacks_notif.*" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/Projects/stem.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/snacks_notif.*"
+Searching for "/usr/share/nvim/runtime/parser/snacks_notif.*"
+Searching for "/usr/lib64/nvim/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/parser/snacks_notif.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/parser/snacks_notif.*"
+not found in runtime path: "parser/snacks_notif.*"
+Executing: 
+Executing FileType Autocommands for "*"
+autocommand <Lua 123: ~/.local/share/nvim/lazy/nvim-treesitter/lua/nvim-treesitter/configs.lua:132>
+
+Executing: 
+Executing FileType Autocommands for "*"
+autocommand <Lua 185: /usr/share/nvim/runtime/lua/vim/lsp.lua:627>
+
+Executing: 
+Executing FileType Autocommands for "*"
+autocommand if !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+
+Executing: if !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+Executing:  0verbose exe "set syntax=" . expand("<amatch>") | endif
+Executing:  endif
+Executing FileType Autocommands for "*"
+autocommand lua COLORIZER_SETUP_HOOK()
+
+Executing: lua COLORIZER_SETUP_HOOK()
+Searching for "parser/markdown.*" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/parser/markdown.*"
+Searching for "/home/dpopsuev/Projects/stem.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/markdown.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/markdown.*"
+Searching for "/usr/share/nvim/runtime/parser/markdown.*"
+Searching for "/usr/lib64/nvim/parser/markdown.*"
+Searching for "queries/markdown/injections.scm" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/Projects/stem.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/queries/markdown/injections.scm"
+Searching for "/usr/share/nvim/runtime/queries/markdown/injections.scm"
+Searching for "/usr/lib64/nvim/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/queries/markdown/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/queries/markdown/injections.scm"
+Searching for "queries/markdown/highlights.scm" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/Projects/stem.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/queries/markdown/highlights.scm"
+Searching for "/usr/share/nvim/runtime/queries/markdown/highlights.scm"
+Searching for "/usr/lib64/nvim/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/queries/markdown/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/queries/markdown/highlights.scm"
+Executing Syntax Autocommands for "*"
+autocommand call s:SynSet()
+
+Executing: call s:SynSet()
+calling <SNR>48_SynSet()
+
+line 1:   " clear syntax for :set syntax=OFF  and any syntax name that doesn't exist
+line 2:   syn clear
+line 3:   if exists("b:current_syntax")
+line 4:     unlet b:current_syntax
+line 5:   endif
+line 6: 
+line 7:   0verbose let s = expand("<amatch>")
+line 8:   if s == "ON"
+line 9:     " :set syntax=ON
+line 10:     if &filetype == ""
+line 11:       echohl ErrorMsg
+line 12:       echo "filetype unknown"
+line 13:       echohl None
+line 14:     endif
+line 15:     let s = &filetype
+line 16:   elseif s == "OFF"
+line 17:     let s = ""
+line 18:   endif
+line 19: 
+line 20:   if s != ""
+line 21:     " Load the syntax file(s).  When there are several, separated by dots,
+line 22:     " load each in sequence.  Skip empty entries.
+line 23:     for name in split(s, '\.')
+line 24:       if !empty(name)
+line 25:         " XXX: "[.]" in the first pattern makes it a wildcard on Windows
+line 26:         exe $'runtime! syntax/{name}[.]{{vim,lua}} syntax/{name}/*.{{vim,lua}}'
+line 27:       endif
+line 28:     endfor
+line 29:   endif
+<SNR>48_SynSet returning #0
+
+continuing in Syntax Autocommands for "*"
+
+Searching for "parser/markdown_inline.*" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/Projects/stem.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/markdown_inline.*"
+Searching for "/usr/share/nvim/runtime/parser/markdown_inline.*"
+Searching for "/usr/lib64/nvim/parser/markdown_inline.*"
+Searching for "parser/markdown_inline.*" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/Projects/stem.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/parser/markdown_inline.*"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/parser/markdown_inline.*"
+Searching for "/usr/share/nvim/runtime/parser/markdown_inline.*"
+Searching for "/usr/lib64/nvim/parser/markdown_inline.*"
+Searching for "queries/markdown_inline/injections.scm" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/Projects/stem.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/queries/markdown_inline/injections.scm"
+Searching for "/usr/share/nvim/runtime/queries/markdown_inline/injections.scm"
+Searching for "/usr/lib64/nvim/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/queries/markdown_inline/injections.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/queries/markdown_inline/injections.scm"
+Searching for "queries/markdown_inline/highlights.scm" in runtime path
+Searching for "/home/dpopsuev/.config/nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/lazy.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-notify/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nui.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/noice.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-colorizer.lua/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/Projects/stem.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lspconfig/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-web-devicons/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/oil.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/FTerm.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-treesitter/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mini.statusline/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/nvim-lint/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/zen-mode.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/snacks.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/monokai-pro.nvim/queries/markdown_inline/highlights.scm"
+Searching for "/usr/share/nvim/runtime/queries/markdown_inline/highlights.scm"
+Searching for "/usr/lib64/nvim/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/state/nvim/lazy/readme/queries/markdown_inline/highlights.scm"
+Searching for "/home/dpopsuev/.local/share/nvim/lazy/mason-lspconfig.nvim/after/queries/markdown_inline/highlights.scm"
+
+Executing QuitPre Autocommands for "*"
+autocommand <Lua 217: ~/Projects/stem.nvim/lua/stem/init.lua:68>
+
+Close unnamed workspace without saving?
+
+line 0: sourcing "nvim_exec2() called at QuitPre Autocommands for "*":0"
+line 1: echomsg 'stem confirm: Close unnamed workspace without saving? -> 2'
+                                                                            stem confirm: Close unnamed workspace without saving? -> 2
+finished sourcing nvim_exec2() called at QuitPre Autocommands for "*":0
+continuing in QuitPre Autocommands for "*"
+Executing: 
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing BufWinLeave Autocommands for "*"
+autocommand <Lua 215: ~/Projects/stem.nvim/lua/stem/init.lua:63>
+
+Executing: 
+Executing VimLeavePre Autocommands for "*"
+autocommand <Lua 175: ~/.local/share/nvim/lazy/mason.nvim/lua/mason/init.lua:9>
+
+Executing: 
+autocommand <Lua 136: /usr/share/nvim/runtime/lua/vim/lsp.lua:1204>
+
+Executing: 
+Executing VimLeavePre Autocommands for "*"
+autocommand <Lua 303: ~/.local/share/nvim/lazy/noice.nvim/lua/noice/init.lua:58>
+
+Executing: 
+Writing ShaDa file "/home/dpopsuev/.local/state/nvim/shada/main.shada"
+Executing UILeave Autocommands for "*"
+autocommand <Lua 230: /usr/share/nvim/runtime/plugin/osc52.lua:55>
+
+Executing: 

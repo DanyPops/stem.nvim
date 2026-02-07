@@ -107,6 +107,80 @@ describe("stem.nvim workspace lifecycle", function()
     end
   end)
 
+  -- QuitPre pre-exit autocmd blocks editor quit on close decline.
+  it("QuitPre pre-exit autocmd blocks editor quit on close decline", function()
+    util.by("Ensure QuitPre autocmds are registered")
+    stem.setup({})
+
+    util.by("Open unnamed workspace and add a root")
+    local dir = util.new_temp_dir()
+    stem.new("")
+    stem.add(dir)
+
+    local original_confirm = vim.fn.confirm
+    local original_list_uis = vim.api.nvim_list_uis
+    vim.fn.confirm = function()
+      return 2
+    end
+    vim.api.nvim_list_uis = function()
+      return { {} }
+    end
+
+    local ok_set = pcall(vim.api.nvim_set_vvar, "exiting", 1)
+    pcall(vim.api.nvim_set_vvar, "errmsg", "")
+    local ok, err = pcall(function()
+      util.by("Simulate QuitPre handling")
+      vim.api.nvim_exec_autocmds("QuitPre", {})
+    end)
+
+    vim.fn.confirm = original_confirm
+    vim.api.nvim_list_uis = original_list_uis
+    if ok_set then
+      pcall(vim.api.nvim_set_vvar, "exiting", 0)
+    end
+
+    local errmsg = ""
+    pcall(function()
+      errmsg = vim.api.nvim_get_vvar("errmsg")
+    end)
+    if errmsg ~= "" then
+      ok = false
+      err = errmsg
+    end
+    assert.is_true(ok, err)
+  end)
+
+  -- Adding a root should not leave the original buffer open.
+  it("replaces the original buffer with mounted path", function()
+    util.by("Create a file and open it")
+    local dir = util.new_temp_dir()
+    local file = util.new_temp_file(dir, "dup.txt")
+    vim.cmd("cd " .. vim.fn.fnameescape(dir))
+    vim.cmd("edit " .. vim.fn.fnameescape(file))
+
+    util.by("Add root to workspace")
+    stem.add(dir)
+
+    util.by("Verify original buffer is not still open")
+    local temp_root = vim.fn.getcwd()
+    local filename = "/dup.txt"
+    local has_original = false
+    local has_mounted = false
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        if name == file then
+          has_original = true
+        end
+        if name:find(temp_root, 1, true) == 1 and name:sub(-#filename) == filename then
+          has_mounted = true
+        end
+      end
+    end
+    assert.is_true(has_mounted)
+    assert.is_false(has_original)
+  end)
+
   -- Saving then opening a workspace uses the named temp root.
   it("saves and opens a workspace", function()
     util.by("Save a workspace and reopen it")

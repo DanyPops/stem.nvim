@@ -12,6 +12,23 @@ local function normalize_dir(path)
   return expanded
 end
 
+local function log_confirm_result(prompt, choice)
+  vim.cmd(
+    ("echomsg %s"):format(vim.fn.string("stem confirm: " .. prompt .. " -> " .. tostring(choice)))
+  )
+end
+
+local function is_oil_buffer(bufnr)
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return false
+  end
+  if vim.bo[bufnr].filetype == constants.oil.filetype then
+    return true
+  end
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  return name and name:match(constants.oil.uri_pattern) ~= nil
+end
+
 local function context_dir()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
@@ -45,9 +62,14 @@ local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   if not mount_name then
     return
   end
+  local original_buf = buf
   if path == root then
     local target = temp_root .. "/" .. mount_name
     vim.cmd(constants.vim.edit_cmd .. vim.fn.fnameescape(target))
+    local new_buf = vim.api.nvim_get_current_buf()
+    if new_buf ~= original_buf and vim.api.nvim_buf_is_valid(original_buf) and not vim.bo[original_buf].modified then
+      pcall(vim.api.nvim_buf_delete, original_buf, { force = false })
+    end
     return
   end
   if path:sub(1, #root + 1) ~= root .. "/" then
@@ -56,6 +78,10 @@ local function maybe_reopen_in_workspace(temp_root, mount_map, root)
   local rel = path:sub(#root + 2)
   local target = temp_root .. "/" .. mount_name .. "/" .. rel
   vim.cmd(constants.vim.edit_cmd .. vim.fn.fnameescape(target))
+  local new_buf = vim.api.nvim_get_current_buf()
+  if new_buf ~= original_buf and vim.api.nvim_buf_is_valid(original_buf) and not vim.bo[original_buf].modified then
+    pcall(vim.api.nvim_buf_delete, original_buf, { force = false })
+  end
 end
 
 function M.new(config, deps)
@@ -233,6 +259,7 @@ function M.new(config, deps)
   function core.close()
     if state.temporary and #state.roots > 0 and config.workspace.confirm_close and #vim.api.nvim_list_uis() > 0 then
       local choice = ui.confirm(constants.messages.close_unnamed_confirm, "&Yes\n&No", 2)
+      log_confirm_result(constants.messages.close_unnamed_confirm, choice)
       if choice ~= 1 then
         return false
       end
@@ -272,6 +299,7 @@ function M.new(config, deps)
     end
     if #modified > 0 and #vim.api.nvim_list_uis() > 0 then
       local choice = ui.confirm(constants.messages.close_unsaved_confirm, "&Yes\n&No", 2)
+      log_confirm_result(constants.messages.close_unsaved_confirm, choice)
       if choice ~= 1 then
         return false
       end
@@ -304,6 +332,14 @@ function M.new(config, deps)
       untitled.cleanup_if_last(config.workspace)
     end
     if state.prev_cwd then
+      local current_buf = vim.api.nvim_get_current_buf()
+      if is_oil_buffer(current_buf) then
+        local scratch = vim.api.nvim_create_buf(false, true)
+        if vim.api.nvim_win_is_valid(0) then
+          vim.api.nvim_win_set_buf(0, scratch)
+        end
+        pcall(vim.api.nvim_buf_delete, current_buf, { force = true })
+      end
       effects.set_cwd(state.prev_cwd)
     end
     if registry and registry.module then

@@ -79,7 +79,16 @@ local function setup_autocmds()
       local ok = manager.close()
       if not ok then
         quit_guard = false
-        error("Stem: quit cancelled")
+        local bufnr = vim.api.nvim_get_current_buf()
+        if vim.api.nvim_buf_is_valid(bufnr) then
+          vim.bo[bufnr].modified = true
+          vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(bufnr) then
+              vim.bo[bufnr].modified = false
+            end
+          end)
+        end
+        return
       end
     end,
   })

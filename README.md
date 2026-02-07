@@ -55,6 +55,12 @@ test -r /dev/fuse
 - `:StemInfo [name]` - show workspace roots
 - `:StemCleanup` - cleanup orphaned mounts
 
+## Won't do
+
+- Block quitting from dashboard plugins when `set hidden` is enabled. Neovim allows
+  abandoning modified buffers with `hidden`, so QuitPre cancel hacks do not block
+  exit in this scenario.
+
 ## Session behavior
 
 On `:StemClose`, a session is saved for the current workspace (if named) to
@@ -79,18 +85,27 @@ workspace path without root access.
 ```lua
 require("stem").setup({
   workspace = {
+    -- Auto-add current working directory on `:StemNew`/`:StemOpen`.
     auto_add_cwd = true,
+    -- Prompt before closing unnamed workspaces with roots.
     confirm_close = true,
+    -- Temp root for saved workspaces.
     temp_root = "/tmp/stem.nvim/saved",
+    -- Temp root for unnamed workspaces.
     temp_untitled_root = "/tmp/stem.nvim/temp",
+    -- Extra bindfs flags, e.g. { "--no-allow-other" }.
     bindfs_args = { "--no-allow-other" },
   },
   session = {
+    -- Save sessions on close and load on open.
     enabled = true,
+    -- Auto-load matching session when opening a workspace.
     auto_load = true,
   },
   oil = {
+    -- Enable oil.nvim integration when available.
     enabled = true,
+    -- Follow workspace root in Oil buffers.
     follow = true,
   },
 })
