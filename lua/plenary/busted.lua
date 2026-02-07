@@ -52,8 +52,22 @@ local colors = {
   summary = 36,
 }
 
+local labels = {
+  pass = "[Pass]",
+  fail = "[Fail]",
+  err = "[Err]",
+  start = "[Start]",
+  suite = "[Suite]",
+  file = "[File]",
+  summary = "[Summary]",
+}
+
 local function color(code, text)
   return string.format("\27[%sm%s\27[0m", code, text)
+end
+
+local function colored_label(key)
+  return color(colors[key], labels[key])
 end
 
 local function time_tag()
@@ -64,6 +78,10 @@ end
 
 local function time_prefix()
   return "[" .. time_tag() .. "] "
+end
+
+local function print_tag(key, text)
+  print(time_prefix() .. string.format("%s %s", colored_label(key), text))
 end
 
 local results = {}
@@ -138,13 +156,20 @@ end
 mod.format_results = function(res, elapsed_ms)
   local summary = string.format(
     "%s %s passed, %s failed, %s errors in %dms",
-    color(colors.summary, "[Summary]"),
+    colored_label("summary"),
     color(colors.pass, tostring(#res.pass)),
     color(colors.fail, tostring(#res.fail)),
     color(colors.err, tostring(#res.errs)),
     elapsed_ms
   )
   print(time_prefix() .. summary)
+  print(string.format(
+    "PLENARY_SUMMARY|%d|%d|%d|%d",
+    #res.pass,
+    #res.fail,
+    #res.errs,
+    elapsed_ms
+  ))
 end
 
 mod.describe = function(desc, func)
@@ -153,7 +178,7 @@ mod.describe = function(desc, func)
   results.errs = results.errs or {}
 
   if #current_description == 0 then
-    print(time_prefix() .. string.format("%s %s", color(colors.suite, "[Suite]"), desc))
+    print_tag("suite", desc)
   end
 
   describe = mod.inner_describe
@@ -195,7 +220,7 @@ mod.it = function(desc, func)
   local desc_stack = vim.deepcopy(current_description)
   table.insert(desc_stack, desc)
   local name = stack_to_name(desc_stack)
-  print(time_prefix() .. string.format("%s %s", color(colors.start, "[Start]"), name))
+  print_tag("start", name)
   if test_util and test_util.set_current_test then
     test_util.set_current_test(name)
   end
@@ -221,13 +246,11 @@ mod.it = function(desc, func)
   if not ok then
     to_insert = results.fail
     test_result.msg = msg
-    print(time_prefix() .. string.format("%s %s (%dms)", color(colors.fail, "[Fail ]"), name, elapsed_ms))
+    print_tag("fail", string.format("%s (%dms)", name, elapsed_ms))
     print(indent(msg, 9))
-    print("")
   else
     to_insert = results.pass
-    print(time_prefix() .. string.format("%s %s (%dms)", color(colors.pass, "[Pass ]"), name, elapsed_ms))
-    print("")
+    print_tag("pass", string.format("%s (%dms)", name, elapsed_ms))
   end
 
   table.insert(to_insert, test_result)
@@ -236,7 +259,7 @@ end
 mod.pending = function(desc, func)
   local curr_stack = vim.deepcopy(current_description)
   table.insert(curr_stack, desc)
-  print(string.format("  [Pend ] %s", stack_to_name(curr_stack)))
+  print(string.format("  [Pend] %s", stack_to_name(curr_stack)))
 end
 
 _PlenaryBustedOldAssert = _PlenaryBustedOldAssert or assert
@@ -256,7 +279,7 @@ mod.run = function(file)
   local env_file = vim.env.PLENARY_TEST_FILE
   if env_file and env_file ~= "" then
     print ""
-    print(time_prefix() .. string.format("%s %s", color(colors.file, "[File ]"), env_file))
+    print_tag("file", env_file)
   end
 
   local loaded, msg = loadfile(file)

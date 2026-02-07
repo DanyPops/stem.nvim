@@ -11,6 +11,27 @@ local plenary_dir = vim.fn.fnamemodify(debug.getinfo(1).source:match "@?(.*[/\\]
 
 local harness = {}
 
+local function color(code, text)
+  return string.format("\27[%sm%s\27[0m", code, text)
+end
+
+local summary_colors = {
+  label = 36,
+  pass = 32,
+  fail = 91,
+  err = 35,
+}
+
+local function time_tag()
+  local sec, usec = vim.loop.gettimeofday()
+  local ms = math.floor(usec / 1000)
+  return os.date("%H:%M:%S", sec) .. "." .. string.format("%03d", ms)
+end
+
+local function time_prefix()
+  return "[" .. time_tag() .. "] "
+end
+
 local print_output = vim.schedule_wrap(function(_, ...)
   for _, v in ipairs { ... } do
     io.stdout:write(tostring(v))
@@ -54,6 +75,7 @@ local function test_paths(paths, opts)
   vim.env.PLENARY_TEST_TIMEOUT = opts.timeout
 
   local res = {}
+  local totals = { pass = 0, fail = 0, err = 0, ms = 0 }
   if not headless then
     res = win_float.percentage_range_window(0.95, 0.70, opts.winopts)
 
@@ -75,6 +97,52 @@ local function test_paths(paths, opts)
   end
 
   local outputter = headless and print_output or get_nvim_output(res.job_id)
+
+  local function parse_summary_line(line)
+    if type(line) ~= "string" then
+      return nil
+    end
+    local clean = line:gsub("\r", ""):gsub("%s+$", "")
+    local pass, fail, err, ms = clean:match("^PLENARY_SUMMARY|(%d+)|(%d+)|(%d+)|(%d+)$")
+    if not pass then
+      return nil
+    end
+    return tonumber(pass), tonumber(fail), tonumber(err), tonumber(ms)
+  end
+
+  local function normalize_lines(data)
+    if type(data) == "table" then
+      return data
+    end
+    if data == nil then
+      return {}
+    end
+    return { data }
+  end
+
+  local function handle_lines(lines, should_output)
+    for _, line in ipairs(normalize_lines(lines)) do
+      local clean = line
+      if type(clean) == "string" then
+        clean = clean:gsub("\r", "")
+      end
+      if clean == nil or clean == "" then
+        if should_output then
+          outputter(res.bufnr, clean)
+        end
+      else
+        local pass, fail, err, ms = parse_summary_line(clean)
+        if pass then
+          totals.pass = totals.pass + pass
+          totals.fail = totals.fail + fail
+          totals.err = totals.err + err
+          totals.ms = totals.ms + ms
+        elseif should_output then
+          outputter(res.bufnr, clean)
+        end
+      end
+    end
+  end
 
   local path_len = #paths
   local failure = false
@@ -113,20 +181,20 @@ local function test_paths(paths, opts)
       -- Can be turned on to debug
       on_stdout = function(_, data)
         if path_len == 1 then
-          outputter(res.bufnr, data)
+          handle_lines(data, true)
         end
       end,
 
       on_stderr = function(_, data)
         if path_len == 1 then
-          outputter(res.bufnr, data)
+          handle_lines(data, true)
         end
       end,
 
       on_exit = vim.schedule_wrap(function(j_self, _, _)
         if path_len ~= 1 then
-          outputter(res.bufnr, unpack(j_self:stderr_result()))
-          outputter(res.bufnr, unpack(j_self:result()))
+          handle_lines(j_self:stderr_result(), true)
+          handle_lines(j_self:result(), true)
         end
 
         vim.cmd "mode"
@@ -174,6 +242,17 @@ local function test_paths(paths, opts)
   vim.wait(100)
 
   if headless then
+    if totals.pass + totals.fail + totals.err > 0 then
+      local summary = string.format(
+        "%s %s passed, %s failed, %s errors in %dms",
+        color(summary_colors.label, "[Totals]"),
+        color(summary_colors.pass, tostring(totals.pass)),
+        color(summary_colors.fail, tostring(totals.fail)),
+        color(summary_colors.err, tostring(totals.err)),
+        totals.ms
+      )
+      outputter(res.bufnr, time_prefix() .. summary)
+    end
     if failure then
       return vim.cmd "1cq"
     end
