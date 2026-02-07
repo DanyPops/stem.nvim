@@ -53,21 +53,31 @@ local colors = {
 }
 
 local labels = {
-  pass = "[Pass]",
-  fail = "[Fail]",
-  err = "[Err]",
-  start = "[Start]",
-  suite = "[Suite]",
-  file = "[File]",
-  summary = "[Summary]",
+  pass = "Pass",
+  fail = "Fail",
+  err = "Err",
+  start = "Start",
+  suite = "Suite",
+  file = "File",
+  summary = "Summary",
 }
 
 local function color(code, text)
   return string.format("\27[%sm%s\27[0m", code, text)
 end
 
+local label_inner_width = 8
+
+local function format_label(name)
+  local pad = label_inner_width - #name
+  if pad < 0 then
+    pad = 0
+  end
+  return "[ " .. name .. string.rep(" ", pad) .. "]"
+end
+
 local function colored_label(key)
-  return color(colors[key], labels[key])
+  return color(colors[key], format_label(labels[key]))
 end
 
 local function time_tag()
@@ -259,7 +269,7 @@ end
 mod.pending = function(desc, func)
   local curr_stack = vim.deepcopy(current_description)
   table.insert(curr_stack, desc)
-  print(string.format("  [Pend] %s", stack_to_name(curr_stack)))
+  print(string.format("  %s %s", format_label("Pend"), stack_to_name(curr_stack)))
 end
 
 _PlenaryBustedOldAssert = _PlenaryBustedOldAssert or assert

@@ -22,10 +22,20 @@ local function time_prefix()
   return "[" .. time_tag() .. "] "
 end
 
+local label_inner_width = 8
+
+local function format_label(name)
+  local pad = label_inner_width - #name
+  if pad < 0 then
+    pad = 0
+  end
+  return "[ " .. name .. string.rep(" ", pad) .. "]"
+end
+
 local function print_labeled(indent, label, color_code, msg)
   local raw_label = indent .. label .. " "
   local prefix = time_prefix() .. indent .. color(color_code, label) .. " "
-  local cont_prefix = time_prefix() .. string.rep(" ", #raw_label)
+  local cont_prefix = string.rep(" ", #time_prefix() + #raw_label)
   local lines = vim.split(tostring(msg), "\n", { plain = true })
   if #lines == 0 then
     print(prefix)
@@ -111,7 +121,7 @@ M.install_notify_capture = function(disable_passthrough)
       pcall(cb, msg, level, opts)
     end
   if current_test then
-    print_labeled("  ", "[Note]", colors.note, msg)
+    print_labeled("", format_label("Note"), colors.note, msg)
     end
     if not disable_passthrough and notify_passthrough then
       return notify_passthrough(msg, level, opts)
@@ -220,7 +230,7 @@ end
 
 M.by = function(msg)
   if current_test then
-    print_labeled("  ", "[By]", colors.by, msg)
+    print_labeled("", format_label("By"), colors.by, msg)
     return
   end
   table.insert(by_messages, msg)
@@ -228,7 +238,7 @@ end
 
 M.flush_by = function()
   for _, msg in ipairs(by_messages) do
-    print_labeled("  ", "[By]", colors.by, msg)
+    print_labeled("", format_label("By"), colors.by, msg)
   end
   by_messages = {}
 end
@@ -244,7 +254,7 @@ M.flush_current_test = function()
   end
   local messages = current_test_messages[current_test] or {}
   for _, msg in ipairs(messages) do
-    print_labeled("  ", "[Note]", colors.note, msg)
+    print_labeled("", format_label("Note"), colors.note, msg)
   end
   current_test_messages[current_test] = {}
 end

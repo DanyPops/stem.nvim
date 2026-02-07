@@ -22,6 +22,16 @@ local summary_colors = {
   err = 35,
 }
 
+local label_inner_width = 8
+
+local function format_label(name)
+  local pad = label_inner_width - #name
+  if pad < 0 then
+    pad = 0
+  end
+  return "[ " .. name .. string.rep(" ", pad) .. "]"
+end
+
 local function time_tag()
   local sec, usec = vim.loop.gettimeofday()
   local ms = math.floor(usec / 1000)
@@ -245,7 +255,7 @@ local function test_paths(paths, opts)
     if totals.pass + totals.fail + totals.err > 0 then
       local summary = string.format(
         "%s %s passed, %s failed, %s errors in %dms",
-        color(summary_colors.label, "[Totals]"),
+        color(summary_colors.label, format_label("Totals")),
         color(summary_colors.pass, tostring(totals.pass)),
         color(summary_colors.fail, tostring(totals.fail)),
         color(summary_colors.err, tostring(totals.err)),
