@@ -4,6 +4,13 @@ local util = require "tests.test_util"
 describe("stem.nvim workspace lifecycle", function()
   local stem
   local data_home
+  local cleanup_paths = {}
+
+  local function queue_cleanup(path)
+    if path and path ~= "" then
+      table.insert(cleanup_paths, path)
+    end
+  end
 
   before_each(function()
     data_home = vim.fn.stdpath "data"
@@ -18,6 +25,10 @@ describe("stem.nvim workspace lifecycle", function()
 
   after_each(function()
     pcall(stem.close)
+    for _, path in ipairs(cleanup_paths) do
+      pcall(vim.fn.delete, path, "rf")
+    end
+    cleanup_paths = {}
     util.flush_by()
   end)
 
@@ -67,6 +78,47 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(vim.fn.getcwd():match(vim.pesc(named_root) .. "/alpha$") ~= nil)
   end)
 
+  -- Opening a saved workspace after restart should use named temp root.
+  it("opens saved workspace in named root after restart", function()
+    local prev_tmp_root = vim.env.STEM_TMP_ROOT
+    local prev_tmp_untitled = vim.env.STEM_TMP_UNTITLED_ROOT
+    vim.env.STEM_TMP_ROOT = "/tmp/stem/named"
+    vim.env.STEM_TMP_UNTITLED_ROOT = "/tmp/temporary/untitled"
+
+    util.by("Reload stem with custom temp roots")
+    stem = util.reset_stem()
+    util.reset_editor()
+
+    util.by("Create a root directory with a dummy file")
+    local dir = util.new_temp_dir()
+    local file = util.new_temp_file(dir, "dummy.txt")
+
+    util.by("Start in the root directory")
+    vim.cmd("cd " .. vim.fn.fnameescape(dir))
+    vim.cmd("tcd " .. vim.fn.fnameescape(dir))
+    vim.cmd("edit " .. vim.fn.fnameescape(file))
+
+    util.by("Add cwd to a new workspace and save it")
+    stem.add("")
+    stem.save("restart-ws")
+    stem.close()
+
+    util.by("Restart stem and reopen from root directory")
+    stem = util.reset_stem()
+    util.reset_editor()
+    vim.cmd("cd " .. vim.fn.fnameescape(dir))
+    vim.cmd("tcd " .. vim.fn.fnameescape(dir))
+    vim.cmd("edit " .. vim.fn.fnameescape(file))
+    stem.open("restart-ws")
+
+    util.by("Verify named root cwd (not untitled root)")
+    local named_root = vim.env.STEM_TMP_ROOT or constants.paths.default_temp_root
+    assert.is_true(vim.fn.getcwd():match(vim.pesc(named_root) .. "/restart%-ws$") ~= nil)
+
+    vim.env.STEM_TMP_ROOT = prev_tmp_root
+    vim.env.STEM_TMP_UNTITLED_ROOT = prev_tmp_untitled
+  end)
+
   -- Renaming a workspace moves its stored file.
   it("renames a workspace", function()
     util.by("Save and rename a workspace")
@@ -80,6 +132,56 @@ describe("stem.nvim workspace lifecycle", function()
     util.by("Verify old file removed and new file exists")
     assert.is_true(vim.fn.filereadable(old_file) == 0)
     assert.is_true(vim.fn.filereadable(new_file) == 1)
+  end)
+
+  -- Deleting a workspace removes its stored file.
+  it("deletes a saved workspace", function()
+    util.by("Save a workspace to delete")
+    stem.new("")
+    stem.save("delete-me")
+    local ws_file = data_home .. "/" .. constants.paths.workspace_dir .. "/delete-me.lua"
+    local session_file = data_home .. "/" .. constants.paths.session_dir .. "/delete-me.vim"
+    queue_cleanup(ws_file)
+    queue_cleanup(session_file)
+    assert.is_true(vim.fn.filereadable(ws_file) == 1)
+
+    util.by("Delete the saved workspace")
+    stem.delete("delete-me")
+    assert.is_true(vim.fn.filereadable(ws_file) == 0)
+    assert.is_true(vim.fn.filereadable(session_file) == 0)
+  end)
+
+  -- Deleting should refuse when another instance holds a lock.
+  it("refuses to delete a locked workspace", function()
+    util.by("Save a workspace to delete")
+    stem.new("")
+    stem.save("locked-ws")
+    local ws_file = data_home .. "/" .. constants.paths.workspace_dir .. "/locked-ws.lua"
+    local session_file = data_home .. "/" .. constants.paths.session_dir .. "/locked-ws.vim"
+    queue_cleanup(ws_file)
+    queue_cleanup(session_file)
+    assert.is_true(vim.fn.filereadable(ws_file) == 1)
+
+    util.by("Create a lock from another instance")
+    local locks = require "stem.ws.locks"
+    local lock_config = { temp_root = vim.env.STEM_TMP_ROOT or constants.paths.default_temp_root }
+    locks.ensure_instance_lock(lock_config, "locked-ws", "other-instance")
+    queue_cleanup(lock_config.temp_root .. "/" .. constants.names.locks_dir)
+
+    util.by("Attempt to delete locked workspace")
+    local messages, restore = util.capture_notify()
+    stem.delete("locked-ws")
+    restore()
+    assert.is_true(vim.fn.filereadable(ws_file) == 1)
+    local expected = string.format(constants.messages.workspace_locked, "locked-ws")
+    local found = false
+    for _, item in ipairs(messages) do
+      if item.msg and item.msg:find(expected, 1, true) then
+        found = true
+        break
+      end
+    end
+    assert.is_true(found)
   end)
 
   -- Listing and status report include saved workspace names.

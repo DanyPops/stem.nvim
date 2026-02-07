@@ -41,4 +41,13 @@ function M.save(name, enabled)
   vim.cmd(constants.vim.mksession_cmd .. vim.fn.fnameescape(path))
 end
 
+-- Delete a session file if present.
+function M.delete(name)
+  local path = session_file(name)
+  if not path or vim.fn.filereadable(path) == 0 then
+    return false
+  end
+  return vim.fn.delete(path) == 0
+end
+
 return M

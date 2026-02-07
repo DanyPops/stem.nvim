@@ -99,6 +99,7 @@ function M.setup(opts)
     open = manager.open,
     save = manager.save,
     close = manager.close,
+    delete = manager.delete,
     add = manager.add,
     remove = manager.remove,
     rename = manager.rename,
@@ -141,6 +142,10 @@ end
 -- Rename current or saved workspace.
 M.rename = function(a, b)
   return manager.rename(a, b)
+end
+-- Delete a saved workspace by name.
+M.delete = function(name)
+  return manager.delete(name)
 end
 -- List saved workspaces.
 M.list = function()

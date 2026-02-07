@@ -119,6 +119,35 @@ M.reset_by = function()
   by_messages = {}
 end
 
+M.assert_temp_root_clean = function()
+  M.cleanup_test_mounts()
+  local data_home = vim.env.XDG_DATA_HOME
+  if data_home and data_home ~= "" and vim.fn.isdirectory(data_home) == 1 then
+    vim.fn.delete(data_home, "rf")
+  end
+  local test_root = "/tmp/stem.nvim.test"
+  if vim.fn.isdirectory(test_root) == 1 then
+    vim.fn.delete(test_root, "rf")
+  end
+  local parent = vim.g.stem_test_tmp_parent
+  local before = vim.g.stem_test_tmp_entries or {}
+  if not parent or parent == "" or vim.fn.isdirectory(parent) == 0 then
+    return
+  end
+  local after = vim.fn.readdir(parent)
+  table.sort(before)
+  table.sort(after)
+  if #before ~= #after then
+    error("Temp root mismatch after tests")
+  end
+  for i, entry in ipairs(before) do
+    if after[i] ~= entry then
+      error("Temp root mismatch after tests")
+    end
+  end
+
+end
+
 M.by = function(msg)
   table.insert(by_messages, msg)
 end

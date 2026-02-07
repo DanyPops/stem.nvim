@@ -93,4 +93,13 @@ function M.list()
   return names
 end
 
+-- Delete a saved workspace definition.
+function M.delete(name)
+  local path = M.path(name)
+  if not path or vim.fn.filereadable(path) == 0 then
+    return false
+  end
+  return vim.fn.delete(path) == 0
+end
+
 return M

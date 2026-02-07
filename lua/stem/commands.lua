@@ -37,6 +37,10 @@ function M.setup(api)
     api.close()
   end, { nargs = constants.command_opts.nargs_none })
 
+  vim.api.nvim_create_user_command(constants.user_commands.delete, function(opts)
+    api.delete(opts.args)
+  end, { nargs = constants.command_opts.nargs_required, complete = complete.workspaces })
+
   vim.api.nvim_create_user_command(constants.user_commands.add, function(opts)
     api.add(opts.args)
   end, { nargs = constants.command_opts.nargs_optional, complete = constants.command_opts.complete_dir })

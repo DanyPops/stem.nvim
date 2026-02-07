@@ -159,6 +159,23 @@ function M.new(core, deps)
     ui.notify(string.format(constants.messages.renamed_workspace_to, new_name))
   end
 
+  function titled.delete(name)
+    if not name or name == "" then
+      ui.notify(constants.messages.workspace_name_required, vim.log.levels.ERROR)
+      return
+    end
+    if workspace_lock and workspace_lock.has_other_locks(config.workspace, name, core.state().instance_id) then
+      ui.notify(string.format(constants.messages.workspace_locked, name), vim.log.levels.ERROR)
+      return
+    end
+    if not store.delete(name) then
+      ui.notify(string.format(constants.messages.workspace_not_found, name), vim.log.levels.ERROR)
+      return
+    end
+    sessions.delete(name)
+    ui.notify(string.format(constants.messages.workspace_deleted, name))
+  end
+
   function titled.list_saved()
     return store.list()
   end

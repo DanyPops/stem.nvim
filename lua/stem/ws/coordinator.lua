@@ -82,6 +82,10 @@ function M.new(config, deps)
     titled.rename(arg1, arg2)
   end
 
+  function coordinator.delete(name)
+    titled.delete(name)
+  end
+
   function coordinator.list()
     local untitled_names = untitled.list()
     local saved_names = titled.list_saved()
