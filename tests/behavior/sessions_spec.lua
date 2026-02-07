@@ -5,6 +5,10 @@ describe("stem.nvim sessions", function()
   local stem
   local data_home
 
+  local function session_path(name)
+    return data_home .. "/" .. constants.paths.session_dir .. "/" .. name .. ".vim"
+  end
+
   before_each(function()
     data_home = vim.fn.stdpath "data"
     util.ensure_bindfs()
@@ -32,12 +36,11 @@ describe("stem.nvim sessions", function()
     util.by("Save workspace to persist session")
     stem.save("sess")
     stem.close()
-    local session_path = data_home .. "/" .. constants.paths.session_dir .. "/sess.vim"
     util.by("Verify session file exists")
-    assert.is_true(vim.fn.filereadable(session_path) == 1)
+    assert.is_true(vim.fn.filereadable(session_path("sess")) == 1)
     util.by("Open saved workspace to load session")
     stem.open("sess")
-    assert.is_true(vim.fn.filereadable(session_path) == 1)
+    assert.is_true(vim.fn.filereadable(session_path("sess")) == 1)
   end)
 
   -- Session load does not abandon a modified buffer.
@@ -52,6 +55,7 @@ describe("stem.nvim sessions", function()
     stem.close()
 
     util.by("Create a modified buffer")
+    local prev_hidden = vim.o.hidden
     vim.o.hidden = false
     vim.cmd "enew"
     vim.api.nvim_buf_set_lines(0, 0, -1, false, { "dirty" })
@@ -60,5 +64,6 @@ describe("stem.nvim sessions", function()
     util.by("Open workspace and verify buffer stays modified")
     stem.open("conflict")
     assert.is_true(vim.bo.modified == true)
+    vim.o.hidden = prev_hidden
   end)
 end)

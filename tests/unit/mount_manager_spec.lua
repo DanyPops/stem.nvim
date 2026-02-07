@@ -65,7 +65,7 @@ describe("stem.nvim mount manager", function()
     local orig_executable = vim.fn.executable
     vim.fn.executable = function(cmd)
       if cmd == constants.commands.fusermount then
-        return 1
+        return 0
       end
       return orig_executable(cmd)
     end

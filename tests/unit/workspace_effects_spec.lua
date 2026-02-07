@@ -26,6 +26,7 @@ describe("stem.nvim workspace effects", function()
     effects.set_cwd("/tmp/example")
 
     util.by("Verify cd and tcd were issued")
+    assert.is_true(#commands == 2)
     assert.is_true(commands[1]:match("^cd ") ~= nil)
     assert.is_true(commands[2]:match("^tcd ") ~= nil)
   end)
@@ -39,6 +40,7 @@ describe("stem.nvim workspace effects", function()
         opened = path
       end,
     }
+    local prev_filetype = vim.bo.filetype
 
     util.by("Skip open when not in oil buffer")
     vim.bo.filetype = ""
@@ -51,5 +53,6 @@ describe("stem.nvim workspace effects", function()
     assert.is_true(opened == "/tmp/root")
 
     package.loaded.oil = original_oil
+    vim.bo.filetype = prev_filetype
   end)
 end)

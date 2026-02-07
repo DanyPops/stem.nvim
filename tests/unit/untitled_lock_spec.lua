@@ -3,6 +3,10 @@ local util = require "tests.test_util"
 describe("stem.nvim untitled locks", function()
   local untitled
 
+  local function lock_config()
+    return { temp_untitled_root = util.new_temp_dir() }
+  end
+
   before_each(function()
     untitled = require "stem.ws.untitled_store"
     util.reset_by()
@@ -14,7 +18,7 @@ describe("stem.nvim untitled locks", function()
 
   -- Ensure/release toggles untitled instance locks.
   it("creates and releases untitled instance locks", function()
-    local config = { temp_untitled_root = util.new_temp_dir() }
+    local config = lock_config()
     util.by("Create an untitled instance lock")
     untitled.ensure_instance_lock(config, "inst-1")
     assert.is_true(untitled.has_locks(config))
@@ -26,7 +30,7 @@ describe("stem.nvim untitled locks", function()
 
   -- Cleanup removes untitled roots when no locks remain.
   it("cleans untitled roots when no locks exist", function()
-    local config = { temp_untitled_root = util.new_temp_dir() }
+    local config = lock_config()
     local base = config.temp_untitled_root
     util.by("Create untitled roots and clear locks")
     vim.fn.mkdir(base .. "/untitled", "p")

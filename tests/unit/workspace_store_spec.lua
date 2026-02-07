@@ -6,6 +6,12 @@ describe("stem.nvim workspace store", function()
   local data_home
   local ws_dir
 
+  local function read_entry(name)
+    local entry = store.read(name)
+    assert.is_true(type(entry) == "table")
+    return entry
+  end
+
   before_each(function()
     store = require "stem.ws.store"
     data_home = vim.fn.stdpath "data"
@@ -38,8 +44,7 @@ describe("stem.nvim workspace store", function()
     assert.is_true(ok)
 
     util.by("Read back schema version and roots")
-    local entry = store.read("alpha")
-    assert.is_true(type(entry) == "table")
+    local entry = read_entry("alpha")
     assert.is_true(entry.version == 1)
     assert.is_true(type(entry.roots) == "table")
     assert.is_true(#entry.roots == 1)
@@ -70,8 +75,7 @@ describe("stem.nvim workspace store", function()
     assert.is_false(result)
 
     util.by("Verify original data still readable")
-    local entry = store.read("alpha")
-    assert.is_true(entry and type(entry.roots) == "table")
+    local entry = read_entry("alpha")
     assert.is_true(#entry.roots == 1)
     assert.is_true(entry.roots[1] == root)
   end)

@@ -3,6 +3,10 @@ local util = require "tests.test_util"
 describe("stem.nvim workspace lock", function()
   local workspace_lock
 
+  local function lock_config()
+    return { temp_root = util.new_temp_dir() }
+  end
+
   before_each(function()
     workspace_lock = require "stem.ws.locks"
     util.reset_by()
@@ -14,7 +18,7 @@ describe("stem.nvim workspace lock", function()
 
   -- Ensure/release toggles lock presence for a named workspace.
   it("creates and releases named workspace locks", function()
-    local config = { temp_root = util.new_temp_dir() }
+    local config = lock_config()
     util.by("Create a lock for alpha")
     workspace_lock.ensure_instance_lock(config, "alpha", tostring(vim.fn.getpid()))
     assert.is_true(workspace_lock.has_locks(config, "alpha"))
@@ -26,7 +30,7 @@ describe("stem.nvim workspace lock", function()
 
   -- has_other_locks detects locks by other instances.
   it("detects other locks for a workspace", function()
-    local config = { temp_root = util.new_temp_dir() }
+    local config = lock_config()
     util.by("Create two instance locks")
     local current = tostring(vim.fn.getpid())
     workspace_lock.ensure_instance_lock(config, "alpha", current)
@@ -36,7 +40,7 @@ describe("stem.nvim workspace lock", function()
 
   -- Stale locks are pruned when checking lock status.
   it("prunes stale lock files", function()
-    local config = { temp_root = util.new_temp_dir() }
+    local config = lock_config()
     local lock_path = workspace_lock.instance_lock_path(config, "alpha", "999999")
     util.by("Write a stale lock file directly")
     vim.fn.mkdir(vim.fn.fnamemodify(lock_path, ":h"), "p")

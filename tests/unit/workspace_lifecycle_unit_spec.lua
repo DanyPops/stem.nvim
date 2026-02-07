@@ -83,6 +83,8 @@ describe("stem.nvim workspace lifecycle helpers", function()
 
     util.by("Verify mount and registry were invoked")
     assert.is_true(recorded.mounted ~= nil)
+    assert.is_true(recorded.mounted.temp_root == state.temp_root)
+    assert.is_true(recorded.mounted.bindfs_args[1] == "--no-allow-other")
     assert.is_true(recorded.registered ~= nil)
     assert.is_true(recorded.current == state.temp_root)
     assert.is_true(recorded.cwd == state.temp_root)

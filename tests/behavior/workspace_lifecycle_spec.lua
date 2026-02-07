@@ -12,6 +12,14 @@ describe("stem.nvim workspace lifecycle", function()
     end
   end
 
+  local function messages_text(messages)
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    return table.concat(joined, "\n")
+  end
+
   before_each(function()
     data_home = vim.fn.stdpath "data"
     util.ensure_bindfs()
@@ -307,25 +315,34 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(found)
   end)
 
-  -- Listing and status report include saved workspace names.
-  it("lists workspaces and reports status", function()
-    util.by("Save a workspace then list and show status")
+  -- Listing includes saved workspace names.
+  it("lists saved workspaces", function()
+    util.by("Save a workspace then list")
     local messages, restore = util.capture_notify()
     stem.new("")
     stem.save("listme")
     util.by("List workspaces")
     stem.list()
+    restore()
+    local all = messages_text(messages)
+    util.by("Verify list output includes saved workspace")
+    assert.is_true(all:match(vim.pesc(constants.messages.list_header)) ~= nil)
+    assert.is_true(all:match("listme") ~= nil)
+  end)
+
+  -- Status reports the current workspace name.
+  it("reports status for the current workspace", function()
+    util.by("Save a workspace then show status")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    stem.save("status-me")
     util.by("Show workspace status")
     stem.status()
     restore()
-    local joined = {}
-    for _, item in ipairs(messages) do
-      table.insert(joined, item.msg)
-    end
-    local all = table.concat(joined, "\n")
-    util.by("Verify list and status output")
-    assert.is_true(all:match("listme") ~= nil)
+    local all = messages_text(messages)
+    util.by("Verify status output includes workspace name")
     assert.is_true(all:match(vim.pesc(constants.messages.status_header)) ~= nil)
+    assert.is_true(all:match("status%-me") ~= nil)
   end)
 
   -- List shows untitled workspaces before saved ones.
@@ -367,8 +384,8 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(untitled_idx < saved_idx)
   end)
 
-  -- Workspace info shows roots for current and saved workspaces.
-  it("reports workspace roots via StemInfo", function()
+  -- Workspace info shows roots for the current workspace.
+  it("reports workspace roots via StemInfo for current workspace", function()
     util.by("Create a workspace with two roots")
     local messages, restore = util.capture_notify()
     stem.new("")
@@ -376,23 +393,30 @@ describe("stem.nvim workspace lifecycle", function()
     local dir2 = util.new_temp_dir()
     stem.add(dir1)
     stem.add(dir2)
-    util.by("Remove one root and reuse it in another workspace")
-    stem.remove(dir2)
     util.by("Show info for current workspace")
     stem.info("")
-    util.by("Save workspace and show info by name")
-    stem.save("info-me")
-    stem.info("info-me")
-    util.by("Open another workspace and add the removed root")
-    stem.new("info-two")
-    stem.add(dir2)
-    stem.info("info-two")
     restore()
-    local joined = {}
-    for _, item in ipairs(messages) do
-      table.insert(joined, item.msg)
-    end
-    local all = table.concat(joined, "\n")
+    local all = messages_text(messages)
+    util.by("Verify info output includes roots")
+    assert.is_true(all:match(vim.pesc(constants.messages.status_header)) ~= nil)
+    assert.is_true(all:match(vim.pesc(dir1)) ~= nil)
+    assert.is_true(all:match(vim.pesc(dir2)) ~= nil)
+  end)
+
+  -- Workspace info shows roots for a saved workspace by name.
+  it("reports workspace roots via StemInfo for saved workspace", function()
+    util.by("Create a workspace with two roots and save it")
+    local messages, restore = util.capture_notify()
+    stem.new("")
+    local dir1 = util.new_temp_dir()
+    local dir2 = util.new_temp_dir()
+    stem.add(dir1)
+    stem.add(dir2)
+    stem.save("info-me")
+    util.by("Show info for saved workspace")
+    stem.info("info-me")
+    restore()
+    local all = messages_text(messages)
     util.by("Verify info output includes roots")
     assert.is_true(all:match(vim.pesc(constants.messages.status_header)) ~= nil)
     assert.is_true(all:match(vim.pesc(dir1)) ~= nil)

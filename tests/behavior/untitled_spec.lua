@@ -4,6 +4,15 @@ local util = require "tests.test_util"
 describe("stem.nvim untitled workspaces", function()
   local stem
 
+  local function untitled_root()
+    return vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
+  end
+
+  local function mount_path_for(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    return vim.fn.getcwd() .. "/" .. mount_name
+  end
+
   before_each(function()
     util.ensure_bindfs()
     stem = util.reset_stem()
@@ -23,14 +32,14 @@ describe("stem.nvim untitled workspaces", function()
   it("clears all untitled workspaces when last instance closes", function()
     util.by("Close last instance and verify cleanup")
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
+    local base = untitled_root()
     local extra = base .. "/untitled1"
     util.by("Create extra untitled directory")
     vim.fn.mkdir(extra, "p")
     util.by("Close workspace to trigger cleanup")
     stem.close()
     util.by("Wait for cleanup to complete")
-    vim.wait(1000, function()
+    local cleaned = vim.wait(1000, function()
       local remaining = vim.fn.readdir(base)
       for _, entry in ipairs(remaining) do
         if entry ~= ".locks" then
@@ -39,6 +48,7 @@ describe("stem.nvim untitled workspaces", function()
       end
       return true
     end, 50)
+    assert.is_true(cleaned)
     local remaining = vim.fn.readdir(base)
     local has_dirs = false
     for _, entry in ipairs(remaining) do
@@ -54,7 +64,7 @@ describe("stem.nvim untitled workspaces", function()
   it("keeps other untitled workspaces when another instance is active", function()
     util.by("Create a lock file and close the workspace")
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
+    local base = untitled_root()
     local other = base .. "/untitled1"
     util.by("Create another untitled workspace directory")
     vim.fn.mkdir(other, "p")
@@ -72,7 +82,7 @@ describe("stem.nvim untitled workspaces", function()
     util.by("Hold an untitled lock and close the buffer")
     stem.setup({})
     stem.new("")
-    local base = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
+    local base = untitled_root()
     local lock_dir = base .. "/.locks"
     vim.fn.mkdir(lock_dir, "p")
     util.by("Create untitled lock file")
@@ -80,8 +90,7 @@ describe("stem.nvim untitled workspaces", function()
     local dir = util.new_temp_dir()
     local file = util.new_temp_file(dir, "lock.txt")
     stem.add(dir)
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    local mount_path = mount_path_for(dir)
     util.by("Open buffer within mounted path")
     vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/lock.txt"))
     local buf = vim.api.nvim_get_current_buf()

@@ -39,14 +39,26 @@ describe("stem.nvim garbage collector", function()
     return mounts
   end
 
-  -- Cleans named mounts when no locks exist.
-  it("cleans named mounts without locks", function()
-    util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
+  local function build_gc()
+    return require("stem.gc.collector").new(config, {
       mount = mount,
       untitled = untitled,
       workspace_lock = workspace_lock,
     })
+  end
+
+  local function messages_text(messages)
+    local joined = {}
+    for _, item in ipairs(messages) do
+      table.insert(joined, item.msg)
+    end
+    return table.concat(joined, "\n")
+  end
+
+  -- Cleans named mounts when no locks exist.
+  it("cleans named mounts without locks", function()
+    util.by("Build garbage collector with mount deps")
+    local gc = build_gc()
 
     util.by("Create a named mount with a temp root")
     local roots = { util.new_temp_dir() }
@@ -68,11 +80,7 @@ describe("stem.nvim garbage collector", function()
   -- Keeps named mounts when a live lock exists.
   it("keeps named mounts with live lock", function()
     util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create a named mount and lock it")
     local roots = { util.new_temp_dir() }
@@ -95,11 +103,7 @@ describe("stem.nvim garbage collector", function()
   -- Cleans untitled mounts when no locks exist.
   it("cleans untitled mounts without locks", function()
     util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create an untitled mount without locks")
     local roots = { util.new_temp_dir() }
@@ -117,11 +121,7 @@ describe("stem.nvim garbage collector", function()
   -- Keeps untitled mounts when a lock exists.
   it("keeps untitled mounts with lock", function()
     util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create an untitled mount and lock it")
     local roots = { util.new_temp_dir() }
@@ -144,11 +144,7 @@ describe("stem.nvim garbage collector", function()
   -- Cleans untitled mounts under /tmp/nvim.* roots.
   it("cleans untitled mounts under nvim temp roots", function()
     util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create a mount under a /tmp/nvim.* stem-untitled root")
     local user = vim.env.USER or "user"
@@ -169,11 +165,7 @@ describe("stem.nvim garbage collector", function()
   -- Ignores bindfs mounts outside stem roots.
   it("ignores non-stem bindfs mounts", function()
     util.by("Build garbage collector with mount deps")
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create a bindfs mount outside stem roots")
     local roots = { util.new_temp_dir() }
@@ -193,11 +185,7 @@ describe("stem.nvim garbage collector", function()
 
   -- Reports unmount failures when cleaning.
   it("reports unmount errors", function()
-    local gc = require("stem.gc.collector").new(config, {
-      mount = mount,
-      untitled = untitled,
-      workspace_lock = workspace_lock,
-    })
+    local gc = build_gc()
 
     util.by("Create a named mount to clean")
     local roots = { util.new_temp_dir() }
@@ -219,11 +207,7 @@ describe("stem.nvim garbage collector", function()
     mount.unmount_all = orig_unmount_all
 
     util.by("Verify unmount error was reported")
-    local joined = {}
-    for _, item in ipairs(messages) do
-      table.insert(joined, item.msg)
-    end
-    local all = table.concat(joined, "\n")
+    local all = messages_text(messages)
     assert.is_true(all:match("unmount failed") ~= nil)
   end)
 end)

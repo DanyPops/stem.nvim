@@ -5,6 +5,32 @@ local util = require "tests.test_util"
 describe("stem.nvim oil integration", function()
   local stem
 
+  local function with_oil_open(buf, fn)
+    local had_preload = package.preload.oil ~= nil
+    local original_preload = package.preload.oil
+    local ok, oil_mod = pcall(require, "oil")
+    if not ok then
+      package.preload.oil = function()
+        return {
+          get_current_dir = function()
+            return vim.g.stem_test_oil_dir
+          end,
+          open = function()
+          end,
+        }
+      end
+      oil_mod = require "oil"
+    end
+    local original_open = oil_mod.open
+    oil_mod.open = fn
+    return function()
+      oil_mod.open = original_open
+      if not had_preload then
+        package.preload.oil = original_preload
+      end
+    end
+  end
+
   before_each(function()
     util.reset_by()
   end)
@@ -72,15 +98,13 @@ describe("stem.nvim oil integration", function()
     vim.api.nvim_win_set_buf(0, buf)
     vim.g.stem_test_oil_dir = original_dir
 
-    local oil_mod = require "oil"
-    local original_open = oil_mod.open
-    oil_mod.open = function(path)
+    local restore_open = with_oil_open(buf, function(path)
       vim.g.stem_test_oil_opened = path
       vim.g.stem_test_oil_dir = path
       if vim.api.nvim_buf_is_valid(buf) then
         vim.api.nvim_buf_set_name(buf, "oil://" .. path .. "/")
       end
-    end
+    end)
 
     local dir_autocmd = vim.api.nvim_create_autocmd("DirChanged", {
       callback = function()
@@ -119,7 +143,7 @@ describe("stem.nvim oil integration", function()
     if dir_autocmd then
       pcall(vim.api.nvim_del_autocmd, dir_autocmd)
     end
-    oil_mod.open = original_open
+    restore_open()
     pcall(vim.api.nvim_buf_delete, buf, { force = true })
   end)
 end)

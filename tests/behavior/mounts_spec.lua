@@ -4,6 +4,19 @@ local util = require "tests.test_util"
 describe("stem.nvim mounts", function()
   local stem
 
+  local function mount_path_for(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    return vim.fn.getcwd() .. "/" .. mount_name
+  end
+
+  local function assert_mount_exists(path)
+    assert.is_true(vim.fn.getftype(path) == "dir")
+  end
+
+  local function assert_mount_missing(path)
+    assert.is_true(vim.fn.getftype(path) == "")
+  end
+
   before_each(function()
     util.ensure_bindfs()
     stem = util.reset_stem()
@@ -26,12 +39,11 @@ describe("stem.nvim mounts", function()
     local dir = util.new_temp_dir()
     util.by("Add directory to workspace")
     stem.add(dir)
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
-    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+    local mount_path = mount_path_for(dir)
+    assert_mount_exists(mount_path)
     util.by("Remove directory from workspace")
     stem.remove(dir)
-    assert.is_true(vim.fn.getftype(mount_path) == "")
+    assert_mount_missing(mount_path)
   end)
 
   -- Adding a directory creates a bindfs-backed mount.
@@ -41,10 +53,9 @@ describe("stem.nvim mounts", function()
     local dir = util.new_temp_dir()
     util.by("Add directory to workspace")
     stem.add(dir)
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    local mount_path = mount_path_for(dir)
     util.by("Verify mount exists")
-    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+    assert_mount_exists(mount_path)
   end)
 
   -- Adding a relative path works from a changed cwd.
@@ -65,7 +76,7 @@ describe("stem.nvim mounts", function()
     vim.cmd("tcd " .. vim.fn.fnameescape(temp_root))
     local mount_path = temp_root .. "/relrepo"
     util.by("Verify relative mount exists")
-    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+    assert_mount_exists(mount_path)
   end)
 
   -- Bindfs mount failures are reported via notify.
@@ -105,8 +116,8 @@ describe("stem.nvim mounts", function()
     stem.add(repo2)
     local cwd = vim.fn.getcwd()
     util.by("Verify both mounts exist with disambiguation")
-    assert.is_true(vim.fn.getftype(cwd .. "/repo") == "dir")
-    assert.is_true(vim.fn.getftype(cwd .. "/repo__2") == "dir")
+    assert_mount_exists(cwd .. "/repo")
+    assert_mount_exists(cwd .. "/repo__2")
   end)
 
   -- Mount unmounts when the last buffer from it closes.
@@ -117,25 +128,21 @@ describe("stem.nvim mounts", function()
     local dir = util.new_temp_dir()
     local file = util.new_temp_file(dir, "buffer.txt")
     stem.add(dir)
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    local mount_path = mount_path_for(dir)
     util.by("Open buffer within mounted path")
     vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/buffer.txt"))
     local buf = vim.api.nvim_get_current_buf()
     util.by("Delete the buffer")
-    vim.g.stem_redir = ""
-    vim.cmd("redir => g:stem_redir")
-    vim.cmd(string.format("silent! lua vim.api.nvim_buf_delete(%d, { force = true })", buf))
-    vim.cmd("redir END")
-    local captured = vim.g.stem_redir or ""
+    local ok, err = pcall(vim.api.nvim_buf_delete, buf, { force = true })
     util.by("Verify buffer delete did not error")
-    assert.is_true(captured:match("E211") == nil)
+    assert.is_true(ok, err)
     util.by("Wait for unmount")
-    vim.wait(1000, function()
+    local unmounted = vim.wait(1000, function()
       return vim.fn.getftype(mount_path) == ""
     end, 50)
     util.by("Verify mount was removed")
-    assert.is_true(vim.fn.getftype(mount_path) == "")
+    assert.is_true(unmounted)
+    assert_mount_missing(mount_path)
   end)
 
   -- Mount remains while another buffer from it is still open.
@@ -147,8 +154,7 @@ describe("stem.nvim mounts", function()
     local file1 = util.new_temp_file(dir, "one.txt")
     local file2 = util.new_temp_file(dir, "two.txt")
     stem.add(dir)
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    local mount_path = mount_path_for(dir)
     util.by("Open first buffer")
     vim.cmd("edit! " .. vim.fn.fnameescape(mount_path .. "/one.txt"))
     local buf1 = vim.api.nvim_get_current_buf()
@@ -158,7 +164,7 @@ describe("stem.nvim mounts", function()
     util.by("Close second buffer")
     vim.api.nvim_buf_delete(buf2, { force = true })
     util.by("Verify mount still exists")
-    assert.is_true(vim.fn.getftype(mount_path) == "dir")
+    assert_mount_exists(mount_path)
     vim.api.nvim_buf_delete(buf1, { force = true })
   end)
 end)

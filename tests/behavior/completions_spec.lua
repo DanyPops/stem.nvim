@@ -3,6 +3,10 @@ local util = require "tests.test_util"
 describe("stem.nvim completions", function()
   local stem
 
+  local function assert_contains(items, expected)
+    assert.is_true(vim.tbl_contains(items, expected))
+  end
+
   before_each(function()
     util.ensure_bindfs()
     stem = util.reset_stem()
@@ -27,7 +31,7 @@ describe("stem.nvim completions", function()
     util.by("Request completion list")
     local items = stem._complete.workspaces("a")
     util.by("Verify completion includes alpha")
-    assert.is_true(vim.tbl_contains(items, "alpha"))
+    assert_contains(items, "alpha")
   end)
 
   -- StemSave completion includes saved workspace names.
@@ -39,7 +43,7 @@ describe("stem.nvim completions", function()
     util.by("Request completion list")
     local items = stem._complete.workspaces("b")
     util.by("Verify completion includes bravo")
-    assert.is_true(vim.tbl_contains(items, "bravo"))
+    assert_contains(items, "bravo")
   end)
 
   -- StemRemove completion includes current roots.
@@ -52,7 +56,7 @@ describe("stem.nvim completions", function()
     util.by("Request completion list")
     local items = stem._complete.roots(dir:sub(1, 3))
     util.by("Verify completion includes directory")
-    assert.is_true(vim.tbl_contains(items, dir))
+    assert_contains(items, dir)
   end)
 
   -- StemRename completion suggests existing workspace names.
@@ -64,6 +68,6 @@ describe("stem.nvim completions", function()
     util.by("Request completion list")
     local items = stem._complete.rename("c", "StemRename c")
     util.by("Verify completion includes charlie")
-    assert.is_true(vim.tbl_contains(items, "charlie"))
+    assert_contains(items, "charlie")
   end)
 end)

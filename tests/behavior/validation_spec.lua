@@ -5,6 +5,15 @@ describe("stem.nvim validation", function()
   local stem
   local data_home
 
+  local function has_message(messages, expected)
+    for _, item in ipairs(messages) do
+      if item.msg == expected then
+        return true
+      end
+    end
+    return false
+  end
+
   before_each(function()
     data_home = vim.fn.stdpath "data"
     util.ensure_bindfs()
@@ -31,15 +40,9 @@ describe("stem.nvim validation", function()
     restore()
     local ws_file = data_home .. "/" .. constants.paths.workspace_dir .. "/bad/name.lua"
     assert.is_true(vim.fn.filereadable(ws_file) == 0)
-    local saw_invalid = false
     local expected = string.format(constants.messages.invalid_workspace_name, "bad/name")
-    for _, item in ipairs(messages) do
-      if item.msg == expected then
-        saw_invalid = true
-      end
-    end
     util.by("Verify invalid name was reported")
-    assert.is_true(saw_invalid)
+    assert.is_true(has_message(messages, expected))
   end)
 
   -- Opening a missing workspace reports an error.
@@ -49,15 +52,9 @@ describe("stem.nvim validation", function()
     util.by("Open missing workspace")
     stem.open("missing")
     restore()
-    local saw_missing = false
     local expected = string.format(constants.messages.workspace_not_found, "missing")
-    for _, item in ipairs(messages) do
-      if item.msg == expected then
-        saw_missing = true
-      end
-    end
     util.by("Verify missing workspace was reported")
-    assert.is_true(saw_missing)
+    assert.is_true(has_message(messages, expected))
   end)
 
   -- Adding a non-directory path is rejected.
@@ -70,15 +67,9 @@ describe("stem.nvim validation", function()
     util.by("Add non-directory path")
     stem.add(file)
     restore()
-    local saw_error = false
     local expected = string.format(constants.messages.not_a_directory, file)
-    for _, item in ipairs(messages) do
-      if item.msg == expected then
-        saw_error = true
-      end
-    end
     util.by("Verify error was reported")
-    assert.is_true(saw_error)
+    assert.is_true(has_message(messages, expected))
   end)
 
   -- Removing an unknown directory reports an error.
@@ -90,15 +81,9 @@ describe("stem.nvim validation", function()
     util.by("Remove unknown directory")
     stem.remove(dir)
     restore()
-    local saw_error = false
     local expected = string.format(constants.messages.directory_not_found, dir)
-    for _, item in ipairs(messages) do
-      if item.msg == expected then
-        saw_error = true
-      end
-    end
     util.by("Verify error was reported")
-    assert.is_true(saw_error)
+    assert.is_true(has_message(messages, expected))
   end)
 
   -- Renaming to an existing workspace name is rejected.
@@ -114,14 +99,8 @@ describe("stem.nvim validation", function()
     util.by("Attempt to rename one to two")
     stem.rename("one", "two")
     restore()
-    local saw_error = false
     local expected = string.format(constants.messages.workspace_exists, "two")
-    for _, item in ipairs(messages) do
-      if item.msg == expected then
-        saw_error = true
-      end
-    end
     util.by("Verify rename error was reported")
-    assert.is_true(saw_error)
+    assert.is_true(has_message(messages, expected))
   end)
 end)

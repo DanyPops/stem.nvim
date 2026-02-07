@@ -4,6 +4,11 @@ local util = require "tests.test_util"
 describe("stem.nvim workspace locks", function()
   local stem
 
+  local function mount_path_for(dir)
+    local mount_name = vim.fn.fnamemodify(dir, ":t")
+    return vim.fn.getcwd() .. "/" .. mount_name
+  end
+
   before_each(function()
     util.ensure_bindfs()
     stem = util.reset_stem()
@@ -27,8 +32,7 @@ describe("stem.nvim workspace locks", function()
     stem.new("alpha")
     stem.add(dir)
     stem.save("alpha")
-    local mount_name = vim.fn.fnamemodify(dir, ":t")
-    local mount_path = vim.fn.getcwd() .. "/" .. mount_name
+    local mount_path = mount_path_for(dir)
 
     local locks = require "stem.ws.locks"
     local lock_config = { temp_root = vim.env.STEM_TMP_ROOT or constants.paths.default_temp_root }
