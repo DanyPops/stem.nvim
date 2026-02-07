@@ -234,7 +234,7 @@ function M.new(config, deps)
     if state.temporary and #state.roots > 0 and config.workspace.confirm_close and #vim.api.nvim_list_uis() > 0 then
       local choice = ui.confirm(constants.messages.close_unnamed_confirm, "&Yes\n&No", 2)
       if choice ~= 1 then
-        return
+        return false
       end
     end
     local candidates = {}
@@ -273,7 +273,7 @@ function M.new(config, deps)
     if #modified > 0 and #vim.api.nvim_list_uis() > 0 then
       local choice = ui.confirm(constants.messages.close_unsaved_confirm, "&Yes\n&No", 2)
       if choice ~= 1 then
-        return
+        return false
       end
     end
     for bufnr in pairs(candidates) do
@@ -316,6 +316,7 @@ function M.new(config, deps)
     state.temp_root = nil
     state.prev_cwd = nil
     ui.notify(constants.messages.workspace_closed)
+    return true
   end
 
   function core.complete_roots(arg_lead)

@@ -58,12 +58,12 @@ test -r /dev/fuse
 ## Session behavior
 
 On `:StemClose`, a session is saved for the current workspace (if named) to
-`stdpath("data")/stem/sessions/<name>.vim`. When opening a workspace with
+`stdpath("data")/stem.nvim/sessions/<name>.vim`. When opening a workspace with
 `:StemOpen` or `:StemNew <name>`, a matching session is automatically loaded.
 
 ## Storage
 
-Each workspace is stored as a Lua file in `stdpath("data")/stem/workspaces/`.
+Each workspace is stored as a Lua file in `stdpath("data")/stem.nvim/workspaces/`.
 Lua is used because it is Neovim-native, commentable, and easy to hand-edit.
 
 ## Why FUSE?

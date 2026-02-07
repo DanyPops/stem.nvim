@@ -67,7 +67,7 @@ function M.new(config, deps)
   end
 
   function coordinator.close()
-    core.close()
+    return core.close()
   end
 
   function coordinator.add(dir)

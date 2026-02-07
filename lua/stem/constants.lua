@@ -1,11 +1,21 @@
 local M = {}
 
 -- Filesystem roots for workspace storage and temp mounts.
+M._names = {
+  project_name = "stem.nvim",
+  storage_root = "stem.nvim",
+  temp_root_base = "/tmp/stem.nvim",
+  temp_root_saved_dir = "saved",
+  temp_root_untitled_dir = "temp",
+  workspace_dir_name = "workspaces",
+  session_dir_name = "sessions",
+}
+
 M.paths = {
-  workspace_dir = "stem/workspaces",
-  session_dir = "stem/sessions",
-  default_temp_root = "/tmp/stem.nvim/saved",
-  default_temp_untitled_root = "/tmp/stem.nvim/temp",
+  workspace_dir = M._names.storage_root .. "/" .. M._names.workspace_dir_name,
+  session_dir = M._names.storage_root .. "/" .. M._names.session_dir_name,
+  default_temp_root = M._names.temp_root_base .. "/" .. M._names.temp_root_saved_dir,
+  default_temp_untitled_root = M._names.temp_root_base .. "/" .. M._names.temp_root_untitled_dir,
 }
 
 -- External executables invoked by stem.
@@ -135,7 +145,7 @@ M.oil = {
 M.autocmds = {
   buf_enter = { "BufEnter" },
   buf_leave = { "BufWinLeave", "BufDelete" },
-  vim_leave_pre = "VimLeavePre",
+  quit_pre = "QuitPre",
 }
 
 -- User command names and option shorthands.

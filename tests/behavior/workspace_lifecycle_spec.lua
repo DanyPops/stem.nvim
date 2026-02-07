@@ -58,6 +58,55 @@ describe("stem.nvim workspace lifecycle", function()
     assert.is_true(vim.fn.isdirectory(cwd) == 1)
   end)
 
+  -- Declining close keeps the unnamed workspace open.
+  it("refuses to close unnamed workspace when user declines", function()
+    util.by("Open unnamed workspace and add a root")
+    local dir = util.new_temp_dir()
+    stem.new("")
+    stem.add(dir)
+
+    local original_confirm = vim.fn.confirm
+    local original_list_uis = vim.api.nvim_list_uis
+    local confirm_calls = 0
+    local messages, restore = util.capture_notify()
+    vim.fn.confirm = function()
+      confirm_calls = confirm_calls + 1
+      return 2
+    end
+    vim.api.nvim_list_uis = function()
+      return { {} }
+    end
+
+    local ok, err = pcall(function()
+      local temp_root = vim.env.STEM_TMP_UNTITLED_ROOT or constants.paths.default_temp_untitled_root
+      local cwd_before = vim.fn.getcwd()
+      local lock_path = require("stem.ws.untitled_store").instance_lock_path({
+        temp_untitled_root = temp_root,
+      }, tostring(vim.fn.getpid()))
+
+      util.by("Attempt to close and decline confirmation")
+      local closed = stem.close()
+      assert.is_false(closed)
+      local cwd = vim.fn.getcwd()
+      assert.is_true(cwd:match(vim.pesc(temp_root) .. "/untitled") ~= nil)
+      assert.is_true(cwd == cwd_before)
+      assert.is_true(vim.fn.isdirectory(cwd) == 1)
+      assert.is_true(vim.fn.filereadable(lock_path) == 1)
+      assert.is_true(confirm_calls == 1)
+      local closed_message = constants.messages.workspace_closed
+      for _, item in ipairs(messages) do
+        assert.is_true(item.msg ~= closed_message)
+      end
+    end)
+
+    vim.fn.confirm = original_confirm
+    vim.api.nvim_list_uis = original_list_uis
+    restore()
+    if not ok then
+      error(err)
+    end
+  end)
+
   -- Saving then opening a workspace uses the named temp root.
   it("saves and opens a workspace", function()
     util.by("Save a workspace and reopen it")

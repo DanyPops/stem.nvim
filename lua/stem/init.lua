@@ -50,6 +50,7 @@ local manager = require("stem.ws.coordinator").new(config, {
 })
 
 local commands = require "stem.commands"
+local quit_guard = false
 
 -- Autocmds keep buffer tracking and cleanup in sync.
 local function setup_autocmds()
@@ -63,10 +64,22 @@ local function setup_autocmds()
       manager.on_buf_leave(args.buf)
     end,
   })
-  vim.api.nvim_create_autocmd(constants.autocmds.vim_leave_pre, {
+  vim.api.nvim_create_autocmd(constants.autocmds.quit_pre, {
     callback = function()
-      if manager.state().temp_root then
-        pcall(manager.close)
+      if vim.v.exiting == 0 then
+        return
+      end
+      if quit_guard then
+        return
+      end
+      if not manager.state().temp_root then
+        return
+      end
+      quit_guard = true
+      local ok = manager.close()
+      if not ok then
+        quit_guard = false
+        error("Stem: quit cancelled")
       end
     end,
   })
